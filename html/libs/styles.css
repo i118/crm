@@ -1,0 +1,150 @@
+@font-face {
+    font-family: Roboto;
+    src: url(../libs/fonts/Roboto-Regular-webfont.ttf);
+}
+
+.webix_message_area{width: 800px;}
+
+
+.myhover{
+    background-color: gray !important;
+    }
+
+.webix_column>div.webix_row_select {
+    color: black;
+    background-color: silver;
+}
+
+.center {
+    text-align: center !important;
+    }
+    
+.warning {
+    background-color: tomato;
+    color: black;
+    }
+
+.info {
+    background-color: lightcyan;
+    color: black;
+    }
+
+.success {
+    background-color: lightgreen;
+    color: black;
+    }
+
+.nothing {}
+
+.selected_inf {
+    color: black;
+    text-align: center;
+    background-color: silver;
+}
+
+.warning_inf {
+    background-color: tomato;
+    text-align: center;
+    color: black;
+    }
+
+.info_inf {
+    background-color: lightcyan;
+    text-align: center;
+    color: black;
+    }
+
+.success_inf {
+    background-color: lightgreen;
+    text-align: center;
+    color: black;
+    }
+
+.nothing_inf {
+    text-align: center;
+    /*color: black;*/
+    }
+
+
+.num_s {
+    font-size: 13px !important;
+    padding: 0px !important;
+    }
+
+.date_s {
+    font-size: 13px !important;
+    }
+
+.header_data {
+    font-family: Roboto !important;
+    font-size: 15px !important;
+    text-align: center !important;
+
+    }
+
+.webix_ss_header TD {
+    font-size: 12px !important;
+    border-bottom-style: hidden !important;
+}
+
+.buttons {
+    
+    }
+
+button {
+    font-size: 14px !important;
+    border-radius: 6px !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+    }
+
+.header_css {
+    background: #fff !important;
+    }
+
+.webix_ss_filter input {
+    border: 1px solid #edf2f1 !important;
+    line-height: 1.5 !important;
+    margin-top: -2px !important;
+    height: 18px !important;
+    border-radius: 3px !important;
+    }
+
+select {
+    border: 1px solid #edf2f1 !important;
+    line-height: 1.5 !important;
+    margin-top: -2px !important;
+    height: 18px !important;
+    padding: 0px !important;
+    border-radius: 3px !important;
+    }
+    
+.ms-logo {
+    width: 36px;
+    height: 36px;
+    margin-top: 0px !important;
+    background-image: url(img/ms_logo.jpg);
+    display: block;
+    background-repeat: round;
+}
+.ms-logo-text {
+    color: #666 !important;
+    font-size: large !important;
+}
+.user-text {
+    color: #666 !important;
+    /*font-size: small !important;*/
+}
+.serv_info {
+    font-size: small;
+}
+.s_header {
+    text-align: center;
+    }
+
+.webix_win_content {
+    padding: 7px !important;
+    }
+
+
+

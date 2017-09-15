@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Manuscirpt CRM</title>
+    <meta charset="utf-8">
+    <meta http-equiv="cache-control" content="no-cache" />
+    <link href="/img/favicon.ico" rel="shortcut icon">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.js"></script>
+    <script src="http://bootstrap-ru.com/204/assets/js/bootstrap-tooltip.js"></script>
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="crmMS" class="container-fluid col-sm-12">
+        <div id="premButts">
+            <h3>Manuscript Solution CRM</h3>
+            <button class="btn btn-default btn-sm">Новая заявка</button>
+            <button class="btn btn-default btn-sm">Мои заявки</button>
+            <button class="btn btn-default btn-sm">Все заявки</button>
+            <button class="btn btn-default btn-sm">История заявок</button>
+            <button class="btn btn-default btn-sm">Поставщики</button>
+            <button class="btn btn-default btn-sm">Клиенты</button>
+            <button class="btn btn-default btn-sm">База знаний</button>
+
+        </div>
+
+        <div class="col-sm-12">
+            <div id="letterMainReq">
+                <!-- Мои заявки -->
+                <div class="col-sm-9">
+                    <div id="mainReq">
+                        <h4>Мои заявки</h4>
+                        <table id="tableMain" class="table table-bordered table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>№</th>
+                                    <th>Создано</th>
+                                    <th>В работу</th>
+                                    <th>Статус</th>
+                                    <th>Создал</th>
+                                    <th>Клиент</th>
+                                    <th>В работе</th>
+                                    <th>Тема</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="danger">1</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7</td>
+                                    <td>3 дня</td>
+                                    <td>Не пришли накладные</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">2</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Клиент</td>
+                                    <td>Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7</td>
+                                    <td>3 дня</td>
+                                    <td>Проблема с оборудованием</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">3</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Клиент</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">4</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">5</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Клиент</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">6</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">7</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">8</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="info">9</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="success">10</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">11</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">12</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">13</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Клиент</td>
+                                    <td>Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="danger"> 14</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="danger">15</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Клиент</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="danger">16</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Клиент</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="danger">17</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="info">18</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="success">19</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Клиент</td>
+                                    <td>Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">20</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">21</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div id="globalAlert" class="col-sm-12">
+                        <h4>Массовые заявки</h4>
+                        <table id="tableGlobalAlert" class="table table-bordered table-striped table-hover">
+                            <thead>
+                                <tr class="danger">
+                                    <th>№</th>
+                                    <th>Проблема</th>
+                                    <th>Выявил</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>42</td>
+                                    <td>Не работает Склад</td>
+                                    <td>Овсянников С.Е.</td>
+                                </tr>
+                                <tr>
+                                    <td>43</td>
+                                    <td>Не работает Склад</td>
+                                    <td>Овсянников С.Е.</td>
+                                </tr>
+                                <tr>
+                                    <td>44</td>
+                                    <td>Не работает Прайс Лист</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td>45</td>
+                                    <td>Не работает Склад</td>
+                                    <td>Кашинцев Д.А.</td>
+                                </tr>
+                                <tr>
+                                    <td>45</td>
+                                    <td>Не работает Склад</td>
+                                    <td>Кашинцев Д.А.</td>
+                                </tr>
+                                <tr>
+                                    <td>45</td>
+                                    <td>Не работает Склад</td>
+                                    <td>Кашинцев Д.А.</td>
+                                </tr>
+                                <tr>
+                                    <td>45</td>
+                                    <td>Не работает Склад</td>
+                                    <td>Кашинцев Д.А.</td>
+                                </tr>
+                                <tr>
+                                    <td>38</td>
+                                    <td>Не работает деление</td>
+                                    <td>Овсянников С.Е.</td>
+                                </tr>
+                                <tr>
+                                    <td>39</td>
+                                    <td>Не работает деление</td>
+                                    <td>Овсянников С.Е.</td>
+                                </tr>
+                                <tr>
+                                    <td>40</td>
+                                    <td>Не пришел прайс Протек77</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td>41</td>
+                                    <td>Не работает дефектура</td>
+                                    <td>Кашинцев Д.А.</td>
+                                </tr>
+                                <tr>
+                                    <td>41</td>
+                                    <td>Не работает дефектура</td>
+                                    <td>Кашинцев Д.А.</td>
+                                </tr>
+                                <tr>
+                                    <td>41</td>
+                                    <td>Не работает дефектура</td>
+                                    <td>Кашинцев Д.А.</td>
+                                </tr>
+                                <tr>
+                                    <td>41</td>
+                                    <td>Не работает дефектура</td>
+                                    <td>Кашинцев Д.А.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="letterAllReq">
+                <!-- Все заявки -->
+                <div class="col-sm-12">
+                    <div id="allReq">
+                        <h4>Все заявки</h4>
+                        <table id="tableAll" class="table table-bordered table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>№</th>
+                                    <th>Создано</th>
+                                    <th>В работу</th>
+                                    <th>Статус</th>
+                                    <th>Создал</th>
+                                    <th>Назначен</th>
+                                    <th>Клиент</th>
+                                    <th>В работе</th>
+                                    <th>Тема</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="danger">1</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7</td>
+                                    <td>3 дня</td>
+                                    <td>Не пришли накладные</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">2</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Клиент</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7</td>
+                                    <td>3 дня</td>
+                                    <td>Ошибка Склад71</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">3</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Клиент</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">4</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">5</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Клиент</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">6</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">7</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">8</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="info">9</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="success">10</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">11</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">12</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">13</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Клиент</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="danger"> 14</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="danger">15</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Клиент</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="danger">16</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Клиент</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="danger">17</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="info">18</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Парацельс Плюс</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="success">19</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Клиент</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">20</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7</td>
+                                    <td>3 дня</td>
+                                    <td>Тарасов М.А.</td>
+                                </tr>
+                                <tr>
+                                    <td class="danger">21</td>
+                                    <td>11.08.2017</td>
+                                    <td>11.08.2017</td>
+                                    <td>В работе</td>
+                                    <td>Тарасов М.А.</td>
+                                    <td>Кашинцев Д.А.</td>
+                                    <td>Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7</td>
+                                    <td>3 дня</td>
+                                    <td>Не приходят накладные в склад</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,32 @@
+        html body table {
+            width: 100%;
+        }
+        
+        @font-face {
+            font-family: Roboto;
+            /* Гарнитура шрифта */
+            src: url(../fonts/Roboto-Regular.ttf);
+            /* Путь к файлу со шрифтом */
+        }
+        
+        body {
+            /* margin: 10px; */
+            /* background-repeat: repeat; */
+            /* background-image: url(../img/background.jpg); */
+            font-family: 'Roboto';
+            font-size: 12px;
+        }
+        
+        #premButts,
+        table,
+        table th {
+            text-align: center;
+        }
+        
+        #letterMainReq {
+            /* display: none; */
+        }
+        
+        #letterAllReq {
+            /* display: none; */
+        }
