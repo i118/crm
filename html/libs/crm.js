@@ -104,11 +104,12 @@ var all_appl = {id: "view_2", view: "datatable",
     navigation: true, 
     multiselect: true,
     resizeColumn:true,
-    fixedRowHeight:false,  rowLineHeight:34, rowHeight:34,
+    fixedRowHeight:false,  //rowLineHeight:34, rowHeight:34,
     on:{
         //"onresize": webix.once(function(){ 
             //this.adjustRowHeight("client", true);
-            //}),
+            //})
+
         //onBeforeSelect: webix.once(function(){
             //this.adjustRowHeight("client", true);
             //}),
@@ -185,6 +186,7 @@ var all_appl = {id: "view_2", view: "datatable",
         { content:"selectFilter"}
         ]},
     { id:"client",
+      fillspace: 3,
       width: 360,
       sort: "text",
       header:[
@@ -200,6 +202,7 @@ var all_appl = {id: "view_2", view: "datatable",
         },
     { id:"topic",
       width: 225,
+      fillspace: 1,
       header: [
         {text: "Тема", heigth: 10, css: 'header_data'},
         { content:"selectFilter", height: 20}
@@ -277,6 +280,7 @@ function update_all(){
     webix.ajax().post(req_url, params, function(text, data){
         data = data.json();
         $$("view_2").clearAll();
+        $$("view_2").refresh();
         $$("view_2").parse(data);
         });
     };
@@ -446,3 +450,8 @@ $$("_reset_f").attachEvent("onItemClick", function(){
     $$("view_2").refreshFilter();
     $$("view_2").render();
     });
+
+$$("view_2").attachEvent("onresize", webix.once(function(){ 
+            this.adjustRowHeight();
+            })
+    );
