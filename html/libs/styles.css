@@ -7,7 +7,7 @@
 
 
 .myhover{
-    background-color: gray !important;
+    background-color: Gainsboro !important;
     }
 
 .webix_column>div.webix_row_select {
@@ -15,10 +15,6 @@
     background-color: silver;
 }
 
-.center {
-    text-align: center !important;
-    }
-    
 .warning {
     background-color: tomato;
     color: black;
@@ -73,6 +69,7 @@
 
 .date_s {
     font-size: 13px !important;
+    text-align: center !important;
     }
 
 .header_data {
@@ -83,7 +80,7 @@
     }
 
 .webix_ss_header TD {
-    font-size: 12px !important;
+    /*font-size: 12px !important;*/
     border-bottom-style: hidden !important;
 }
 

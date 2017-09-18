@@ -146,23 +146,21 @@ var all_appl = {id: "view_2", view: "datatable",
         },
     { id:"create_date",
       width: 85,
-      css: "center",
+      css: "date_s",
       sort:"int",
       header: [
         {text: "Создано", autoheight: true, css: 'header_data'},
-        {content:"textFilter"}
-        ],
-      template: "<span class='date_s'>#create_date#</span>"
+        {id: "c_filter", content:"textFilter"}
+        ]
     },
     { id:"to_work_date",
       width: 85,
-      css: "center",
+      css: "date_s",
       sort: "int",
       header: [
         {text: "В работу", autoheight: true, css: 'header_data'},
         {content:"textFilter"}
-        ],
-      template: "<span class='date_s'>#to_work_date#</span>"
+        ]
     },
     { id:"status",
       width: 100,
@@ -219,13 +217,13 @@ var view_cells = [
 
 var buttons = [
             {view:"button", id: '_new_button', type:"form", popup: "pop_send_form",
-                label: 'Новая заявка', width: 100},
+                label: 'Новая заявка', width: 100, tooltip: "Создание новой заявки"},
             {view:"button", id: '_vendors', type:"form", popup: "pop_vendors_form",
-                label: 'Поставщики', width: 100},
+                label: 'Поставщики', width: 100, tooltip: "Список поставщиков"},
             {view:"button", id: '_customers', type:"form", popup: "pop_customers_form",
-                label: 'Клиенты', width: 100},
+                label: 'Клиенты', width: 100, tooltip: "Список клиентов"},
             {view:"button", id: '_knowledge_base', type:"form", popup: "pop_knowbase_form",
-                label: 'База знаний', width: 100},
+                label: 'База знаний', width: 100, tooltip: "Наиболее частые проблемы и их решения"},
             {},
             {view:"button", id: "_reset_f", type:"form",
                 label: 'Сбросить фильтры', width: 140},
@@ -329,6 +327,19 @@ function open_appl(id) {
     $$("pop_application").show();
     //webix.message(c_item);
     };
+
+function remove_filters(){
+    $$('view_2').filter(function(obj){
+        console.dir($$("view_2"));
+        //console.log(obj);
+        return obj.status != "", obj.ordered != "", obj.create_user != "",
+               obj.create_date != "", obj.to_work_date != "", obj.client != "",
+               obj.in_work != "", obj.topic != "";
+    });
+    //$$('view_2').resize();
+    }
+    
+    
 
 //webix events attaches
 webix.attachEvent("onBeforeAjax", 
@@ -447,8 +458,9 @@ $$("close_button").attachEvent("onItemClick", function(){
 
 $$("_reset_f").attachEvent("onItemClick", function(){
     console.log('dd');
-    $$("view_2").refreshFilter();
-    $$("view_2").render();
+    remove_filters();
+    //$$("view_2").refreshFilter();
+    //$$("view_2").render();
     });
 
 $$("view_2").attachEvent("onresize", webix.once(function(){ 
