@@ -132,6 +132,7 @@ select {
     font-size: large !important;
 }
 .user-text {
+    text-align: left;
     color: #666 !important;
     /*font-size: small !important;*/
 }
