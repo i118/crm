@@ -15,59 +15,97 @@ import traceback
 import subprocess
 from urllib.parse import unquote
 from libs.lockfile import LockWait
-
-#"2012.05.06"
-data_2 = [
-{"alert": 2, "num": 1, "create_date": "2012.05.06", "to_work_date": "2012.05.08", "status":"В работе", "create_user": "Тарасов", "client": "Парацельс Плюс", "in_work": 3, "topic": "Не накладные", "ordered": "Кашинцев", "description" : "11212"},
-{"alert": 1, "num": 2, "create_date": "2012.05.06", "to_work_date": "2012.05.08", "status":"В работе", "create_user": "Тарасов", "client": "Парацельс Плюс", "in_work": 3, "topic": "пришли накладные", "ordered": "Кашинцев", "description" : "11212"},
-{"alert": 2, "num": 3, "create_date": "2012.05.06", "to_work_date": "2012.05.08", "status":"В работе", "create_user": "Тарасов", "client": "Парацельс минусПлюс", "in_work": 1, "topic": "Не пришли", "ordered": "Кашинцев", "description" : "11212"},
-{"alert": 3, "num": 4, "create_date": "2012.05.06", "to_work_date": "2012.05.08", "status":"В работе", "create_user": "Тарасов", "client": "Парацельс Плюс", "in_work": 3, "topic": "Не накладные", "ordered": "Кашинцев", "description" : "11212"},
-{"alert": 3, "num": 5, "create_date": "2012.05.06", "to_work_date": "2012.05.08", "status":"В работе", "create_user": "Тарасов", "client": "Парацельс минусПлюс", "in_work": 4, "topic": "Не пришли накладные", "ordered": "Кашинцев", "description" : "11212"},
-{"alert": 3, "num": 6, "create_date": "2012.05.06", "to_work_date": "2012.05.08", "status":"В работе", "create_user": "Тарасов", "client": "Парацельс Плюс", "in_work": 3, "topic": "Не накладные", "ordered": "Кашинцев", "description" : "11212"},
-{"alert": 3, "num": 8, "create_date": "2012.05.06", "to_work_date": "2012.05.08", "status":"В работе", "create_user": "Тарасов", "client": "Парацельс минусПлюс", "in_work": 6, "topic": "Не пришли", "ordered": "Кашинцев", "description" : "11212"},
-{"alert": 3, "num": 9, "create_date": "2012.05.06", "to_work_date": "2012.05.08", "status":"В работе", "create_user": "Тарасов", "client": "Парацельс Плюс", "in_work": 3, "topic": "Не пришли накладные", "ordered": "Кашинцев", "description" : "11212"},
-{"alert": 3, "num": 10, "create_date": "2012.05.06", "to_work_date": "2012.05.08", "status":"В работе", "create_user": "Тарасов", "client": "Парацельс Плюс", "in_work": 4, "topic": "Не пришли", "ordered": "Тарасов", "description" : "11212"},
-{"alert": 3, "num": 11, "create_date": "2012.05.06", "to_work_date": "2012.05.08", "status":"В работе", "create_user": "Тарасов", "client": "Парацельс минус", "in_work": 2, "topic": "Не пришли накладные", "ordered": "Тарасов", "description" : "11212"},
-{"alert": 1, "num": 12, "create_date": "2012.05.06", "to_work_date": "2012.05.08", "status":"В работе", "create_user": "Тарасов", "client": "Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7", "in_work": 3, "topic": "Не пришли накладные", "ordered": "Кашинцев", "description" : "11212"},
-{"alert": 2, "num": 13, "create_date": "2012.05.06", "to_work_date": "2012.05.08", "status":"В работе", "create_user": "Тарасов", "client": "Парацельс минус", "in_work": 3, "topic": "Не пришли накладные", "ordered": "Тарасов", "description" : "11212"},
-{"alert": 0, "num": 14, "create_date": "2012.05.06", "to_work_date": "2012.05.08", "status":"В работе", "create_user": "Тарасов", "client": "Парацельс Плюс", "in_work": 3, "topic": "Не пришли накладные", "ordered": "Кашинцев", "description" : "11212"},
-{"alert": 1, "num": 15, "create_date": "2012.05.06", "to_work_date": "2012.05.08", "status":"В работе", "create_user": "Тарасов", "client": "Парацельс минус", "in_work": 3, "topic": "Не пришли накладные", "ordered": "Кашинцев", "description" : "11212"},
-{"alert": 2, "num": 1650, "create_date": "2012.05.06", "to_work_date": "2012.05.08", "status":"В работе", "create_user": "Тарасов", "client": "Парацельс Плюс", "in_work": 3, "topic": "Не пришли накладные", "ordered": "Кашинцев", "description" : "11212"},
-{"alert": 2, "num": 10650, "create_date": "2012.05.06", "to_work_date": "2012.05.08", "status":"В работе", "create_user": "Тарасов", "client": "Парацельс Плюс", "in_work": 3, "topic": "Не пришли накладные", "ordered": "Кашинцев", "description" : "11212"}
-]
-
-clients = ['Парацельс Плюс', 'Партнер-Инвест ООО Московская Область, г. Серпухов, Мишина проезд, 7',
-           'Минус', 'арацельс минусПлюс',
-           'Парацельс Минус', 'Парацельс минусПлюс']
-
-users = ["Тарасов", "Кашинцев", 'user', 'userrrr']
-
-topics = ["...", "Не накладные", "пришли накладные", "Не пришли", "Не пришли накладные"] 
+import psycopg2
 
 class API:
     """
     API class for http access to reloader
     """
-
-    def __init__(self, Lock, log, w_path = '/ms71/data/crv', p_path='/ms71/keys'):
-        self.methods = ['login', 'logout']
+    
+    sql_all ="""select num, alerts.name, create_date, to_work_date, status.name, users.display_name, clients.display_name, topics.name, uu.display_name, description, change_date
+from requests
+join alerts
+    on alerts.uid = requests.alert
+join users
+    on users.uid = requests.create_user
+join status
+    on status.uid = requests.status
+join clients
+    on clients.uid = requests.client
+join topics
+    on topics.uid = requests.topic
+join users as uu
+    on uu.uid = requests.ordered
+where requests.archived = false and requests.deleted = false;
+"""
+    def __init__(self, Lock, log, w_path = '/ms71/data/crm', p_path='/ms71/keys'):
+        self.methods = []
         self.path = w_path
         self.p_path = p_path
         self.lock = Lock
         self.exec = sys.executable
         self.log = log
-        self.data2 = data_2
+        params = {'dbname': 'apps', 'user': 'postgres', 'host': 'localhost'}
+        self.con = psycopg2.connect(**params)
+        """
+        cur = self.con.cursor()
+        cur.execute(self.sql_all)
+        rl = []
+        for row in cur.fetchall():
+            cr_date = row[2].strftime('%d.%m.%Y')
+            ch_date = row[10].strftime('%d.%m.%Y')
+            if row[3] < row[2]:
+                work_date = ''
+                in_work_d = ''
+            else:
+                in_work_d = (row[3] - row[2]).days
+                work_date = row[3]
+            qw = {"alert": row[1], "num": row[0], "create_date": cr_date, "to_work_date": work_date, "status": row[4], "create_user": row[5], "client": row[6], "in_work": in_work_d, "topic": row[7], "ordered": row[8], "description" : row[9], "change_date": ch_date}
+            rl.append(qw)
+            print(qw)
+        cur.close()
+        self.con.close()
+        sys.exit(0)
+        """
 
     def get_topics(self, params=None, x_hash=None):
-        ret_value = json.dumps(topics, ensure_ascii=False)
+        sql = "select name from topics"
+        cur = self._make_sql(sql)
+        rl = []
+        for re in cur:
+            rl.append(re[0])
+        cur.close()
+        ret_value = json.dumps(rl, ensure_ascii=False)
+        return ret_value
+
+    def get_alerts(self, params=None, x_hash=None):
+        sql = "select name from alerts"
+        cur = self._make_sql(sql)
+        rl = []
+        for re in cur.fetchall():
+            rl.append(re[0])
+        cur.close()
+        ret_value = json.dumps(rl, ensure_ascii=False)
         return ret_value
 
     def get_users(self, params=None, x_hash=None):
-        ret_value = json.dumps(users, ensure_ascii=False)
+        sql = "select display_name from users where active=true and deleted=false"
+        cur = self._make_sql(sql)
+        rl = []
+        for re in cur:
+            rl.append(re[0])
+        cur.close()
+        ret_value = json.dumps(rl, ensure_ascii=False)
         return ret_value
 
     def get_clients(self, params=None, x_hash=None):
-        ret_value = json.dumps(clients, ensure_ascii=False)
+        sql = "select display_name from clients"
+        cur = self._make_sql(sql)
+        rl = []
+        for row in cur.fetchall():
+            rl.append(row[0])
+        cur.close()
+        ret_value = json.dumps(rl, ensure_ascii=False)
         return ret_value
 
     def get_all(self, params=None, x_hash=None):
@@ -76,8 +114,28 @@ class API:
         """
         #проверяем ключ
         user = params
-        ret_value = json.dumps(self.data2, ensure_ascii=False)
+        cur = self._make_sql(self.sql_all)
+        rl = []
+        for row in cur.fetchall():
+            if row[3] < row[2]:
+                work_date = ''
+                in_work_d = ''
+            else:
+                in_work_d = (row[3] - row[2]).days
+                work_date = self._f_date(row[3])
+            qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
+                  "status": row[4], "create_user": row[5], "client": row[6], "in_work": in_work_d, "topic": row[7],
+                  "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10])}
+            #for k in qw:
+                #print(k, type(qw[k]), sep='  <-->  ')
+            #print(qw)
+            rl.append(qw)
+        cur.close()
+        ret_value = json.dumps(rl, ensure_ascii=False)
         return ret_value
+
+    def _f_date(self, date_value):
+        return date_value.strftime('%d.%m.%Y')
 
     def get_my(self, params=None, x_hash=None):
         """
@@ -86,11 +144,6 @@ class API:
         #проверяем ключ
         user = params
         datas = []
-        for row in self.data2:
-            if user != row['ordered']:
-                continue
-            datas.append(row)
-            #print(row)
         
         ret_value = json.dumps(datas, ensure_ascii=False)
         return ret_value
@@ -118,23 +171,41 @@ class API:
         """
         помещем заявку в базу
         """
-        params['alert'] = 3
-        params['num'] = len(self.data2) + 1
-        params['to_work_date'] = ''
-        params['status'] = 'Заведена'
-        params['in_work'] = 0
-        params['ordered'] = ''
-        cr_date = params['create_date'].split()[0].split('-')
-        #cr_date.reverse()
-        cr_date = '.'.join(cr_date)
-        params['create_date'] = cr_date
-        self.data2.append(params)
-        #print(self.data2[0])
-        #print(self.data2[-1])
-        #print(params)
-        ret_value = json.dumps('bla-bla-bla', ensure_ascii=False)
-        return u''
 
+        cr_date, _ = params['create_date'].split()
+        sql_ins = """insert into requests (num, alert, create_date, to_work_date, status, create_user, client, topic, ordered, description, archived, deleted, change_date) values
+    (default,
+    (select uid from alerts where name = '{0}'),
+    '{1}',
+    '1971-01-01',
+    (select uid from status where name = 'Заведена'),
+    (select uid from users where display_name = '{3}'),
+    (select uid from clients where display_name = '{4}'),
+    (select uid from topics where name = '{5}'),
+    0,
+    '{6}',
+    false,
+    false,
+    current_date)
+    ON CONFLICT DO NOTHING
+    RETURNING num;
+""".format(params['alert'], cr_date, None, params['create_user'], params['client'], params['topic'], params['description'])
+        #print(sql_ins)
+        cur = self._make_sql(sql_ins)
+        ret = cur.fetchone()
+        print(ret)
+        cur.close()
+        num = 10000
+        ret_value = json.dumps(num, ensure_ascii=False)
+        return ret_value
+
+    def _make_sql(self, sql):
+        """
+        Создаем курсор и делаем sql запрос
+        """
+        cur = self.con.cursor()
+        cur.execute(sql)
+        return cur
 
 class fLock:
     """

@@ -27,10 +27,13 @@ var appl = {
 
 
 var input_form = [
-    {view:"text", label:"Пользователь", value: user,
-        readonly: true, name:"create_user", disabled: true, id: "cr_user"},
+    {view:"text", label:"Пользователь", //value: user, readonly: true, disabled: true,
+         placeholder: "Выберите пользователя", name:"create_user", id: "user_input", popup: 'pop_users'},
     {view:"datepicker", label:"Дата заявки", name:"create_date", stringResult:"true",
         value: new Date(), readonly: true, disabled: true},
+    {view: "text", label: "Приоритет", name: "alert", value: "Обычный", id: "alert_input",
+        popup: "pop_alerts", value: "Обычный"
+        },
     {view:"text", label:"Клиент", name:"client", id: 'customer_new', invalidMessage: "Выберите клиента",
         required: true, popup: "pop_customers_form_new", placeholder: "Выберите клиента"
         },
@@ -48,8 +51,6 @@ var input_form = [
             var vl = $$("n_desc").validate();
             var vl_1 = $$("n_topic").validate();
             if (vl & vl_1 & vl_2) {
-                //$$("cr_user").setValue(user);
-                $$("cr_user").refresh();
                 submit();
             };
             }}
@@ -67,7 +68,32 @@ var customers = {
     height: 400,
     select: true,
     hover: "myhover",
-    navigation: true,
+    navigation: true
+    };
+
+var alerts = {
+    view:"list", 
+    //uniteBy:function(obj){
+    //    return obj.value.substr(0,1); 
+    //    },
+    datatype: 'JSArray',
+    id: "alerts_list",
+    width: 400,
+    height: 600,
+    select: true,
+    hover: "myhover",
+    navigation: true
+    };
+
+var users = {
+    view:"list", 
+    datatype: 'JSArray',
+    id: "users_list",
+    width: 400,
+    height: 600,
+    select: true,
+    hover: "myhover",
+    navigation: true
     };
 
 var topics = {
@@ -101,10 +127,11 @@ var send_form_body = {
 var all_appl = {id: "view_2", view: "datatable",
     select: true,
     hover: "myhover",
-    navigation: true, 
-    multiselect: true,
+    navigation: "row",
+    select: true,
+    //multiselect: true,
     resizeColumn:true,
-    fixedRowHeight:false,  //rowLineHeight:34, rowHeight:34,
+    fixedRowHeight:false,  rowLineHeight:34, rowHeight:34,
     on:{
         //"onresize": webix.once(function(){ 
             //this.adjustRowHeight("client", true);
@@ -126,9 +153,10 @@ var all_appl = {id: "view_2", view: "datatable",
             if (obj.to_work_date != "") {
                 obj.to_work_date = webix.i18n.dateFormatStr(obj.to_work_date);
             };
-            obj.$css = (obj.alert === 0) ? "warning":
-                       (obj.alert === 1) ? "info":
-                       (obj.alert === 2) ? "success":
+            //obj.ch_date = (obj.to_work_date != "") ? obj.to_work_date: obj.create_date;
+            obj.$css = (obj.alert === "Высокий") ? "high_pr":
+                       (obj.alert === "Средний") ? "med_pr":
+                       (obj.alert === "Низкий") ? "low_pr":
                        "nothing";
             //obj - data object from incoming data
             //obj.count = obj.cells[0]; //set value based on some data in incoming dataset
@@ -140,47 +168,68 @@ var all_appl = {id: "view_2", view: "datatable",
     { id:"num",
       sort: "int",
       css: "num_s",
-      cssFormat: shrink, 
-      width: 40,
-      header: {text: "№", autoheight: true, css: 'header_data'}
+      //cssFormat: shrink, 
+      width: 85,
+      header: [{text: "№ заявки", css: 'header_data'},
+        {content:"textFilter"}
+        ]
         },
-    { id:"create_date",
+    { id:"alert",
       width: 85,
       css: "date_s",
       sort:"int",
       header: [
-        {text: "Создано", autoheight: true, css: 'header_data'},
-        {id: "c_filter", content:"textFilter"}
+        {text: "Приоритет", css: 'header_data'},
+        {content:"selectFilter"}
         ]
     },
-    { id:"to_work_date",
-      width: 85,
+    { id:"change_date",
+      width: 105,
+      //format: webix.Date.dateToStr("%d.%m.%Y"),
       css: "date_s",
-      sort: "int",
+      sort:"date",
       header: [
-        {text: "В работу", autoheight: true, css: 'header_data'},
-        {content:"textFilter"}
+        {text: "Дата", css: 'header_data'},
+        {content: "datepickerFilter"}
         ]
     },
+    //{ id:"create_date",
+      //width: 85,
+      //css: "date_s",
+      //sort:"int",
+      //header: [
+        //{text: "Создано", css: 'header_data'},
+        //{content:"textFilter"}
+        //]
+    //},
+    //{ id:"to_work_date",
+      //width: 85,
+      //css: "date_s",
+      //sort: "int",
+      //header: [
+        //{text: "В работу", css: 'header_data'},
+        //{content:"textFilter"}
+        //]
+    //},
     { id:"status",
       width: 100,
       sort: "text",
       header: [
-        {text: "Статус", autoheight: true, css: 'header_data'},
+        {text: "Статус", css: 'header_data'},
         { content:"selectFilter"}
         ]},
     { id:"create_user",
       width: 145,
       sort: "text",
       header: [
-        {text: "Создал", autoheight: true, css: 'header_data'},
+        {text: "Создал", css: 'header_data'},
         { content:"selectFilter"}
         ]},
     { id:"ordered",
       width: 145,
       sort: "text",
       header: [
-        {text: "Назначен", autoheight: true, css: 'header_data'},
+        {text: "Назначен", css: 'header_data'},
         { content:"selectFilter"}
         ]},
     { id:"client",
@@ -188,22 +237,22 @@ var all_appl = {id: "view_2", view: "datatable",
       width: 360,
       sort: "text",
       header:[
-        {text: "Клиент", height: 10, css: 'header_data'},
+        {text: "Клиент", css: 'header_data'},
         {content:"textFilter"}]
         },
     { id:"in_work",
       width: 80,
-      css: "center",
+      css: "num_s",
       sort: "int",
-      header: [{text: "В работе", autoheight: true, css: 'header_data'},
+      header: [{text: "В работе", css: 'header_data'},
                {content: "numberFilter"}]
         },
     { id:"topic",
       width: 225,
       fillspace: 1,
       header: [
-        {text: "Тема", heigth: 10, css: 'header_data'},
-        { content:"selectFilter", height: 20}
+        {text: "Тема", heigth: 18, css: 'header_data'},
+        { content:"selectFilter", height: 18}
         ]}
     ]}
 
@@ -217,13 +266,13 @@ var view_cells = [
 
 var buttons = [
             {view:"button", id: '_new_button', type:"form", popup: "pop_send_form",
-                label: 'Новая заявка', width: 100, tooltip: "Создание новой заявки"},
+                label: 'Новая заявка', width: 120, tooltip: "Создание новой заявки"},
             {view:"button", id: '_vendors', type:"form", popup: "pop_vendors_form",
-                label: 'Поставщики', width: 100, tooltip: "Список поставщиков"},
+                label: 'Поставщики', width: 120, tooltip: "Список поставщиков"},
             {view:"button", id: '_customers', type:"form", popup: "pop_customers_form",
-                label: 'Клиенты', width: 100, tooltip: "Список клиентов"},
+                label: 'Клиенты', width: 120, tooltip: "Список клиентов"},
             {view:"button", id: '_knowledge_base', type:"form", popup: "pop_knowbase_form",
-                label: 'База знаний', width: 100, tooltip: "Наиболее частые проблемы и их решения"},
+                label: 'База знаний', width: 120, tooltip: "Наиболее частые проблемы и их решения"},
             {},
             {view:"button", id: "_reset_f", type:"form",
                 label: 'Сбросить фильтры', width: 140},
@@ -234,17 +283,17 @@ var buttons = [
 var bottom = [
     {template: 'bottom' + '&nbsp;<span class="serv_info">' + location.hostname + "</span>",
         height: 30, id: "foot1"},
-    {},
-    {template: 'Внимание!',
-        label: 'Alert', width: 90, css: "warning_inf"},
-    {template: 'Инфо',
-        label: 'Info', width: 90, css: "info_inf"},
-    {template: 'Успешно',
-        label: 'Success', width: 90, css: "success_inf"},
-    {template: 'Обычные',
-        label: 'Ordinary', width: 90, css: "nothing_inf"},
-    {template: 'Выделенные',
-        label: 'Selected', width: 90, css: "selected_inf"},
+    {}
+    //{template: 'Внимание!',
+        //label: 'Alert', width: 90, css: "warning_inf"},
+    //{template: 'Инфо',
+        //label: 'Info', width: 90, css: "info_inf"},
+    //{template: 'Успешно',
+        //label: 'Success', width: 90, css: "success_inf"},
+    //{template: 'Обычные',
+        //label: 'Ordinary', width: 90, css: "nothing_inf"},
+    //{template: 'Выделенные',
+        //label: 'Selected', width: 90, css: "selected_inf"},
 ];
 
 //functions
@@ -264,6 +313,25 @@ function customers_load() {
         });
     };
 
+function alerts_load() {
+    var params = {'get_alerts': user};
+    webix.ajax().post(req_url, params, function(text, data){
+        data = data.json();
+        $$("alerts_list").clearAll();
+        $$("alerts_list").parse(data);
+        });
+    };
+
+function users_load() {
+    var params = {'get_users': user};
+    webix.ajax().post(req_url, params, function(text, data){
+        data = data.json();
+        $$("users_list").clearAll();
+        $$("users_list").parse(data);
+        });
+    };
+
+
 function topics_load() {
     var params = {'get_topics': user};
     webix.ajax().post(req_url, params, function(text, data){
@@ -282,7 +350,6 @@ function update_all(){
         $$("view_2").parse(data);
         });
     };
-
 
 function update_my(){
     var params = {'get_my': user};
@@ -317,13 +384,14 @@ function submit(){
     var params = {"put_apply": data_send};
     webix.ajax().post(req_url, params, function(text, data){
         update_all();
+        console.log(data.json());
         });
     $$("send_form").reconstruct();
     };
 
 function open_appl(id) {
     var c_item = $$("view_2").getItem(id.row);
-    console.log(c_item);
+    //console.log(c_item);
     $$("pop_application").show();
     //webix.message(c_item);
     };
@@ -369,7 +437,7 @@ webix.ui({
             {view:"button", id: '_login', type:"form", css: 'buttons',
                 label: 'Войти', width: 120}
             ]},
-        {height: 30, cols:buttons},
+        {height: 46, cols:buttons},
         {view: "tabview",
             id:"tabview1",
             animate:false,
@@ -405,6 +473,18 @@ webix.ui({
 
 webix.ui({
     view: "popup",
+    id: "pop_alerts",
+    body: alerts
+    });
+
+webix.ui({
+    view: "popup",
+    id: "pop_users",
+    body: users
+    });
+
+webix.ui({
+    view: "popup",
     id: "pop_customers_form_new",
     body: customers
     });
@@ -431,6 +511,8 @@ update_all();
 update_my();
 topics_load();
 customers_load();
+alerts_load();
+users_load();
 
 //elemnts attachs
 
@@ -448,6 +530,20 @@ $$("topics_list").attachEvent("onAfterSelect", function(){
     $$('n_topic').setValue(curent_topic);
     });
 
+$$("alerts_list").attachEvent("onAfterSelect", function(){
+    var curent_alert = $$("alerts_list").getSelectedItem().value;
+    $$("pop_alerts").hide();
+    $$("alerts_list").unselectAll();
+    $$('alert_input').setValue(curent_alert);
+    });
+
+$$("users_list").attachEvent("onAfterSelect", function(){
+    var curent_alert = $$("users_list").getSelectedItem().value;
+    $$("pop_users").hide();
+    $$("users_list").unselectAll();
+    $$('user_input').setValue(curent_alert);
+    });
+
 $$("view_2").attachEvent("onItemDblClick", function(id, e, node){
     open_appl(id);
     });
@@ -462,8 +558,3 @@ $$("_reset_f").attachEvent("onItemClick", function(){
     //$$("view_2").refreshFilter();
     //$$("view_2").render();
     });
-
-$$("view_2").attachEvent("onresize", webix.once(function(){ 
-            this.adjustRowHeight();
-            })
-    );

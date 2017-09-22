@@ -10,27 +10,30 @@
     background-color: Gainsboro !important;
     }
 
+.webix_column>div {
+    padding: 2px !important;
+    }
+
 .webix_column>div.webix_row_select {
     color: black;
     background-color: silver;
 }
 
-.warning {
-    background-color: tomato;
-    color: black;
+.high_pr {
+    color: tomato;
     }
 
-.info {
-    background-color: lightcyan;
-    color: black;
+.med_pr {
+    color: blue;
     }
 
-.success {
-    background-color: lightgreen;
-    color: black;
+.low_pr {
+    color: green;
     }
 
-.nothing {}
+.nothing {
+    color: grey;
+    }
 
 .selected_inf {
     color: black;
@@ -39,21 +42,21 @@
 }
 
 .warning_inf {
-    background-color: tomato;
+    /*background-color: tomato;*/
     text-align: center;
-    color: black;
+    color: tomato;
     }
 
 .info_inf {
-    background-color: lightcyan;
+    /*background-color: lightcyan;*/
     text-align: center;
-    color: black;
+    color: blue;
     }
 
 .success_inf {
-    background-color: lightgreen;
+    /*background-color: lightgreen;*/
     text-align: center;
-    color: black;
+    color: green;
     }
 
 .nothing_inf {
@@ -64,35 +67,96 @@
 
 .num_s {
     font-size: 13px !important;
-    padding: 0px !important;
+    text-align: center !important;
+    /*padding: 0px !important;*/
     }
 
 .date_s {
     font-size: 13px !important;
     text-align: center !important;
+    /*padding-left: 2px  !important;*/
     }
 
 .header_data {
-    font-family: Roboto !important;
-    font-size: 15px !important;
+    /*font-size: 11px !important;*/
+    padding: 0px 2px 0px 2px !important;
+    padding-bottom: 10px !important;
     text-align: center !important;
-
     }
 
-.webix_ss_header TD {
-    /*font-size: 12px !important;*/
-    border-bottom-style: hidden !important;
+.webix_hcell.webix_ss_filter {
+    padding: 2px 5px 2px 5px !important; 
+    }
+
+.webix_hcell.webix_div_filter {
+    padding: 0px !important; 
+    }
+
+.webix_inp_static {
+    height: 24px !important;
+    line-height: 24px !important;
+    font-size: 12px !important;
+    font-weight: normal !important;
+    border: none !important;
+    }
+
+/*.webix_el_box {
+    line-height: 10px !important;
+    height: 24px !important;
+    }*/
+
+.webix_richfilter .webix_inp_static {
+    height: 22px !important;
 }
 
-.buttons {
+.webix_richfilter .webix_el_box {
+    border: none !important;
+    }
+
+.webix_richfilter {
+    border: 1px solid #edf2f1 !important;
+    margin-top: 0px !important;
+    height: 22px !important;
+    border-radius: 3px !important;
+    background-color: transparent !important;
+    padding-top: 0px !important;
+    }
+
+.webix_input_icon.fa-calendar {
+    height: 18px !important;
+    padding-top: 1px !important;
+    }
+
+.webix_view.webix_control.webix_datepicker {
+    padding: 0 !important;
+    }
+
+/*.webix_ss_header TD {
+    font-size: 12px !important;
+    border-bottom-style: hidden !important;
+}*/
+
+.webix_ss_header table {
+    margin-bottom: 5px !important;
     
     }
 
+.expand {
+    height: auto !important;
+    }
+
 button {
-    font-size: 14px !important;
+    font-size: 10px !important;
     border-radius: 6px !important;
     padding-top: 0px !important;
     padding-bottom: 0px !important;
+    }
+
+.webix_ss_header {
+    font-size: 12px !important;
+/*    height: 60px !important;
+    margin-bottom: 8px !important;
+    margin-top: 8px !important;*/
     }
 
 .header_css {
@@ -103,8 +167,25 @@ button {
     border: 1px solid #edf2f1 !important;
     line-height: 1.5 !important;
     margin-top: -2px !important;
-    height: 18px !important;
+    height: 24px !important;
     border-radius: 3px !important;
+    font-family: helvetica !important;
+    }
+
+.webix_ss_filter select {
+    border: 1px solid #edf2f1 !important;
+    line-height: 1.5 !important;
+    margin-top: -2px !important;
+    height: 24px !important;
+    border-radius: 3px !important;
+    font-family: helvetica !important;
+    background-color: transparent !important;
+    }
+
+.webix_hcell {
+    height: 29px !important;
+    line-height: 25px !important;
+    /*font-size: 12px !important;*/
     }
 
 select {

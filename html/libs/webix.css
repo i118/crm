@@ -1,6 +1,6 @@
 .webix_view {
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #545454;
   -webkit-font-smoothing: antialiased;
   cursor: default;
@@ -103,11 +103,11 @@ body.webix_full_screen {
   background-color: transparent;
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAUCAIAAADDbMD2AAAABnRSTlMA/wD/AP83WBt9AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAHElEQVR4nGP4//8/EwMDA158/vx5BmLUMTAwAADGhQiMQPqPwgAAAABJRU5ErkJggg==);
   background-repeat: repeat-x;
-  background-position: 11.25px;
+  background-position: 8px;
   color: #444;
   font-size: 10px;
   text-transform: uppercase;
-  line-height: 45px;
+  line-height: 32px;
 }
 .webix_section > .webix_template {
   padding: 0px 8px;
@@ -129,14 +129,14 @@ body.webix_full_screen {
 }
 .webix_header > div {
   padding-left: 10px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #545454;
-  font-size: 15px;
+  font-size: 18px;
   font-weight: bold;
   background: #ffffff;
-  line-height: 43px;
-  line-height: 45px;
+  line-height: 30px;
+  line-height: 32px;
   padding-top: 0;
   padding-bottom: 0;
 }
@@ -274,13 +274,13 @@ button,
   border-bottom: 1px solid #edf2f1;
   position: relative;
   z-index: 2;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #545454;
-  font-size: 15px;
+  font-size: 18px;
   font-weight: bold;
   background: #ffffff;
-  line-height: 43px;
+  line-height: 30px;
   cursor: pointer;
   overflow: hidden;
 }
@@ -304,7 +304,7 @@ button,
   position: relative;
   height: 11px;
   width: 11px;
-  margin: 19.5px 19.5px;
+  margin: 13px 13px;
 }
 /*
 .webix_accordionitem.vertical > .webix_accordionitem_header .webix_accordionitem_button{
@@ -577,8 +577,8 @@ button,
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
 }
 /*selected  button of pager*/
 .webix_pager_item_selected {
@@ -624,7 +624,7 @@ button,
 /*chart container*/
 .webix_chart {
   position: relative;
-  font-family: PT Sans, Tahoma;
+  font-family: Helvetica, Verdana;
   font-size: 13px;
   color: #545454;
   overflow: hidden;
@@ -884,8 +884,8 @@ button,
   margin: 0px;
   border: 1px solid #ffd700;
   height: 100%;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #545454;
 }
 .webix_dt_editor input[type="checkbox"] {
@@ -950,7 +950,7 @@ button,
   position: fixed;
   background-color: #ffffff;
   box-shadow: 0px 3px 6px #c8c8c8;
-  font-family: PT Sans, Tahoma;
+  font-family: Helvetica, Verdana;
   z-index: 20000;
   border-radius: 2px;
   border: 1px solid #ffffff;
@@ -1024,7 +1024,7 @@ div.webix_modal_cover {
 }
 .webix_button input,
 .webix_popup_button div {
-  font-size: 13px;
+  font-size: 14px;
   color: #3e9eff;
   background: transparent;
   font-weight: bold;
@@ -1046,13 +1046,13 @@ div.webix_modal_cover {
 .webix_popup_text {
   margin: 0 0 5px 0;
   padding-top: 25px;
-  font-size: 13px;
+  font-size: 14px;
   color: #545454;
   min-height: 60px;
 }
 .webix_info,
 .webix_error {
-  font-size: 13px;
+  font-size: 14px;
   color: #333;
   box-shadow: 0px 0px 10px #888;
   padding: 0px;
@@ -1080,8 +1080,8 @@ div.webix_modal_cover {
   position: absolute;
   box-shadow: 1px 1px 5px #edf2f1;
   background-color: #ffffff;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #545454;
   pointer-events: none;
 }
@@ -1201,7 +1201,7 @@ div.webix_modal_cover {
   width: 100%;
   font-size: inherit;
   color: #545454 !important;
-  height: 41px;
+  height: 28px;
   margin-top: -2px;
   padding: 0 3px;
   vertical-align: top;
@@ -1210,7 +1210,7 @@ div.webix_modal_cover {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  font-family: PT Sans, Tahoma;
+  font-family: Helvetica, Verdana;
 }
 .webix_richfilter {
   margin-top: 1px;
@@ -1478,15 +1478,15 @@ div.webix_modal_cover {
   border-bottom: 1px solid silver;
 }
 .webix_win_head > .webix_view > .webix_template {
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #545454;
-  font-size: 15px;
+  font-size: 18px;
   font-weight: bold;
   background: #ffffff;
   padding: 0px;
   text-align: center;
-  line-height: 45px;
+  line-height: 32px;
 }
 /*----------------------------*/
 /* DO NOT CHANGE STYLES BELOW */
@@ -1953,13 +1953,13 @@ div.webix_modal_cover {
 }
 .webix_property_label_line {
   padding-left: 10px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #545454;
-  font-size: 15px;
+  font-size: 18px;
   font-weight: bold;
   background: #ffffff;
-  line-height: 43px;
+  line-height: 30px;
   line-height: 23px;
   border-bottom: 1px solid #edf2f1;
 }
@@ -1994,8 +1994,8 @@ div.webix_modal_cover {
   background-color: #ffffff;
   padding: 5px 10px;
   border: 1px solid #edf2f1;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #545454;
   border-radius: 2px;
   box-shadow: 1px 1px 0px 0px #CCC;
@@ -2119,8 +2119,8 @@ div.webix_modal_cover {
   height: 100%;
   width: 100%;
   cursor: pointer;
-  font-size: 13px;
-  font-family: PT Sans, Tahoma;
+  font-size: 14px;
+  font-family: Helvetica, Verdana;
   -webkit-appearance: none;
 }
 .webix_el_button .webix_img_btn,
@@ -2148,8 +2148,8 @@ div.webix_modal_cover {
   color: #3e9eff;
   background: transparent;
   font-weight: bold;
-  font-size: 13px;
-  font-family: PT Sans, Tahoma;
+  font-size: 14px;
+  font-family: Helvetica, Verdana;
   padding: 0px;
   border: 0px;
 }
@@ -2262,7 +2262,7 @@ input.webixtype_next {
   background-repeat: no-repeat;
   background-position: 2px center;
   height: 100%;
-  font-size: 13px;
+  font-size: 14px;
 }
 .webix_img_btn .webix_icon,
 .webix_img_btn_abs .webix_icon {
@@ -2389,7 +2389,7 @@ input.webixtype_next {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  font-family: PT Sans, Tahoma;
+  font-family: Helvetica, Verdana;
 }
 .webix_el_box {
   -moz-box-sizing: border-box;
@@ -2411,7 +2411,7 @@ input.webixtype_next {
   border: 1px solid #edf2f1;
   color: #545454;
   font-size: 15px;
-  font-family: PT Sans, Tahoma;
+  font-family: Helvetica, Verdana;
   -webkit-appearance: none;
   border-radius: 0;
 }
@@ -2462,7 +2462,7 @@ input.webixtype_next {
 .webix_el_select select {
   height: 100%;
   font-size: 15px;
-  font-family: PT Sans, Tahoma;
+  font-family: Helvetica, Verdana;
   border: 1px solid #edf2f1;
 }
 body:not(:-moz-handler-blocked) .webix_el_select select {
@@ -2540,7 +2540,7 @@ body:not(:-moz-handler-blocked) .webix_el_select select {
   color: #545454;
   resize: none;
   font-size: 15px;
-  font-family: PT Sans, Tahoma;
+  font-family: Helvetica, Verdana;
   padding-left: 10px;
   padding-right: 10px;
 }
@@ -2604,8 +2604,8 @@ body:not(:-moz-handler-blocked) .webix_el_select select {
   color: #3e9eff;
   background: transparent;
   font-weight: bold;
-  font-size: 13px;
-  font-family: PT Sans, Tahoma;
+  font-size: 14px;
+  font-family: Helvetica, Verdana;
   cursor: pointer;
   padding: 0;
 }
@@ -2656,7 +2656,7 @@ body:not(:-moz-handler-blocked) .webix_el_select select {
 .webix_el_search .webix_inp_static {
   color: #545454;
   padding-right: 24px;
-  font-family: PT Sans, Tahoma;
+  font-family: Helvetica, Verdana;
   -webkit-appearance: none;
 }
 .webix_el_combo .webix_input_icon,
@@ -2800,7 +2800,7 @@ label.webix_required:after {
   padding: 0px;
   color: #545454;
   font-size: 15px;
-  font-family: PT Sans, Tahoma;
+  font-family: Helvetica, Verdana;
   margin-left: 7px;
 }
 .webix_el_text .webix_multicombo_input:focus {
@@ -2870,7 +2870,7 @@ label.webix_required:after {
   border-left-width: 0px;
   background-color: #ffffff;
   color: #545454;
-  font-size: 15px;
+  font-size: 18px;
   -webkit-border-top-left-radius: 0px;
   -webkit-border-bottom-left-radius: 0px;
   -webkit-border-top-right-radius: 0px;
@@ -2893,7 +2893,7 @@ label.webix_required:after {
 .webix_item_tab.webix_selected {
   border-bottom-width: 0px;
   color: #545454;
-  font-size: 15px;
+  font-size: 18px;
 }
 .webixtype_bottom .webix_item_tab.webix_selected {
   border-bottom-width: 1px ;
@@ -3137,7 +3137,7 @@ label.webix_required:after {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  font-family: PT Sans, Tahoma;
+  font-family: Helvetica, Verdana;
   float: left;
   padding-right: 7.5px;
 }
@@ -5883,7 +5883,7 @@ label.webix_required:after {
   position: relative;
 }
 .webix_barcode .webix_canvas_text {
-  font-size: 13px;
+  font-size: 14px;
   padding: 0 2px;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -6046,8 +6046,8 @@ label.webix_required:after {
   border-radius: 6px;
   border: 1px solid #edf2f1;
   cursor: pointer;
-  font-size: 13px;
-  font-family: PT Sans, Tahoma;
+  font-size: 14px;
+  font-family: Helvetica, Verdana;
 }
 .webix_dbllist button:active {
   box-shadow: inset 1px 1px 0px silver;
@@ -6242,7 +6242,7 @@ label.webix_required:after {
 .webix_popup_title {
   color: #545454 !important;
   background: #fff !important;
-  font-size: 15px !important;
+  font-size: 18px !important;
   font-weight: bold;
   border-bottom: 1px solid #dee7e5 !important;
   text-shadow: none !important;
@@ -6263,8 +6263,8 @@ label.webix_required:after {
 .webix_popup_button.confirm div {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -6304,8 +6304,8 @@ label.webix_required:after {
 .webix_popup_button div {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -6349,8 +6349,8 @@ label.webix_required:after {
 .webix_confirm-warning .webix_popup_button.confirm div {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -6400,8 +6400,8 @@ label.webix_required:after {
 .webix_confirm-warning .webix_popup_button div {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -6453,8 +6453,8 @@ label.webix_required:after {
 .webix_confirm-error .webix_popup_button.confirm div {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -6504,8 +6504,8 @@ label.webix_required:after {
 .webix_confirm-error .webix_popup_button div {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -6573,8 +6573,8 @@ label.webix_required:after {
   padding: 2px 17px;
   background: transparent;
   color: #545454;
-  font-family: PT Sans, Tahoma;
-  font-size: 16.77px;
+  font-family: Helvetica, Verdana;
+  font-size: 18.060000000000002px;
   font-weight: normal;
 }
 .webix_template {
@@ -6606,7 +6606,7 @@ label.webix_required:after {
 }
 .webix_ss_sort_asc,
 .webix_ss_sort_desc {
-  font-size: 13px;
+  font-size: 14px;
   font-family: FontAwesome;
   top: 50%;
   line-height: 1px;
@@ -6733,8 +6733,8 @@ label.webix_required:after {
   padding-right: 80px;
 }
 .buttonStyle {
-  font-size: 13px;
-  font-family: PT Sans, Tahoma;
+  font-size: 14px;
+  font-family: Helvetica, Verdana;
 }
 .webix_el_tabbar {
   background: #ffffff;
@@ -6746,8 +6746,8 @@ label.webix_required:after {
   background: transparent;
 }
 .webix_item_tab {
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -6763,8 +6763,8 @@ label.webix_required:after {
   color: #6eb6ff;
 }
 .webix_item_tab.webix_selected {
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -6785,7 +6785,7 @@ label.webix_required:after {
 }
 .webix_icon,
 .webix_input_icon {
-  font-size: 13px;
+  font-size: 14px;
 }
 .webix_img_btn .webix_icon,
 .webix_img_btn_top .webix_icon,
@@ -6800,7 +6800,7 @@ label.webix_required:after {
 }
 .webix_ss_header {
   text-transform: uppercase;
-  font-size: 12.09px;
+  font-size: 13.020000000000001px;
 }
 .webix_ss_header tr:last-child td,
 .webix_ss_header tr td[rowspan] {
@@ -6834,8 +6834,8 @@ label.webix_required:after {
 .webixbutton button {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -6922,8 +6922,8 @@ label.webix_required:after {
 .webixbutton.button_raised button {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -7013,8 +7013,8 @@ label.webix_required:after {
 .webixbutton.button_primary button {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -7102,8 +7102,8 @@ label.webix_required:after {
 .webixbutton.button_primary.button_raised button {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -7206,8 +7206,8 @@ label.webix_required:after {
 .webixbutton.button_success button {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -7295,8 +7295,8 @@ label.webix_required:after {
 .webixbutton.button_success.button_raised button {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -7386,8 +7386,8 @@ label.webix_required:after {
 .webixbutton.button_info button {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -7475,8 +7475,8 @@ label.webix_required:after {
 .webixbutton.button_info.button_raised button {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -7566,8 +7566,8 @@ label.webix_required:after {
 .webixbutton.button_warning button {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -7655,8 +7655,8 @@ label.webix_required:after {
 .webixbutton.button_warning.button_raised button {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -7746,8 +7746,8 @@ label.webix_required:after {
 .webixbutton.button_danger button {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -7835,8 +7835,8 @@ label.webix_required:after {
 .webixbutton.button_danger.button_raised button {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -7941,8 +7941,8 @@ label.webix_required:after {
 .webixbutton.button_transparent {
   border-width: 1px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -7975,12 +7975,12 @@ label.webix_required:after {
 }
 .webix_view.webix_form {
   color: #545454;
-  font-family: PT Sans, Tahoma;
+  font-family: Helvetica, Verdana;
   font-size: 15px;
   font-weight: normal;
 }
 .webix_view.webix_form .webix_control input {
-  font-family: PT Sans, Tahoma;
+  font-family: Helvetica, Verdana;
 }
 .webix_view .webix_layout_form input,
 .webix_view .webix_layout_form .webix_inp_static,
@@ -8006,33 +8006,33 @@ label.webix_required:after {
 }
 .webix_inp_static .webix_placeholder {
   color: #b8b8b8;
-  font-size: 13px;
+  font-size: 14px;
 }
 ::-webkit-input-placeholder {
   color: #b8b8b8;
-  font-size: 13px;
+  font-size: 14px;
 }
 :-moz-placeholder {
   /* Firefox 18- */
 
   color: #b8b8b8;
-  font-size: 13px;
+  font-size: 14px;
 }
 ::-moz-placeholder {
   /* Firefox 19+ */
 
   color: #b8b8b8;
-  font-size: 13px;
+  font-size: 14px;
 }
 :-ms-input-placeholder {
   color: #b8b8b8;
-  font-size: 13px;
+  font-size: 14px;
 }
 .webix_form label,
 .webix_form .webix_el_label {
   color: #545454;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   font-weight: 700;
 }
 /*
@@ -8082,7 +8082,7 @@ label.webix_required:after {
 }
 .webix_el_radio .webix_label_right {
   color: #545454;
-  font-size: 13px;
+  font-size: 14px;
 }
 .webix_el_checkbox .webix_inp_checkbox_border input {
   display: none;
@@ -8115,7 +8115,7 @@ label.webix_required:after {
   width: 12px;
 }
 .webix_inp_label {
-  font-size: 13px;
+  font-size: 14px;
 }
 .webix_segment_0,
 .webix_segment_1,
@@ -8175,8 +8175,8 @@ label.webix_required:after {
 .webix_view input.webix_inp_counter_prev,
 .webix_view input.webix_inp_counter_next {
   width: 30px;
-  font-size: 22.23px;
-  line-height: 22.23px;
+  font-size: 23.939999999999998px;
+  line-height: 23.939999999999998px;
   border: none;
 }
 .webix_el_combo .webix_input_icon,
@@ -8188,7 +8188,7 @@ label.webix_required:after {
   top: 5px;
 }
 .webix_el_slider .webix_slider_title {
-  font-size: 11.18px;
+  font-size: 12.04px;
   margin-bottom: -4px;
   margin-top: -6px;
 }
@@ -8276,8 +8276,8 @@ label.webix_required:after {
 .webix_view input.webix_cal_done {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
@@ -8319,8 +8319,8 @@ label.webix_required:after {
 .webix_pager_item_selected {
   border-width: 0px;
   border-radius: 2px;
-  font-family: PT Sans, Tahoma;
-  font-size: 13px;
+  font-family: Helvetica, Verdana;
+  font-size: 14px;
   color: #d4e9ff;
   font-weight: bold;
   text-transform: uppercase;
