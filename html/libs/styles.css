@@ -35,35 +35,6 @@
     color: grey;
     }
 
-.selected_inf {
-    color: black;
-    text-align: center;
-    background-color: silver;
-}
-
-.warning_inf {
-    /*background-color: tomato;*/
-    text-align: center;
-    color: tomato;
-    }
-
-.info_inf {
-    /*background-color: lightcyan;*/
-    text-align: center;
-    color: blue;
-    }
-
-.success_inf {
-    /*background-color: lightgreen;*/
-    text-align: center;
-    color: green;
-    }
-
-.nothing_inf {
-    text-align: center;
-    /*color: black;*/
-    }
-
 
 .num_s {
     font-size: 13px !important;

@@ -69,41 +69,55 @@ where requests.archived = false and requests.deleted = false;
         """
 
     def get_topics(self, params=None, x_hash=None):
-        sql = "select name from topics"
+        sql = "select uid, name from topics"
         cur = self._make_sql(sql)
         rl = []
-        for re in cur:
-            rl.append(re[0])
+        for row in cur:
+            re_dict = {}
+            re_dict["id"]  = row[0]
+            re_dict["name"] = row[1]
+            rl.append(re_dict)
         cur.close()
+        #print(rl)
         ret_value = json.dumps(rl, ensure_ascii=False)
         return ret_value
 
     def get_alerts(self, params=None, x_hash=None):
-        sql = "select name from alerts"
+        sql = "select uid, name from alerts"
         cur = self._make_sql(sql)
         rl = []
-        for re in cur.fetchall():
-            rl.append(re[0])
+        for row in cur.fetchall():
+            re_dict = {}
+            re_dict["id"]  = str(row[0])
+            re_dict["name"] = row[1]
+            rl.append(re_dict)
         cur.close()
+        print(rl)
         ret_value = json.dumps(rl, ensure_ascii=False)
         return ret_value
 
     def get_users(self, params=None, x_hash=None):
-        sql = "select display_name from users where active=true and deleted=false"
+        sql = "select uid, display_name from users where active=true and deleted=false"
         cur = self._make_sql(sql)
         rl = []
-        for re in cur:
-            rl.append(re[0])
+        for row in cur.fetchall():
+            re_dict = {}
+            re_dict["id"]  = row[0]
+            re_dict["display_name"] = row[1]
+            rl.append(re_dict)
         cur.close()
         ret_value = json.dumps(rl, ensure_ascii=False)
         return ret_value
 
     def get_clients(self, params=None, x_hash=None):
-        sql = "select display_name from clients"
+        sql = "select uid, display_name from clients"
         cur = self._make_sql(sql)
         rl = []
         for row in cur.fetchall():
-            rl.append(row[0])
+            re_dict = {}
+            re_dict["id"]  = row[0]
+            re_dict["display_name"] = row[1]
+            rl.append(re_dict)
         cur.close()
         ret_value = json.dumps(rl, ensure_ascii=False)
         return ret_value
@@ -190,12 +204,34 @@ where requests.archived = false and requests.deleted = false;
     ON CONFLICT DO NOTHING
     RETURNING num;
 """.format(params['alert'], cr_date, None, params['create_user'], params['client'], params['topic'], params['description'])
-        #print(sql_ins)
+
+        sql_ins = """insert into requests (num, alert, create_date, to_work_date, status, create_user, client, topic, ordered, description, archived, deleted, change_date) values
+    (default, {0}, '{1}', '1971-01-01',
+    (select uid from status where name = 'Заведена'),
+    {3},
+    {4},
+    {5},
+    0,
+    '{6}',
+    false,
+    false,
+    current_date)
+    ON CONFLICT DO NOTHING
+    RETURNING num;
+""".format(params['alert'], cr_date, None, params['create_user'], params['client'], params['topic'], params['description'])
+        print(sql_ins)
+        ret = []
         cur = self._make_sql(sql_ins)
-        ret = cur.fetchone()
-        print(ret)
+        try:
+            ret = cur.fetchone()
+        except Exception as Err:
+            print(Err)
         cur.close()
-        num = 10000
+        self.con.commit()
+        print(ret)
+        num = ret[0] if ret else 0
+
+        #возвращвем выборку сэтой строкой и добавляем его в наш датасторе на клиенте - доделать!!!!!!!!!!!!!!!
         ret_value = json.dumps(num, ensure_ascii=False)
         return ret_value
 
@@ -204,8 +240,23 @@ where requests.archived = false and requests.deleted = false;
         Создаем курсор и делаем sql запрос
         """
         cur = self.con.cursor()
-        cur.execute(sql)
+        try:
+            cur.execute(sql)
+        except Exception as Err:
+            print(Err)
         return cur
+
+    def set_ordered(self, params=None, x_hash=None):
+        """
+        назначение в работу
+        """
+
+        sql_set = ''
+        ret = []
+        print(params)
+        ret_value = json.dumps(ret, ensure_ascii=False)
+        return ret_value
+
 
 class fLock:
     """

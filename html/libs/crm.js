@@ -1,18 +1,62 @@
 "use strict";
 
-var req_url = "/crm_logic"
-var auth_key = "11"
-var user = "Кашинцев"
+//webix.i18n.setLocale('ru-RU');
 
-webix.i18n.setLocale('ru-RU');
-
-var mass_apl = {template: 'Массовые заявки'};
-var my_appl = {template: "My apllications"};
-var history_appl = {template: "history of applications"};
+var mass_apl = {id: "view_3", template: 'Массовые заявки'};
+var my_appl = {id: "view_1", template: "My apllications"};
+var history_appl = {id: "view_4", template: "history of applications"};
 
 var customers_link = {template: "по нажатию кнопки будет переход на страницу 'Клиенты'"}
 var vendors = {template: "по нажатию кнопки будет переход на страницу 'Поставщики'"}
 var knowbase = {template: "по нажатию кнопки будет переход на страницу 'База знаний'"}
+
+
+function upd_all() {
+    var tt = new webix.DataCollection({
+        id: "all_upd",
+        url: {
+            $proxy:true,
+            source: req_url,
+            load: function(view, callback) {
+                var params = {"get_all": user};
+                webix.ajax().post(this.source, params)
+                    .then(function(data){
+                        webix.ajax.$callback(view, callback, "", data, -1);
+                        $$("all_dc").clearAll();
+                        data = data.json();
+                        $$("all_dc").parse(data);
+                        });
+                    }
+            },
+        //on:{
+            //onAfterLoad:function(){
+                //$$("replist").data.sync(this);
+                //$$("run_but").define('badge', this.data.count());
+                //$$("run_but").refresh();
+                    //}
+                //}
+        });
+    return tt
+    };
+
+
+var all_appls = new webix.DataCollection({
+    id: "all_dc",
+    url: {
+        $proxy:true,
+        source: req_url,
+        load: function(view, callback) {
+            var params = {"get_all": user};
+            webix.ajax().post(this.source, params)
+                .then(function(data){
+                    webix.ajax.$callback(view, callback, "", data, -1);
+                    $$("all_dc").clearAll();
+                    data = data.json();
+                    $$("all_dc").parse(data);
+                    });
+                }
+        },
+    });
 
 var appl = {
     rows: [
@@ -25,139 +69,78 @@ var appl = {
         ]
     };
 
-
-var input_form = [
-    {view:"text", label:"Пользователь", //value: user, readonly: true, disabled: true,
-         placeholder: "Выберите пользователя", name:"create_user", id: "user_input", popup: 'pop_users'},
-    {view:"datepicker", label:"Дата заявки", name:"create_date", stringResult:"true",
-        value: new Date(), readonly: true, disabled: true},
-    {view: "text", label: "Приоритет", name: "alert", value: "Обычный", id: "alert_input",
-        popup: "pop_alerts", value: "Обычный"
-        },
-    {view:"text", label:"Клиент", name:"client", id: 'customer_new', invalidMessage: "Выберите клиента",
-        required: true, popup: "pop_customers_form_new", placeholder: "Выберите клиента"
-        },
-    {view:"text", label:"Тема", id: "n_topic", name:"topic", required: true,
-        invalidMessage: "Выберите тему", labelWidth: 80, placeholder: "Выберите тему",
-        popup: "pop_topics"
-        },
-    {view:"textarea", label:"Описание проблемы", name:"description", required: true, labelPosition:"top",
-        id: "n_desc", height: 130, invalidMessage: "Введите описание", placeholder: "Введите описание проблемы"},
-    {cols:[
-        {},
-        {},
-        {view:"button", value:"Отправить", click: function(){
-            var vl_2 = $$("customer_new").validate();
-            var vl = $$("n_desc").validate();
-            var vl_1 = $$("n_topic").validate();
-            if (vl & vl_1 & vl_2) {
-                submit();
-            };
-            }}
-        ]
-    }];
-
-var customers = {
-    view:"unitlist", 
-    uniteBy:function(obj){
-        return obj.value.substr(0,1); 
-        },
-    datatype: 'JSArray',
-    id: "custom_list",
-    width: 600,
-    height: 400,
-    select: true,
-    hover: "myhover",
-    navigation: true
-    };
-
-var alerts = {
-    view:"list", 
-    //uniteBy:function(obj){
-    //    return obj.value.substr(0,1); 
-    //    },
-    datatype: 'JSArray',
-    id: "alerts_list",
-    width: 400,
-    height: 600,
-    select: true,
-    hover: "myhover",
-    navigation: true
-    };
-
-var users = {
-    view:"list", 
-    datatype: 'JSArray',
-    id: "users_list",
-    width: 400,
-    height: 600,
-    select: true,
-    hover: "myhover",
-    navigation: true
-    };
-
-var topics = {
-    view:"unitlist", 
-    uniteBy:function(obj){
-        return obj.value.substr(0,1); 
-        },
-    datatype: 'JSArray',
-    id: "topics_list",
-    width: 600,
-    select: true,
-    hover: "myhover",
-    navigation: true,
-    };
-
-var send_form_body = {
+var complete = {
     view:"form", 
-    id:"send_form",
+    id:"complete_form",
     width: 600,
     rules:{
-        "topic": webix.rules.isNotEmpty,
-        "description": webix.rules.isNotEmpty,
-        "client": webix.rules.isNotEmpty
+        "c_description": webix.rules.isNotEmpty
         },
     elementsConfig:{
         labelWidth: 120
         },
-    elements: input_form
-    };
+    elements: [
+        {view:"radio", id: "result_status",label:"Результат", value:1, labelPosition:"top", options:[
+            { id:1, value:"Успешно" },
+            { id:2, value:"Полный провал" }
+        ]},
+        {view:"textarea", label:"Описание результата", name:"c_description", required: true, labelPosition:"top",
+            id: "c_desc", height: 130, invalidMessage: "Введите описание", placeholder: "Введите описание результата"},
+        {cols:[
+            {},
+            {},
+            {view:"button", value:"Отменить", click: function(){
+                $$("pop_complete_form").hide();
+                $$("complete_form").reconstruct();
+                webix.message("Canceled");
+                }},
+            {view:"button", value:"Отправить", click: function(){
+                var vl = $$("c_desc").validate();
+                if (vl) {
+                    $$("pop_complete_form").hide();
+                    webix.message("Applied");
+                    $$("complete_form").reconstruct();
+                    };
+                }}
+            ]}
+    ]};
 
 var all_appl = {id: "view_2", view: "datatable",
     select: true,
-    hover: "myhover",
+    //hover: "myhover",
     navigation: "row",
     select: true,
+    data: upd_all(),
+    //data: all_appls,
     //multiselect: true,
     resizeColumn:true,
     fixedRowHeight:false,  rowLineHeight:34, rowHeight:34,
     on:{
-        //"onresize": webix.once(function(){ 
-            //this.adjustRowHeight("client", true);
-            //})
-
-        //onBeforeSelect: webix.once(function(){
-            //this.adjustRowHeight("client", true);
-            //}),
-        //onBeforeUnSelect: webix.once(function(){
-            //this.adjustRowHeight("num", true);
-            //}),
-        //onAfterUnSelect: webix.once(function(){
-            //this.adjustRowHeight("num", true);
-            //})
+        onBeforeRender: function(d) {
+            var data = d.order
+            var format = webix.Date.strToDate("%d.%m.%Y");
+            data.forEach(function(item, i, data) {
+                var obj = d.getItem(item);
+                var f_date = format(obj.change_date);
+                obj.change_date = format(f_date);
+                obj.$css = (obj.alert === "Высокий") ? "high_pr":
+                           (obj.alert === "Средний") ? "med_pr":
+                           (obj.alert === "Низкий") ? "low_pr":
+                           "nothing";
+                });
+            },
+        "onresize": webix.once(function(){ 
+            //this.adjustRowHeight();
+            })
         },
     scheme: {
         $init: function(obj){
-            obj.create_date = webix.i18n.dateFormatStr(obj.create_date);
-            if (obj.to_work_date != "") {
-                obj.to_work_date = webix.i18n.dateFormatStr(obj.to_work_date);
-            };
-            //obj.ch_date = (obj.to_work_date != "") ? obj.to_work_date: obj.create_date;
-            obj.$css = (obj.alert === "Высокий") ? "high_pr":
-                       (obj.alert === "Средний") ? "med_pr":
-                       (obj.alert === "Низкий") ? "low_pr":
-                       "nothing";
+            //obj.$css = (obj.alert === "Высокий") ? "high_pr":
+                       //(obj.alert === "Средний") ? "med_pr":
+                       //(obj.alert === "Низкий") ? "low_pr":
+                       //"nothing";
+
+
             //obj - data object from incoming data
             //obj.count = obj.cells[0]; //set value based on some data in incoming dataset
             //obj.price = obj.cells[1];
@@ -185,7 +168,7 @@ var all_appl = {id: "view_2", view: "datatable",
     },
     { id:"change_date",
       width: 105,
-      //format: webix.Date.dateToStr("%d.%m.%Y"),
+      format: webix.Date.dateToStr("%d.%m.%Y"),
       css: "date_s",
       sort:"date",
       header: [
@@ -193,24 +176,6 @@ var all_appl = {id: "view_2", view: "datatable",
         {content: "datepickerFilter"}
         ]
     },
-    //{ id:"create_date",
-      //width: 85,
-      //css: "date_s",
-      //sort:"int",
-      //header: [
-        //{text: "Создано", css: 'header_data'},
-        //{content:"textFilter"}
-        //]
-    //},
-    //{ id:"to_work_date",
-      //width: 85,
-      //css: "date_s",
-      //sort: "int",
-      //header: [
-        //{text: "В работу", css: 'header_data'},
-        //{content:"textFilter"}
-        //]
-    //},
     { id:"status",
       width: 100,
       sort: "text",
@@ -265,38 +230,56 @@ var view_cells = [
             ];
 
 var buttons = [
-            {view:"button", id: '_new_button', type:"form", popup: "pop_send_form",
-                label: 'Новая заявка', width: 120, tooltip: "Создание новой заявки"},
-            {view:"button", id: '_vendors', type:"form", popup: "pop_vendors_form",
-                label: 'Поставщики', width: 120, tooltip: "Список поставщиков"},
-            {view:"button", id: '_customers', type:"form", popup: "pop_customers_form",
-                label: 'Клиенты', width: 120, tooltip: "Список клиентов"},
-            {view:"button", id: '_knowledge_base', type:"form", popup: "pop_knowbase_form",
-                label: 'База знаний', width: 120, tooltip: "Наиболее частые проблемы и их решения"},
-            {},
-            {view:"button", id: "_reset_f", type:"form",
-                label: 'Сбросить фильтры', width: 140},
-            {view:"button", id: '_action', type:"form",
-                label: 'Действия', width: 140}
-            ];
+    {view:"button", id: '_new_button', type:"form", popup: "pop_send_form",
+        label: 'Новая заявка', width: 120, tooltip: "Создание новой заявки"},
+    {view:"button", id: '_vendors', type:"form", popup: "pop_vendors_form",
+        label: 'Поставщики', width: 120, tooltip: "Список поставщиков"},
+    {view:"button", id: '_customers', type:"form", popup: "pop_customers_form",
+        label: 'Клиенты', width: 120, tooltip: "Список клиентов"},
+    {view:"button", id: '_knowledge_base', type:"form", popup: "pop_knowbase_form",
+        label: 'База знаний', width: 120, tooltip: "Наиболее частые проблемы и их решения"},
+    {},
+    {view:"button", id: "_refresh", type:"form",
+        label: "Sync", width: 100},
+    {view:"button", id: "_filters", type:"form",
+        label: "Фильтры", width: 100}
+    ];
+
+var buttons_2floor = [
+    {},
+    {view:"button", id: '_to_work', type:"form",
+        label: 'Взять в работу', width: 100},
+    {view:"button", id: '_order', type:"form",
+        label: 'Назначить', width: 100},
+    {view:"button", id: '_ch_alert', type:"form",
+        label: 'Сменить приоритет', width: 100},
+    {view:"button", id: '_complete', type:"form", popup: "pop_complete_form", 
+        label: 'Выполненно', width: 100},
+    {view:"button", id: '_delete', type:"form",
+        label: 'Удалить заявку', width: 100},
+    {}
+    ];
 
 var bottom = [
     {template: 'bottom' + '&nbsp;<span class="serv_info">' + location.hostname + "</span>",
         height: 30, id: "foot1"},
     {}
-    //{template: 'Внимание!',
-        //label: 'Alert', width: 90, css: "warning_inf"},
-    //{template: 'Инфо',
-        //label: 'Info', width: 90, css: "info_inf"},
-    //{template: 'Успешно',
-        //label: 'Success', width: 90, css: "success_inf"},
-    //{template: 'Обычные',
-        //label: 'Ordinary', width: 90, css: "nothing_inf"},
-    //{template: 'Выделенные',
-        //label: 'Selected', width: 90, css: "selected_inf"},
 ];
 
 //functions
+
+function get_current_view() {
+    var hide1 = $$("view_1").isVisible();
+    var hide2 = $$("view_2").isVisible();
+    var hide3 = $$("view_3").isVisible();
+    var hide4 = $$("view_4").isVisible();
+    var logg = (hide1) ? "view_1":
+               (hide2) ? "view_2":
+               (hide3) ? "view_3":
+               "view_4";
+    return(logg);
+    };
+
 function shrink(value, config) {
     var ret = (value > 999) ? {"font-size":"95%", "padding-left": "5px !important"}:
               (value > 9999) ? {"font-size":"85%", "padding-left": "2px !important"}:
@@ -304,52 +287,6 @@ function shrink(value, config) {
     return ret;
 };
 
-function customers_load() {
-    var params = {"get_clients": user};
-    webix.ajax().post(req_url, params, function(text, data){
-        data = data.json();
-        $$("custom_list").clearAll();
-        $$("custom_list").parse(data);
-        });
-    };
-
-function alerts_load() {
-    var params = {'get_alerts': user};
-    webix.ajax().post(req_url, params, function(text, data){
-        data = data.json();
-        $$("alerts_list").clearAll();
-        $$("alerts_list").parse(data);
-        });
-    };
-
-function users_load() {
-    var params = {'get_users': user};
-    webix.ajax().post(req_url, params, function(text, data){
-        data = data.json();
-        $$("users_list").clearAll();
-        $$("users_list").parse(data);
-        });
-    };
-
-
-function topics_load() {
-    var params = {'get_topics': user};
-    webix.ajax().post(req_url, params, function(text, data){
-        data = data.json();
-        $$("topics_list").clearAll();
-        $$("topics_list").parse(data);
-        });
-    };
-
-function update_all(){
-    var params = {'get_all': user};
-    webix.ajax().post(req_url, params, function(text, data){
-        data = data.json();
-        $$("view_2").clearAll();
-        $$("view_2").refresh();
-        $$("view_2").parse(data);
-        });
-    };
 
 function update_my(){
     var params = {'get_my': user};
@@ -378,45 +315,12 @@ function update_history(){
         });
     };
 
-function submit(){
-    $$("pop_send_form").hide();
-    var data_send = $$("send_form").getValues()
-    var params = {"put_apply": data_send};
-    webix.ajax().post(req_url, params, function(text, data){
-        update_all();
-        console.log(data.json());
-        });
-    $$("send_form").reconstruct();
-    };
-
-function open_appl(id) {
-    var c_item = $$("view_2").getItem(id.row);
-    //console.log(c_item);
+function open_appl(view, id) {
+    var c_item = view.getItem(id.row);
+    console.log(c_item);
     $$("pop_application").show();
     //webix.message(c_item);
     };
-
-function remove_filters(){
-    $$('view_2').filter(function(obj){
-        console.dir($$("view_2"));
-        //console.log(obj);
-        return obj.status != "", obj.ordered != "", obj.create_user != "",
-               obj.create_date != "", obj.to_work_date != "", obj.client != "",
-               obj.in_work != "", obj.topic != "";
-    });
-    //$$('view_2').resize();
-    }
-    
-    
-
-//webix events attaches
-webix.attachEvent("onBeforeAjax", 
-    function(mode, url, data, request, headers, files, promise){
-        headers["Content-type"] = "application/json";
-        headers["x-api-key"] = auth_key;
-        }
-    );
-
 
 
 //main ui's
@@ -437,13 +341,22 @@ webix.ui({
             {view:"button", id: '_login', type:"form", css: 'buttons',
                 label: 'Войти', width: 120}
             ]},
-        {height: 46, cols:buttons},
-        {view: "tabview",
-            id:"tabview1",
-            animate:false,
-            cells: view_cells,
-            multiview: true
-            },
+        {cols: [
+            {},
+            {rows: buttons_2floor},
+            {rows: [
+                {height: 36, cols:buttons},
+                //{height: 36, cols:buttons_2floor},
+                {view: "tabview",
+                    width: 1280,
+                    id:"tabview1",
+                    animate:false,
+                    cells: view_cells,
+                    multiview: true
+                    }
+                ]},
+            {}
+            ]},
         {cols: bottom}
         ]
     });
@@ -454,13 +367,19 @@ webix.ui({
     body: knowbase
     });
 
+webix.ui ({
+    view: "popup",
+    id: "pop_complete_form",
+    body: complete
+    });
+
 webix.ui({
     view: "popup",
     id: "pop_application",
     position:"center",
     height:600,
     width:800,
-    modal:true,
+    //modal:true,
     move:true,
     body: appl
     });
@@ -471,23 +390,6 @@ webix.ui({
     body: customers_link
     });
 
-webix.ui({
-    view: "popup",
-    id: "pop_alerts",
-    body: alerts
-    });
-
-webix.ui({
-    view: "popup",
-    id: "pop_users",
-    body: users
-    });
-
-webix.ui({
-    view: "popup",
-    id: "pop_customers_form_new",
-    body: customers
-    });
 
 webix.ui({
     view: "popup",
@@ -507,54 +409,42 @@ webix.ui({
     body: send_form_body
     });
 
-update_all();
 update_my();
-topics_load();
-customers_load();
-alerts_load();
-users_load();
+
 
 //elemnts attachs
 
-$$("custom_list").attachEvent("onAfterSelect", function(){
-    var curent_customer = $$("custom_list").getSelectedItem().value;
-    $$("pop_customers_form_new").hide();
-    $$("custom_list").unselectAll();
-    $$("customer_new").setValue(curent_customer);
-    });
-    
-$$("topics_list").attachEvent("onAfterSelect", function(){
-    var curent_topic = $$("topics_list").getSelectedItem().value;
-    $$("pop_topics").hide();
-    $$("topics_list").unselectAll();
-    $$('n_topic').setValue(curent_topic);
-    });
-
-$$("alerts_list").attachEvent("onAfterSelect", function(){
-    var curent_alert = $$("alerts_list").getSelectedItem().value;
-    $$("pop_alerts").hide();
-    $$("alerts_list").unselectAll();
-    $$('alert_input').setValue(curent_alert);
-    });
-
-$$("users_list").attachEvent("onAfterSelect", function(){
-    var curent_alert = $$("users_list").getSelectedItem().value;
-    $$("pop_users").hide();
-    $$("users_list").unselectAll();
-    $$('user_input').setValue(curent_alert);
+$$('_order').attachEvent("onItemClick", function(){
+    var cv = get_current_view();
+    var item = $$(cv).getSelectedItem();
+    var id = $$(cv).getSelectedId()
+    console.log(item);
+    item["ordered"] = "Краснов"; //новое значение
+    item["change_date"] = new Date(); //новое значение
+    var params = {"set_ordered": item};
+    webix.ajax().post(req_url, params, function(text, data){
+        //возарвщаем новое значение строки в item
+        //item = data.json();
+        $$("view_2").updateItem(id, item)
+        //$$("view_2").data.sync(upd_all());
+        webix.message(data.json());
+        });
+    //console.log(item);
     });
 
 $$("view_2").attachEvent("onItemDblClick", function(id, e, node){
-    open_appl(id);
+    open_appl($$("view_2"), id);
     });
 
 $$("close_button").attachEvent("onItemClick", function(){
     $$("pop_application").hide();
     });
 
-$$("_reset_f").attachEvent("onItemClick", function(){
-    console.log('dd');
-    remove_filters();
-    //$$("view_2").refreshFilter();
-    //$$("view_2").render();
+$$("_filters").attachEvent("onItemClick", function(){
+    var cv = get_current_view();
+    console.log($$("all_dc"));
+    $$("all_dc").data.$init();
+    //console.log(cv);
+    //console.log($$(cv));
+    webix.message('Filters');
     });
