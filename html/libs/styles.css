@@ -116,6 +116,14 @@
     height: auto !important;
     }
 
+.buttons {
+    font-size: 3px !important;
+    /*border-radius: 6px !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;*/
+    }
+
+
 button {
     font-size: 10px !important;
     border-radius: 6px !important;

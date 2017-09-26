@@ -21,8 +21,18 @@ class API:
     """
     API class for http access to reloader
     """
-    
-    sql_all ="""select num, alerts.name, create_date, to_work_date, status.name, users.display_name, clients.display_name, topics.name, uu.display_name, description, change_date
+
+    def __init__(self, Lock, log, w_path = '/ms71/data/crm', p_path='/ms71/keys'):
+        self.methods = []
+        self.path = w_path
+        self.p_path = p_path
+        self.lock = Lock
+        self.exec = sys.executable
+        self.log = log
+        params = {'dbname': 'apps', 'user': 'postgres', 'host': 'localhost'}
+        self.con = psycopg2.connect(**params)
+
+        self.sqls = {'sql_all': """select num, alerts.name, create_date, to_work_date, status.name, users.display_name, clients.display_name, topics.name, uu.display_name, description, change_date, current_date
 from requests
 join alerts
     on alerts.uid = requests.alert
@@ -36,37 +46,69 @@ join topics
     on topics.uid = requests.topic
 join users as uu
     on uu.uid = requests.ordered
-where requests.archived = false and requests.deleted = false;
-"""
-    def __init__(self, Lock, log, w_path = '/ms71/data/crm', p_path='/ms71/keys'):
-        self.methods = []
-        self.path = w_path
-        self.p_path = p_path
-        self.lock = Lock
-        self.exec = sys.executable
-        self.log = log
-        params = {'dbname': 'apps', 'user': 'postgres', 'host': 'localhost'}
-        self.con = psycopg2.connect(**params)
-        """
-        cur = self.con.cursor()
-        cur.execute(self.sql_all)
-        rl = []
-        for row in cur.fetchall():
-            cr_date = row[2].strftime('%d.%m.%Y')
-            ch_date = row[10].strftime('%d.%m.%Y')
-            if row[3] < row[2]:
-                work_date = ''
-                in_work_d = ''
-            else:
-                in_work_d = (row[3] - row[2]).days
-                work_date = row[3]
-            qw = {"alert": row[1], "num": row[0], "create_date": cr_date, "to_work_date": work_date, "status": row[4], "create_user": row[5], "client": row[6], "in_work": in_work_d, "topic": row[7], "ordered": row[8], "description" : row[9], "change_date": ch_date}
-            rl.append(qw)
-            print(qw)
-        cur.close()
-        self.con.close()
-        sys.exit(0)
-        """
+where requests.archived = false and requests.deleted = false
+order by num desc;
+""",
+'sql_my': """select num, alerts.name, create_date, to_work_date, status.name, users.display_name, clients.display_name, topics.name, uu.display_name, description, change_date, current_date
+from requests
+join alerts
+    on alerts.uid = requests.alert
+join users
+    on users.uid = requests.create_user
+join status
+    on status.uid = requests.status
+join clients
+    on clients.uid = requests.client
+join topics
+    on topics.uid = requests.topic
+join users as uu
+    on uu.uid = requests.ordered
+where requests.archived = false and requests.deleted = false and requests.ordered = (select uid from users where display_name = '{0}')
+order by num desc;
+""",
+'sql_ins': """insert into requests (num, alert, create_date, to_work_date, status, create_user, client, topic, ordered, description, archived, deleted, change_date) values
+    (default, {0}, '{1}', '1971-01-01',
+    (select uid from status where name = 'Заведена'),
+    {3}, {4}, {5}, 0, '{6}',
+    false, false, current_date)
+    ON CONFLICT DO NOTHING
+    RETURNING num;
+""",
+'sql_update' : """update requests
+    set alert = (select uid from alerts where name = '{0}'),
+        create_date = '{1}',
+        to_work_date = '{2}',
+        status = (select uid from status where name = '{3}'),
+        create_user = (select uid from users where display_name = '{4}'),
+        client = (select uid from clients where display_name = '{5}'),
+        topic = (select uid from topics where name = '{6}'),
+        ordered = (select uid from users where display_name = '{7}'),
+        description = '{8}',
+        archived = {10},
+        deleted = {11},
+        change_date = current_date
+    where num = {9}
+    returning num;
+""",
+'sql_select_res': """select num, alerts.name, create_date, to_work_date, status.name, users.display_name, clients.display_name, topics.name, uu.display_name, description, change_date, current_date
+from requests
+join alerts
+    on alerts.uid = requests.alert
+join users
+    on users.uid = requests.create_user
+join status
+    on status.uid = requests.status
+join clients
+    on clients.uid = requests.client
+join topics
+    on topics.uid = requests.topic
+join users as uu
+    on uu.uid = requests.ordered
+where requests.archived = false and requests.deleted = false and num = {0};
+    """
+        }
+
+
 
     def get_topics(self, params=None, x_hash=None):
         sql = "select uid, name from topics"
@@ -78,7 +120,6 @@ where requests.archived = false and requests.deleted = false;
             re_dict["name"] = row[1]
             rl.append(re_dict)
         cur.close()
-        #print(rl)
         ret_value = json.dumps(rl, ensure_ascii=False)
         return ret_value
 
@@ -92,7 +133,6 @@ where requests.archived = false and requests.deleted = false;
             re_dict["name"] = row[1]
             rl.append(re_dict)
         cur.close()
-        print(rl)
         ret_value = json.dumps(rl, ensure_ascii=False)
         return ret_value
 
@@ -128,21 +168,18 @@ where requests.archived = false and requests.deleted = false;
         """
         #проверяем ключ
         user = params
-        cur = self._make_sql(self.sql_all)
+        cur = self._make_sql(self.sqls['sql_all'])
         rl = []
         for row in cur.fetchall():
             if row[3] < row[2]:
                 work_date = ''
                 in_work_d = ''
             else:
-                in_work_d = (row[3] - row[2]).days
+                in_work_d = (row[3] - row[11]).days
                 work_date = self._f_date(row[3])
             qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
                   "status": row[4], "create_user": row[5], "client": row[6], "in_work": in_work_d, "topic": row[7],
                   "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10])}
-            #for k in qw:
-                #print(k, type(qw[k]), sep='  <-->  ')
-            #print(qw)
             rl.append(qw)
         cur.close()
         ret_value = json.dumps(rl, ensure_ascii=False)
@@ -157,9 +194,23 @@ where requests.archived = false and requests.deleted = false;
         """
         #проверяем ключ
         user = params
-        datas = []
+        sql_my = self.sqls['sql_my'].format(user)
         
-        ret_value = json.dumps(datas, ensure_ascii=False)
+        cur = self._make_sql(sql_my)
+        rl = []
+        for row in cur.fetchall():
+            if row[3] < row[2]:
+                work_date = ''
+                in_work_d = ''
+            else:
+                in_work_d = (row[3] - row[11]).days
+                work_date = self._f_date(row[3])
+            qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
+                  "status": row[4], "create_user": row[5], "client": row[6], "in_work": in_work_d, "topic": row[7],
+                  "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10])}
+            rl.append(qw)
+        cur.close()
+        ret_value = json.dumps(rl, ensure_ascii=False)
         return ret_value
 
 
@@ -187,51 +238,38 @@ where requests.archived = false and requests.deleted = false;
         """
 
         cr_date, _ = params['create_date'].split()
-        sql_ins = """insert into requests (num, alert, create_date, to_work_date, status, create_user, client, topic, ordered, description, archived, deleted, change_date) values
-    (default,
-    (select uid from alerts where name = '{0}'),
-    '{1}',
-    '1971-01-01',
-    (select uid from status where name = 'Заведена'),
-    (select uid from users where display_name = '{3}'),
-    (select uid from clients where display_name = '{4}'),
-    (select uid from topics where name = '{5}'),
-    0,
-    '{6}',
-    false,
-    false,
-    current_date)
-    ON CONFLICT DO NOTHING
-    RETURNING num;
-""".format(params['alert'], cr_date, None, params['create_user'], params['client'], params['topic'], params['description'])
-
-        sql_ins = """insert into requests (num, alert, create_date, to_work_date, status, create_user, client, topic, ordered, description, archived, deleted, change_date) values
-    (default, {0}, '{1}', '1971-01-01',
-    (select uid from status where name = 'Заведена'),
-    {3},
-    {4},
-    {5},
-    0,
-    '{6}',
-    false,
-    false,
-    current_date)
-    ON CONFLICT DO NOTHING
-    RETURNING num;
-""".format(params['alert'], cr_date, None, params['create_user'], params['client'], params['topic'], params['description'])
-        print(sql_ins)
-        ret = []
+        sql_ins = self.sqls['sql_ins'].format(params['alert'], cr_date, None, params['create_user'], params['client'], params['topic'], params['description'])
+        ret = None
         cur = self._make_sql(sql_ins)
+
         try:
             ret = cur.fetchone()
         except Exception as Err:
             print(Err)
         cur.close()
         self.con.commit()
-        print(ret)
-        num = ret[0] if ret else 0
+        cur = self._make_sql(self.sqls['sql_select_res'].format(int(ret[0])))
+        ret = []
+        row = cur.fetchone()
+        cur.close()
+        if not row:
+            return json.dumps('error', ensure_ascii=False)
+        if row[3] < row[2]:
+            work_date = ''
+            in_work_d = ''
+        else:
+            in_work_d = (row[3] - row[11]).days
+            work_date = self._f_date(row[3])
+        qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
+              "status": row[4], "create_user": row[5], "client": row[6], "in_work": str(in_work_d), "topic": row[7],
+              "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10])}
+        ret.append(qw)
+        ret_value = json.dumps(ret, ensure_ascii=False)
+        return ret_value
 
-        #возвращвем выборку сэтой строкой и добавляем его в наш датасторе на клиенте - доделать!!!!!!!!!!!!!!!
+        
+        num = ret[0] if ret else 0
+        #возвращвем выборку с этой строкой и добавляем его в наш датасторе на клиенте - доделать!!!!!!!!!!!!!!!
         ret_value = json.dumps(num, ensure_ascii=False)
         return ret_value
 
@@ -246,17 +284,54 @@ where requests.archived = false and requests.deleted = false;
             print(Err)
         return cur
 
-    def set_ordered(self, params=None, x_hash=None):
+    def update_row(self, params=None, x_hash=None):
         """
-        назначение в работу
+        делаем апдейт строки таблицы запросов
         """
-
-        sql_set = ''
+        cr_date = params['create_date'].split('.')
+        cr_date.reverse()
+        cr_date = '-'.join(cr_date)
+        if params['to_work_date']:
+            temp_date = params['to_work_date'].split()
+            if len(temp_date) > 1:
+                tw_date = temp_date[0]
+            else:
+                tw_date = params['to_work_date'].split('.')
+                tw_date.reverse()
+                tw_date = '-'.join(tw_date)
+        else:
+            tw_date = '1971-01-01'
+        arch = params.get('archived', False)
+        deleted = params.get('deleted', False)
+        sql_update = self.sqls['sql_update'].format(params['alert'], cr_date, tw_date, params['status'], params['create_user'],
+                   params['client'], params['topic'], params['ordered'], params['description'],
+                   params['num'], arch, deleted)
+        ret = None
+        cur = self._make_sql(sql_update)
+        try:
+            ret = cur.fetchone()
+        except Exception as Err:
+            print(Err)
+        cur.close()
+        self.con.commit()
+        cur = self._make_sql(self.sqls['sql_select_res'].format(int(ret[0])))
         ret = []
-        print(params)
+        row = cur.fetchone()
+        cur.close()
+        if not row:
+            return json.dumps('ok', ensure_ascii=False)
+        if row[3] < row[2]:
+            work_date = ''
+            in_work_d = ''
+        else:
+            in_work_d = (row[3] - row[11]).days
+            work_date = self._f_date(row[3])
+        qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
+              "status": row[4], "create_user": row[5], "client": row[6], "in_work": str(in_work_d), "topic": row[7],
+              "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10])}
+        ret.append(qw)
         ret_value = json.dumps(ret, ensure_ascii=False)
         return ret_value
-
 
 class fLock:
     """

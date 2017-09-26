@@ -2,7 +2,7 @@
 
 var req_url = "/crm_logic";
 var auth_key = "11";
-var user = "Кашинцев";
+var user = "Краснов";
 
 //webix events attaches
 webix.i18n.setLocale('ru-RU');
@@ -24,7 +24,6 @@ var clients = new webix.DataCollection({
                 .then(function(data){
                     webix.ajax.$callback(view, callback, "", data, -1);
                     $$("clients_dc").clearAll();
-                    //console.log($$("all_dc"));
                     data = data.json();
                     $$("clients_dc").parse(data);
                     });
@@ -126,6 +125,17 @@ var input_form = [
                 }
             },
         },
+    {view:"combo", label:"Точка", name:"client_point", id: 'customer_point', invalidMessage: "Выберите точку",
+        required: true, placeholder: "Выберите точку", //labelWidth: 80,
+        options:  {
+            filter: filter_combo,
+            body: {
+                template:"#points#",
+                yCount:15,
+                data: clients
+                }
+            },
+        },
     {view:"combo", label:"Тема", id: "n_topic", name:"topic", required: true,
         invalidMessage: "Выберите тему", placeholder: "Выберите тему", //labelWidth: 80, 
         options:  {
@@ -150,7 +160,8 @@ var input_form = [
             var vl_2 = $$("customer_new").validate();
             var vl = $$("n_desc").validate();
             var vl_1 = $$("n_topic").validate();
-            if (vl & vl_1 & vl_2) {
+            var vl_3 = $$("customer_point").validate();
+            if (vl & vl_1 & vl_2 & vl_3) {
                 submit();
             };
             }}
@@ -164,7 +175,8 @@ var send_form_body = {
     rules:{
         "topic": webix.rules.isNotEmpty,
         "description": webix.rules.isNotEmpty,
-        "client": webix.rules.isNotEmpty
+        "client": webix.rules.isNotEmpty,
+        "client_point":  webix.rules.isNotEmpty
         },
     elementsConfig:{
         labelWidth: 120
@@ -172,24 +184,50 @@ var send_form_body = {
     elements: input_form
     };
 
-function topics_load() {
-    var params = {'get_topics': user};
-    webix.ajax().post(req_url, params, function(text, data){
-        data = data.json();
-        console.log(data);
-        $$("topics_list").clearAll();
-        $$("topics_list").parse(data);
-        });
-    };
+var result_box = {
+    id: "res_box",
+    view:"form", 
+    label:"Результат",
+    elements:[
+        {view: "label", label:"Ваша заявка ", align:"center", id: "l1"},
+        {view: "label", label:"Номер заявки № ", align:"center", id: "l2"},
+        {cols: [
+            {},
+            {view: "button", label: "OK", click: function(){
+                    $$("pop_result").hide();
+                    $$("res_box").reconstruct();
+                    }
+                },
+            {}
+            ]}
+        ]
+    }
+
+webix.ui({
+    view: "popup",
+    position:"center",
+    id: "pop_result",
+    body: result_box
+    });
 
 function submit(){
     $$("pop_send_form").hide();
     var data_send = $$("send_form").getValues()
     var params = {"put_apply": data_send};
-    webix.ajax().post(req_url, params, function(text, data){
-        $$("view_2").data.sync(upd_all());
-        webix.message(data.json());
-        });
     $$("send_form").reconstruct();
+    webix.ajax().post(req_url, params, function(text, data){
+        var item = data.json()[0];
+        if (item != "error") {
+            $$("view_2").add(item, 0);
+            $$("l1").setValue("Ваша заявка зарегистрирована");
+            $$("l2").setValue("Номер заявки: " + item.num);
+        } else {
+            $$("l1").setValue("Ваша заявка не зарегистрирована");
+            $$("l2").setValue("");
+        };
+        $$("l2").refresh();
+        $$("l1").refresh();
+        $$("pop_result").show();
+        });
     };
 
