@@ -1,7 +1,6 @@
 "use strict";
 
 var mass_apl = {id: "view_3", template: 'Массовые заявки'};
-//var my_appl = {id: "view_1", template: "My apllications"};
 var history_appl = {id: "view_4", template: "history of applications"};
 
 var customers_link = {template: "по нажатию кнопки будет переход на страницу 'Клиенты'"}
@@ -9,77 +8,96 @@ var vendors = {template: "по нажатию кнопки будет перех
 var knowbase = {template: "по нажатию кнопки будет переход на страницу 'База знаний'"}
 
 
-function upd_all() {
-    var tt = new webix.DataCollection({
-        id: "all_upd",
-        url: {
-            $proxy:true,
-            source: req_url,
-            load: function(view, callback) {
-                var params = {"get_all": user};
-                webix.ajax().post(this.source, params)
-                    .then(function(data){
-                        webix.ajax.$callback(view, callback, "", data, -1);
-                        $$("all_upd").clearAll();
-                        data = data.json();
-                        $$("all_upd").parse(data);
-                        });
-                    }
+var appl_form_var = [
+    {cols: [
+        {view: "text", labelPosition: "left", readonly: true, id: "appl_cre",
+            label: "Создана", value: "10.10.1999"
             },
-        });
-    return tt
-    };
-
-function upd_my() {
-    var tt = new webix.DataCollection({
-        id: "my_upd",
-        url: {
-            $proxy:true,
-            source: req_url,
-            load: function(view, callback) {
-                var params = {"get_my": user};
-                webix.ajax().post(this.source, params)
-                    .then(function(data){
-                        webix.ajax.$callback(view, callback, "", data, -1);
-                        $$("my_upd").clearAll();
-                        data = data.json();
-                        $$("my_upd").parse(data);
-                        });
-                    }
+        {view: "text", labelPosition: "left", readonly: true, id: "appl_work",
+            label: "В работе с", value: "10.10.1999"
             },
-        });
-    return tt
-    };
-
-//для образца оставим
-var all_appls = new webix.DataCollection({
-    id: "all_dc",
-    url: {
-        $proxy:true,
-        source: req_url,
-        load: function(view, callback) {
-            var params = {"get_all": user};
-            webix.ajax().post(this.source, params)
-                .then(function(data){
-                    webix.ajax.$callback(view, callback, "", data, -1);
-                    $$("all_dc").clearAll();
-                    data = data.json();
-                    $$("all_dc").parse(data);
-                    });
-                }
+        {view: "text", labelPosition: "left", readonly: true, id: "appl_ch",
+            label: "Последнее изменение", value: "10.10.1999"
+            }
+        ]},
+    {cols: [
+        {view: "text", labelPosition: "left", readonly: true, id: "appl_stat",
+            label: "Статус", value: "Заведена"
+            },
+        {view: "text", labelPosition: "left", id: "appl_alert",
+            label: "Приоритет", value: "Обычный"
+            }
+        ]},
+    {view: "text", id: "appl_cli",
+        label: "Организация", value: "Аптека"
         },
-    });
+    {view: "text", id: "appl_point",
+        label: "Точка", value: "точка за углом"
+        },
+    {cols: [
+        {view: "text", readonly: true, id: "appl_author",
+            label: "Автор запроса", value: "Овсянников"
+            },
+        {view: "text", id: "appl_ordered",
+            label: "Назначен", value: "Овсянников"
+            }
+        ]},
+    {view: "text", id: "appl_topic",
+        label: "Тема", value: "Не работает"
+        },
+    {view: "textarea", height: 84, id: "appl_desc", 
+        label: "Описание проблемы", value: "Жутко длинное описание проблемы"
+        }
 
-var appl = {
-    rows: [
-        {template: "здесь будет полная информация о заявке"},
-        {cols: [
-            {},
-            {view:"button", id: 'close_button', type:"form", 
-                label: 'Закрыть', width: 100}
-            ]}
-        ]
+    ];
+
+var c_appl = {
+    view: "fieldset",
+    id: "appl_fs",
+    label: "Заявка номер 44",
+    //borderless: true,
+    body: {
+        cols: [
+            {rows: [
+                {view: "form",
+                    id:"appl_form",
+                    width: 650,
+                    //readonly: true,
+                    disabled: true,
+                    elementsConfig:{
+                        labelWidth: 120,
+                        labelPosition: "top"
+                        },
+                    elements: appl_form_var
+                    },
+                {cols: [
+                    {},
+                    {view:"button", type:"form", tooltip: "Нажать для редактирования заявки. пока недоступно", //disabled: true,
+                        label: 'Редактировать', width: 120},
+                    {view:"button", id: 'close_button', type:"form", 
+                        label: 'Закрыть', width: 100}
+                    ]}
+            ]},
+            {view: "list",
+                id: "cli__apps_list",
+                //data: clients,
+                //height: 140,
+                width: 350,
+                type: {
+                    css: 'f_list_cl',
+                    height: "auto",
+                    },
+                navigation: true,
+                scroll: true,
+                template: "<div> <span class='f_list_cl'>Номер: </span> <span class='f_list_cl_txt'>#num#</span></div>" +
+                          "<div> <span class='f_list_cl_2'>Дата: </span> <span class='f_list_cl_txt'>#create_date#</span></div>" +
+                          "<div> <span class='f_list_cl_2'>Тема: </span> <span class='f_list_cl_txt'>#topic#</span></div>" +
+                          "<div> <span class='f_list_cl_2'>Описание: </span> <span class='f_list_cl_txt'>#description#</span></div>" +
+                          "<div> <span class='f_list_cl_2'>Решение: </span> <span class='f_list_cl_txt'>#result_desc#</span></div>"                          
+                }
+        ]}
     };
+
 
 var complete = {
     view:"form", 
@@ -118,9 +136,36 @@ var my_appl = {id: "view_1", view: "activeDataTable",
     select: true,
     navigation: "row",
     select: true,
+    subview: {
+        view: 'form',
+        //height: 35,
+        elements: [
+            {cols: [
+                {view: "button", width: 150, label: "кнопка 1", height: 25, click:function(ii){
+                    var form = this.getFormView();
+                    var values = form.getValues();
+                    var changed = form.getDirtyValues();
+                    var master = form.getMasterView();
+                    console.log(ii);
+                    console.log(form);
+                    console.log(values);
+                    console.log(master);
+                    master.updateItem(values.id, changed);
+                    master.closeSub(values.id)
+                    }},
+                {view: "button", width: 150, label: "кнопка 2", height: 25},
+                {view: "button", width: 150, label: "кнопка 3", height: 25},
+                {view: "button", width: 150, label: "кнопка 4", height: 25},
+                {view: "button", width: 150, label: "кнопка 5", height: 25},
+                {view: "button", width: 150, label: "кнопка 6", height: 25},
+                ]}
+            ]
+        },
     data: upd_my(),
     resizeColumn:true,
     fixedRowHeight:false,
+    rowLineHeight:26,
+    rowHeight:26,
     onContext: {},
     activeContent: {
         deleteButton: {
@@ -132,6 +177,15 @@ var my_appl = {id: "view_1", view: "activeDataTable",
             }
         },
     on:{
+        onSubViewCreate:function(view, item){
+            view.setValues(item);
+            },
+        onBeforeSelect: function(item) {
+            this.addRowCss(item.id, "r_css");
+            },
+        onBeforeUnselect: function(item) {
+            this.removeRowCss(item.id, "r_css");
+            },
         onBeforeRender: function(d) {
             var data = d.order
             var format = webix.Date.strToDate("%d.%m.%Y");
@@ -147,6 +201,9 @@ var my_appl = {id: "view_1", view: "activeDataTable",
             }
         },
     columns:[
+    //subview row:
+    //{width: 25,
+    //    template: "{common.subrow()}"},
     { id:"num",
       sort: "int",
       css: "num_s",
@@ -157,7 +214,6 @@ var my_appl = {id: "view_1", view: "activeDataTable",
         },
     { id:"alert",
       width: 85,
-      css: "date_s",
       sort:"text",
       header: [
         {text: "Приоритет", css: 'header_data'},
@@ -189,7 +245,7 @@ var my_appl = {id: "view_1", view: "activeDataTable",
         { content:"selectFilter"}
         ]},
     { id:"client",
-      fillspace: 3,
+      fillspace: 2,
       width: 360,
       sort: "text",
       header:[
@@ -222,8 +278,8 @@ var all_appl = {id: "view_2", view: "activeDataTable",
     //multiselect: true,
     resizeColumn:true,
     fixedRowHeight:false,
-    //rowLineHeight:34,
-    //rowHeight:34,
+    rowLineHeight:26,
+    rowHeight:26,
     onContext: {},
     activeContent: {
         "deleteButton": {
@@ -235,6 +291,12 @@ var all_appl = {id: "view_2", view: "activeDataTable",
             }
         },
     on:{
+        onBeforeSelect: function(item) {
+            this.addRowCss(item.id, "r_css");
+            },
+        onBeforeUnselect: function(item) {
+            this.removeRowCss(item.id, "r_css");
+            },
         onBeforeRender: function(d) {
             var data = d.order
             var format = webix.Date.strToDate("%d.%m.%Y");
@@ -278,7 +340,6 @@ var all_appl = {id: "view_2", view: "activeDataTable",
         },
     { id:"alert",
       width: 85,
-      css: "date_s",
       sort:"text",
       header: [
         {text: "Приоритет", css: 'header_data'},
@@ -317,7 +378,7 @@ var all_appl = {id: "view_2", view: "activeDataTable",
         { content:"selectFilter"}
         ]},
     { id:"client",
-      fillspace: 3,
+      fillspace: 2,
       width: 360,
       sort: "text",
       header:[
@@ -407,12 +468,26 @@ function shrink(value, config) {
     return ret;
 };
 
+function set_appl_info(item) {
+    $$("appl_fs").label_setter('Заявка номер ' + item.num);
+    $$("appl_cre").setValue(item.create_date);
+    $$("appl_work").setValue(item.to_work_date);
+    $$("appl_ordered").setValue(item.ordered);
+    $$("appl_ch").setValue(item.change_date.toLocaleDateString());
+    $$("appl_stat").setValue(item.status);
+    $$("appl_alert").setValue(item.alert);
+    $$("appl_cli").setValue(item.client);
+    $$("appl_point").setValue("Неизвестная точка за углом");
+    $$("appl_author").setValue(item.create_user);
+    $$("appl_topic").setValue(item.topic);
+    $$("appl_desc").setValue(item.description);
+    $$("appl_form").refresh();
+    }
 
 function open_appl(view, id) {
     var c_item = view.getItem(id.row);
-    console.log(c_item);
+    set_appl_info(c_item);
     $$("pop_application").show();
-
     };
 
 
@@ -439,7 +514,6 @@ webix.ui({
             //{rows: buttons_2floor},
             {rows: [
                 {height: 36, cols:buttons},
-                //{height: 36, cols:buttons_2floor},
                 {view: "tabview",
                     width: 1280,
                     id:"tabview1",
@@ -457,6 +531,15 @@ webix.ui({
 webix.ui({
     view:"context",
     id:"context_menu",
+    on: {
+        onShow: function(event) {
+            var cv = get_current_view();
+            var sid = $$(cv).getSelectedId();
+            if (!sid) {
+                this.hide();
+            }
+            }
+        },
     body: {
         view: 'toolbar',
         height: 100,
@@ -487,13 +570,15 @@ webix.ui ({
 
 webix.ui({
     view: "popup",
+    autofit: true,
+    header: "текущая заяка",
     id: "pop_application",
     position:"center",
-    height:600,
-    width:800,
+    //height:600,
+    //width:800,
     //modal:true,
     move:true,
-    body: appl
+    body: c_appl
     });
 
 webix.ui({
@@ -651,9 +736,9 @@ $$('_delete').attachEvent("onItemClick", function(){
 
 $$("view_2").attachEvent("onBeforeFilter", function(id, value, config){
     if (id==='change_date') {
-        //console.log(id);
-        //console.log(value);
-        //console.log(config);
+        console.log(id);
+        console.log(value);
+        console.log(config);
     }
 })
 
@@ -689,64 +774,13 @@ $$("send_result").attachEvent("onItemClick", function(){
     };
     });
 
-    
-function adj_row(item, id, silent) {
-    if (id) {
-        var config = $$("view_2").getColumnConfig(id);
-        var container;
-        var d = webix.html.create("DIV",{"class":"webix_table_cell webix_measure_size webix_cell"},"");
-        d.style.cssText = "width:"+config.width+"px; height:1px; visibility:hidden; position:absolute; top:0px; left:0px; overflow:hidden;";
-        $$("view_2").$view.appendChild(d);
-        if (d.offsetHeight < 1){
-            container = $$("view_2").$view.cloneNode(true);
-            document.body.appendChild(container);
-            container.appendChild(d);
-        }
-        $$("view_2").data.each(function(obj){
-            if (obj){
-                if (obj.id === item) {
-                    d.innerHTML = $$("view_2")._getValue(obj, config, 0);
-                    var d_h = d.scrollHeight;
-                    console.dir(d);
-                    obj.$height = (d_h > $$("view_2")._settings.rowHeight) ? $$("view_2")._settings.rowHeight * 2:
-                        $$("view_2")._settings.rowHeight;
-                }
-            }
-        }, $$("view_2"));
-
-        d = webix.html.remove(d);
-        if (container)
-            webix.html.remove(container);
-    } else {
-        var heightsArr = new Array($$("view_2").data.count()+1).join('0').split('');
-        var cols = $$("view_2").config.columns;
-        for (var i = 0; i < cols.length; i++) {
-            adj_row(item, cols[i].id, true)
-            $$("view_2").data.each(function(obj, index){
-                    if (obj.id === item.row) {
-                    if (obj.$height > heightsArr[index]) {
-                        heightsArr[index] = obj.$height;
-                        }
-                    obj.$height = heightsArr[index];
-                    };
-                });
-            }
-        };
-   if (!silent)
-        $$("view_2").refresh();
-    };
-
-$$("view_2").attachEvent("onBeforeSelect", function(item, e, node){
-    //adj_row(item.row)
+$$("pop_application").attachEvent("onBeforeShow", function(item, e){
+    var data = upd_cli_apps();
+    $$("cli__apps_list").data.sync(data);
     });
 
-
-$$("view_2").attachEvent("onBeforeUnSelect", function(item){
-    //console.log('uuu');
-    //console.dir(item.row);
-    
+$$("view_2").attachEvent("onBeforeSelect", function(item, e){
     });
-    
 
 $$("view_2").attachEvent("onItemDblClick", function(id, e, node){
     open_appl($$("view_2"), id);
@@ -762,8 +796,5 @@ $$("_filters").attachEvent("onItemClick", function(){
     columns.forEach(function(item, i, data) {
         $$(cv).refreshFilter(item.id);
         $$(cv).filter(item.id,"");
-        
         });
     });
-console.log($$('tabview1'))
-

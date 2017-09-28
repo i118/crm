@@ -49,6 +49,13 @@ join users as uu
 where requests.archived = false and requests.deleted = false
 order by num desc;
 """,
+'sql_cli': """select num, create_date, topics.name, description, current_date
+from requests
+join topics
+    on topics.uid = requests.topic
+where requests.deleted = false and requests.num != {0} and requests.client = (select uid from clients where display_name = '{1}')
+order by num desc;
+""",
 'sql_my': """select num, alerts.name, create_date, to_work_date, status.name, users.display_name, clients.display_name, topics.name, uu.display_name, description, change_date, current_date
 from requests
 join alerts
@@ -162,6 +169,25 @@ where requests.archived = false and requests.deleted = false and num = {0};
         ret_value = json.dumps(rl, ensure_ascii=False)
         return ret_value
 
+    def get_reqs(self, params=None, x_hash=None):
+        """
+        получаем все запросы по заданному клиенту
+        """
+        #проверяем ключ
+        #user = params
+        cli = params['client']
+        m_num = params['num']
+        sql_cli = self.sqls['sql_cli'].format(m_num, cli)
+        cur = self._make_sql(sql_cli)
+        rl = []
+        for row in cur.fetchall():
+            qw = {"num": row[0], "create_date": self._f_date(row[1]), 
+                  "topic": row[2], "description" : row[3], "result_desc": "Результат"}
+            rl.append(qw)
+        cur.close()
+        ret_value = json.dumps(rl, ensure_ascii=False)
+        return ret_value
+
     def get_all(self, params=None, x_hash=None):
         """
         получаем заявки (все или по пользователю)
@@ -175,7 +201,7 @@ where requests.archived = false and requests.deleted = false and num = {0};
                 work_date = ''
                 in_work_d = ''
             else:
-                in_work_d = (row[3] - row[11]).days
+                in_work_d = (row[11] - row[3]).days
                 work_date = self._f_date(row[3])
             qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
                   "status": row[4], "create_user": row[5], "client": row[6], "in_work": in_work_d, "topic": row[7],
@@ -203,7 +229,7 @@ where requests.archived = false and requests.deleted = false and num = {0};
                 work_date = ''
                 in_work_d = ''
             else:
-                in_work_d = (row[3] - row[11]).days
+                in_work_d = (row[11] - row[3]).days
                 work_date = self._f_date(row[3])
             qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
                   "status": row[4], "create_user": row[5], "client": row[6], "in_work": in_work_d, "topic": row[7],
