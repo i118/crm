@@ -79,7 +79,7 @@ var c_appl = {
                     ]}
             ]},
             {view: "list",
-                id: "cli__apps_list",
+                id: "cli_apps_list",
                 //data: clients,
                 //height: 140,
                 width: 350,
@@ -411,8 +411,8 @@ var view_cells = [
             ];
 
 var buttons = [
-    {view:"button", id: '_new_button', type:"form", popup: "pop_send_form",
-        label: 'Новая заявка', width: 120, tooltip: "Создание новой заявки"},
+    {view:"button", id: '_new_button', type:"imageButton", popup: "pop_send_form", image: './libs/img/add.svg',
+        label: 'Новая заявка', width: 140, tooltip: "Создание новой заявки"},
     {view:"button", id: '_vendors', type:"form", popup: "pop_vendors_form",
         label: 'Поставщики', width: 120, tooltip: "Список поставщиков"},
     {view:"button", id: '_customers', type:"form", popup: "pop_customers_form",
@@ -420,25 +420,27 @@ var buttons = [
     {view:"button", id: '_knowledge_base', type:"form", popup: "pop_knowbase_form",
         label: 'База знаний', width: 120, tooltip: "Наиболее частые проблемы и их решения"},
     {},
-    {view:"button", id: "_refresh", type:"form",
-        label: "Sync", width: 100},
-    {view:"button", id: "_filters", type:"form",
-        label: "Сбросить фильтры", width: 120}
+    {view:"button", id: "_refresh", type:"imageButton", image: './libs/img/sync.svg',
+        label: "Обновить заявки", width: 160},
+    {view:"button", id: "_filters", type:"imageButton", image: './libs/img/filter.svg',
+        label: "Сбросить фильтры", width: 180},
+    {view:"button", id: "_excel", type:"imageButton", image: './libs/img/sync1.svg',
+        label: "Экспорт в Excel", width: 180}
     ];
 
 var buttons_2floor = [
-    {view:"button", id: '_to_work', type:"form", height: 25,
+    {view:"button", id: '_to_work', type:"form", height: 35,
         label: 'Взять в работу', width: 150},
-    {view:"button", id: '_order', type:"form", height: 25, popup: "pop_ch_users_list",
+    {view:"button", id: '_order', type:"form", height: 35, popup: "pop_ch_users_list",
         label: 'Назначить', width: 150},
-    {view:"button", id: '_ch_alert', type:"form", height: 25, popup: "pop_ch_alert_list",
+    {view:"button", id: '_ch_alert', type:"form", height: 35, popup: "pop_ch_alert_list",
         label: 'Сменить приоритет', width: 150},
-    {view:"button", id: '_complete', type:"form", popup: "pop_complete_form", height: 25,
+    {view:"button", id: '_complete', type:"form", popup: "pop_complete_form", height: 35,
         label: 'Выполненно', width: 150},
-    {view:"button", id: '_archive', type:"form", height: 25,
+    {view:"button", id: '_archive', type:"form", height: 35,
         label: 'В архив', width: 150},
-    {view:"button", id: '_delete', type:"form", height: 25,
-        label: 'Удалить заявку', width: 150}
+    {view:"button", id: '_delete', type:"form", height: 35,
+        label: 'Удалить', width: 150}
     ];
 
 var bottom = [
@@ -485,7 +487,9 @@ function set_appl_info(item) {
     }
 
 function open_appl(view, id) {
-    var c_item = view.getItem(id.row);
+    
+    //var c_item = view.getItem(id.row);
+    var c_item = view.getSelectedItem();
     set_appl_info(c_item);
     $$("pop_application").show();
     };
@@ -537,12 +541,30 @@ webix.ui({
             var sid = $$(cv).getSelectedId();
             if (!sid) {
                 this.hide();
-            }
+            } else {
+                var item = $$(cv).getSelectedItem();
+                if (item.status === 'Назначена') {
+                    $$('_to_work').enable();
+                } else {
+                    $$('_to_work').disable();
+                };
+                if (admin) {
+                    $$('_order').enable();
+                    $$('_archive').enable();
+                    $$('_delete').enable();
+                } else {
+                    $$('_order').disable();
+                    $$('_archive').disable();
+                    $$('_delete').disable();
+                };
+                console.log(item)
+                webix.message('selected')
+            };
             }
         },
     body: {
         view: 'toolbar',
-        height: 100,
+        //height: 150,
         rows: buttons_2floor
         }
     });
@@ -609,10 +631,10 @@ webix.ui({
         view: "list",
         id: "ch_users_list",
         data: users,
-        height: 140,
+        height: 180,
         width: 100,
         navigation: true,
-        scroll: false,
+        //scroll: false,
         template: "#display_name#"
         }
     });
@@ -655,6 +677,7 @@ $$("ch_users_list").attachEvent("onItemClick", function(i_id, ev, val){
         item = data.json()[0];
         $$(cv).updateItem(id, item)
         $$(cv).unselectAll();
+        upd_views();
         });
     });
 
@@ -672,6 +695,7 @@ $$('_to_work').attachEvent("onItemClick", function(){
         item = data.json()[0];
         $$(cv).updateItem(id, item)
         $$(cv).unselectAll();
+        upd_views();
         });
     }
     });
@@ -697,6 +721,7 @@ $$("ch_alert_list").attachEvent("onItemClick", function(i_id, ev, val){
         item = data.json()[0];
         $$(cv).updateItem(id, item)
         $$(cv).unselectAll();
+        upd_views();
         });
     });
 
@@ -713,6 +738,7 @@ $$('_archive').attachEvent("onItemClick", function(){
         item = data.json()[0];
         $$(cv).remove(id);
         $$(cv).unselectAll();
+        upd_views();
         });
     }
     });
@@ -730,6 +756,7 @@ $$('_delete').attachEvent("onItemClick", function(){
         item = data.json()[0];
         $$(cv).remove(id);
         $$(cv).unselectAll();
+        upd_views();
         });
     }
     });
@@ -763,27 +790,43 @@ $$("send_result").attachEvent("onItemClick", function(){
         item["change_date"] = new Date(); //новое значение
         item['status'] = (form_values['c_success'] === 1) ? "Решено":
             "Не решено";
-        item['result'] = form_values['c_description'];
+        item['res_desc'] = form_values['c_description'];
         $$("complete_form").reconstruct();
         var params = {"update_row": item};
         webix.ajax().post(req_url, params, function(text, data){
             item = data.json()[0];
             $$(cv).updateItem(id, item)
             $$(cv).unselectAll();
+            upd_views();
             });
     };
     });
 
 $$("pop_application").attachEvent("onBeforeShow", function(item, e){
     var data = upd_cli_apps();
-    $$("cli__apps_list").data.sync(data);
+    $$("cli_apps_list").data.sync(data);
     });
 
-$$("view_2").attachEvent("onBeforeSelect", function(item, e){
+$$("pop_application").attachEvent("onHide", function(){
+    var cv = get_current_view();
+    $$(cv).getSelectedId();
     });
 
-$$("view_2").attachEvent("onItemDblClick", function(id, e, node){
-    open_appl($$("view_2"), id);
+$$("view_1").attachEvent("onItemDblClick", function(id, e){
+    open_appl($$("view_1"));
+    });
+
+$$("view_2").attachEvent("onItemDblClick", function(id, e){
+    console.log(this)
+    open_appl($$("view_2"));
+    });
+
+$$("view_2").attachEvent("onKeyPress", function(code, e){
+    if (13 === code) {
+        var ci = $$("view_2").getSelectedItem();
+        console.log(ci)
+        open_appl($$("view_2"));
+    }
     });
 
 $$("close_button").attachEvent("onItemClick", function(){
@@ -798,3 +841,39 @@ $$("_filters").attachEvent("onItemClick", function(){
         $$(cv).filter(item.id,"");
         });
     });
+
+$$("_excel").attachEvent("onItemClick", function(){
+    //не работает, так как в заголовке есть наш ключ x-api-key
+    var cv = get_current_view();
+    webix.toExcel($$(cv), {
+        filename: "requests", // for filename
+        name: "requests" // for sheet nam
+        });
+    //экспорт в pdf
+    //webix.toPdf($$(cv), {
+        //filename: "requests", // for filename
+        //});
+    });
+
+$$("_refresh").attachEvent("onItemClick", function(){
+    upd_my();
+    upd_all();
+    //upd_mass();
+    //upd_history();
+    $$("view_1").parse($$("my_upd"));
+    $$("view_2").parse($$("all_upd"));
+    //$$("view_3").parse($$("mass_upd"));
+    //$$("view_4").parse($$("hist_upd"));
+    });
+
+function upd_views() {
+    var cv = get_current_view();
+    if (cv === "view_1") {
+        upd_all();
+        $$("view_2").parse($$("all_upd"));
+    } else {
+        upd_my();
+        $$("view_1").parse($$("my_upd"));
+    }
+    };
+

@@ -3,11 +3,23 @@
     src: url(../libs/fonts/Roboto-Regular-webfont.ttf);
 }
 
-.webix_message_area{width: 800px;}
+/*#d4e9ff*/
 
+.webix_message_area{width: 800px;}
 
 .myhover{
     background-color: Gainsboro !important;
+    }
+
+.webix_control .webix_disabled_box .webixtype_form {
+    /*background-color: #fff !important;*/
+    border: none !important;
+    }
+
+
+.webix_el_button button {
+    /*background-color: #f0f7ff !important;*/
+    background-color: #f5faff;
     }
 
 .webix_view > .webix_disabled {
@@ -254,12 +266,13 @@ select {
 .webix_list .webix_list_item {
     line-height: 20px !important;
     /*border-bottom: 1px solid lightgrey !important;*/
-
     }
 
+
+
 :active, :hover, :focus {
-    outline: 0;
-    outline-offset: 0;
+    outline: 0 !important;
+    outline-offset: 0 !important;
 }
 
 

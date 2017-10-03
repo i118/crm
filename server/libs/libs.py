@@ -30,9 +30,10 @@ class API:
         self.exec = sys.executable
         self.log = log
         params = {'dbname': 'apps', 'user': 'postgres', 'host': 'localhost'}
+        params = {'dbname': 'crm', 'user': 'ms71', 'password': 'iKoosaishohvekohqua1zociGhiSei6w', 'host': '88.99.236.188', 'port': '30000'}
         self.con = psycopg2.connect(**params)
 
-        self.sqls = {'sql_all': """select num, alerts.name, create_date, to_work_date, status.name, users.display_name, clients.display_name, topics.name, uu.display_name, description, change_date, current_date
+        self.sqls = {'sql_all': """select num, alerts.name, create_date, to_work_date, status.name, users.display_name, clients.display_name, topics.name, uu.display_name, description, change_date, current_date, res_desc
 from requests
 join alerts
     on alerts.uid = requests.alert
@@ -49,14 +50,14 @@ join users as uu
 where requests.archived = false and requests.deleted = false
 order by num desc;
 """,
-'sql_cli': """select num, create_date, topics.name, description, current_date
+'sql_cli': """select num, create_date, topics.name, description, current_date, res_desc
 from requests
 join topics
     on topics.uid = requests.topic
 where requests.deleted = false and requests.num != {0} and requests.client = (select uid from clients where display_name = '{1}')
 order by num desc;
 """,
-'sql_my': """select num, alerts.name, create_date, to_work_date, status.name, users.display_name, clients.display_name, topics.name, uu.display_name, description, change_date, current_date
+'sql_my': """select num, alerts.name, create_date, to_work_date, status.name, users.display_name, clients.display_name, topics.name, uu.display_name, description, change_date, current_date, res_desc
 from requests
 join alerts
     on alerts.uid = requests.alert
@@ -93,11 +94,12 @@ order by num desc;
         description = '{8}',
         archived = {10},
         deleted = {11},
-        change_date = current_date
+        change_date = current_date,
+        res_desc = '{12}'
     where num = {9}
     returning num;
 """,
-'sql_select_res': """select num, alerts.name, create_date, to_work_date, status.name, users.display_name, clients.display_name, topics.name, uu.display_name, description, change_date, current_date
+'sql_select_res': """select num, alerts.name, create_date, to_work_date, status.name, users.display_name, clients.display_name, topics.name, uu.display_name, description, change_date, current_date, res_desc
 from requests
 join alerts
     on alerts.uid = requests.alert
@@ -115,8 +117,6 @@ where requests.archived = false and requests.deleted = false and num = {0};
     """
         }
 
-
-
     def get_topics(self, params=None, x_hash=None):
         sql = "select uid, name from topics"
         cur = self._make_sql(sql)
@@ -131,7 +131,7 @@ where requests.archived = false and requests.deleted = false and num = {0};
         return ret_value
 
     def get_alerts(self, params=None, x_hash=None):
-        sql = "select uid, name from alerts"
+        sql = "select uid, name from alerts;"
         cur = self._make_sql(sql)
         rl = []
         for row in cur.fetchall():
@@ -182,7 +182,7 @@ where requests.archived = false and requests.deleted = false and num = {0};
         rl = []
         for row in cur.fetchall():
             qw = {"num": row[0], "create_date": self._f_date(row[1]), 
-                  "topic": row[2], "description" : row[3], "result_desc": "Результат"}
+                  "topic": row[2], "description" : row[3], "result_desc": (row[5] or 'Пока не решено')}
             rl.append(qw)
         cur.close()
         ret_value = json.dumps(rl, ensure_ascii=False)
@@ -205,7 +205,8 @@ where requests.archived = false and requests.deleted = false and num = {0};
                 work_date = self._f_date(row[3])
             qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
                   "status": row[4], "create_user": row[5], "client": row[6], "in_work": in_work_d, "topic": row[7],
-                  "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10])}
+                  "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10]),
+                  "res_desc": row[12]}
             rl.append(qw)
         cur.close()
         ret_value = json.dumps(rl, ensure_ascii=False)
@@ -233,7 +234,8 @@ where requests.archived = false and requests.deleted = false and num = {0};
                 work_date = self._f_date(row[3])
             qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
                   "status": row[4], "create_user": row[5], "client": row[6], "in_work": in_work_d, "topic": row[7],
-                  "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10])}
+                  "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10]),
+                  "res_desc": row[12]}
             rl.append(qw)
         cur.close()
         ret_value = json.dumps(rl, ensure_ascii=False)
@@ -288,7 +290,7 @@ where requests.archived = false and requests.deleted = false and num = {0};
             work_date = self._f_date(row[3])
         qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
               "status": row[4], "create_user": row[5], "client": row[6], "in_work": str(in_work_d), "topic": row[7],
-              "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10])}
+              "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10]), "res_desc": row[12]}
         ret.append(qw)
         ret_value = json.dumps(ret, ensure_ascii=False)
         return ret_value
@@ -329,34 +331,40 @@ where requests.archived = false and requests.deleted = false and num = {0};
             tw_date = '1971-01-01'
         arch = params.get('archived', False)
         deleted = params.get('deleted', False)
+        #if params['res_desc'] == 'None':
+        #    res_desc = params['res_desc']
+        #else:
+        #    res_desc = ''
+
         sql_update = self.sqls['sql_update'].format(params['alert'], cr_date, tw_date, params['status'], params['create_user'],
                    params['client'], params['topic'], params['ordered'], params['description'],
-                   params['num'], arch, deleted)
+                   params['num'], arch, deleted, params['res_desc'])
         ret = None
         cur = self._make_sql(sql_update)
+        self.con.commit()
         try:
             ret = cur.fetchone()
         except Exception as Err:
             print(Err)
         cur.close()
-        self.con.commit()
         cur = self._make_sql(self.sqls['sql_select_res'].format(int(ret[0])))
         ret = []
         row = cur.fetchone()
         cur.close()
         if not row:
-            return json.dumps('ok', ensure_ascii=False)
-        if row[3] < row[2]:
-            work_date = ''
-            in_work_d = ''
+            ret_value = json.dumps('ok', ensure_ascii=False)
         else:
-            in_work_d = (row[3] - row[11]).days
-            work_date = self._f_date(row[3])
-        qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
-              "status": row[4], "create_user": row[5], "client": row[6], "in_work": str(in_work_d), "topic": row[7],
-              "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10])}
-        ret.append(qw)
-        ret_value = json.dumps(ret, ensure_ascii=False)
+            if row[3] < row[2]:
+                work_date = ''
+                in_work_d = ''
+            else:
+                in_work_d = (row[3] - row[11]).days
+                work_date = self._f_date(row[3])
+            qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
+                  "status": row[4], "create_user": row[5], "client": row[6], "in_work": str(in_work_d), "topic": row[7],
+                  "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10]), "res_desc": row[12]}
+            ret.append(qw)
+            ret_value = json.dumps(ret, ensure_ascii=False)
         return ret_value
 
 class fLock:

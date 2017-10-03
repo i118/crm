@@ -3,6 +3,7 @@
 var req_url = "/crm_logic";
 var auth_key = "11";
 var user = "Краснов";
+var admin = false;
 
 //webix events attaches
 webix.i18n.setLocale('ru-RU');
@@ -137,7 +138,7 @@ function upd_cli_apps() {
                 var item;
                 var cv = get_current_view();
                 item = $$(cv).getSelectedItem();
-                console.log(item);
+                //console.log(item);
                 var params = {"get_reqs": item};
                 webix.ajax().post(this.source, params)
                     .then(function(data){
