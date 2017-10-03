@@ -50,6 +50,15 @@ join users as uu
 where requests.archived = false and requests.deleted = false
 order by num desc;
 """,
+'sql_hist': """select num, change_date, clients.display_name, topics.name
+from requests
+join clients
+    on clients.uid = requests.client
+join topics
+    on topics.uid = requests.topic
+where requests.archived = true and requests.deleted = false
+order by num asc;
+""",
 'sql_cli': """select num, create_date, topics.name, description, current_date, res_desc
 from requests
 join topics
@@ -74,11 +83,12 @@ join users as uu
 where requests.archived = false and requests.deleted = false and requests.ordered = (select uid from users where display_name = '{0}')
 order by num desc;
 """,
-'sql_ins': """insert into requests (num, alert, create_date, to_work_date, status, create_user, client, topic, ordered, description, archived, deleted, change_date) values
+'sql_ins': """insert into requests (num, alert, create_date, to_work_date, status, create_user, client, topic, ordered, description, archived, deleted, change_date, res_desc) values
     (default, {0}, '{1}', '1971-01-01',
     (select uid from status where name = 'Заведена'),
-    {3}, {4}, {5}, 0, '{6}',
-    false, false, current_date)
+    (select uid from users where display_name = '{3}'),
+    {4}, {5}, 0, '{6}',
+    false, false, current_date, '{7}')
     ON CONFLICT DO NOTHING
     RETURNING num;
 """,
@@ -182,7 +192,7 @@ where requests.archived = false and requests.deleted = false and num = {0};
         rl = []
         for row in cur.fetchall():
             qw = {"num": row[0], "create_date": self._f_date(row[1]), 
-                  "topic": row[2], "description" : row[3], "result_desc": (row[5] or 'Пока не решено')}
+                  "topic": row[2], "description" : row[3], "result_desc": row[5]}
             rl.append(qw)
         cur.close()
         ret_value = json.dumps(rl, ensure_ascii=False)
@@ -207,6 +217,23 @@ where requests.archived = false and requests.deleted = false and num = {0};
                   "status": row[4], "create_user": row[5], "client": row[6], "in_work": in_work_d, "topic": row[7],
                   "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10]),
                   "res_desc": row[12]}
+            rl.append(qw)
+        cur.close()
+        ret_value = json.dumps(rl, ensure_ascii=False)
+        return ret_value
+
+    def get_hist(self, params=None, x_hash=None):
+        """
+        получаем заявки (все или по пользователю)
+        """
+        #проверяем ключ
+        user = params
+        cur = self._make_sql(self.sqls['sql_hist'])
+        rl = []
+        for row in cur.fetchall():
+            qw = {"num": row[0], "change_date": self._f_date(row[1]),
+                  "client": row[2], "topic": row[3]
+                  }
             rl.append(qw)
         cur.close()
         ret_value = json.dumps(rl, ensure_ascii=False)
@@ -265,17 +292,20 @@ where requests.archived = false and requests.deleted = false and num = {0};
         помещем заявку в базу
         """
 
-        cr_date, _ = params['create_date'].split()
-        sql_ins = self.sqls['sql_ins'].format(params['alert'], cr_date, None, params['create_user'], params['client'], params['topic'], params['description'])
+        #cr_date, _ = params['create_date'].split()
+        t_date = params['create_date'].split('.')
+        t_date.reverse()
+        cr_date = '-'.join(t_date)
+        
+        sql_ins = self.sqls['sql_ins'].format(params['alert'], cr_date, None, params['create_user'], params['client'], params['topic'], params['description'], params['res_desc'])
         ret = None
         cur = self._make_sql(sql_ins)
-
         try:
             ret = cur.fetchone()
         except Exception as Err:
             print(Err)
-        cur.close()
         self.con.commit()
+        cur.close()
         cur = self._make_sql(self.sqls['sql_select_res'].format(int(ret[0])))
         ret = []
         row = cur.fetchone()
@@ -286,7 +316,7 @@ where requests.archived = false and requests.deleted = false and num = {0};
             work_date = ''
             in_work_d = ''
         else:
-            in_work_d = (row[3] - row[11]).days
+            in_work_d = (row[11] - row[3]).days
             work_date = self._f_date(row[3])
         qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
               "status": row[4], "create_user": row[5], "client": row[6], "in_work": str(in_work_d), "topic": row[7],
@@ -358,7 +388,7 @@ where requests.archived = false and requests.deleted = false and num = {0};
                 work_date = ''
                 in_work_d = ''
             else:
-                in_work_d = (row[3] - row[11]).days
+                in_work_d = (row[11] - row[3]).days
                 work_date = self._f_date(row[3])
             qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
                   "status": row[4], "create_user": row[5], "client": row[6], "in_work": str(in_work_d), "topic": row[7],

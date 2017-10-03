@@ -1,12 +1,18 @@
 "use strict";
 
 var mass_apl = {id: "view_3", template: 'Массовые заявки'};
-var history_appl = {id: "view_4", template: "history of applications"};
 
-var customers_link = {template: "по нажатию кнопки будет переход на страницу 'Клиенты'"}
-var vendors = {template: "по нажатию кнопки будет переход на страницу 'Поставщики'"}
+var customers_link = {template: "по нажатию кнопки будет переход на страницу 'Клиенты' (админка клиентов)"}
+var vendors = {template: "по нажатию кнопки будет переход на страницу 'Поставщики'(админка поставщиков)"}
 var knowbase = {template: "по нажатию кнопки будет переход на страницу 'База знаний'"}
+var users_link = {template: "по нажатию кнопки будет переход на страницу 'Пользователи' (админка пользователей)"}
 
+function add_str(data) {
+    var len = data.toString(10).length;
+    if (0 < len) data = data + " дн.";
+
+    return data;
+    }
 
 var appl_form_var = [
     {cols: [
@@ -47,6 +53,9 @@ var appl_form_var = [
         },
     {view: "textarea", height: 84, id: "appl_desc", 
         label: "Описание проблемы", value: "Жутко длинное описание проблемы"
+        },
+    {view: "textarea", height: 84, id: "appl_res_desc", 
+        label: "Решение проблемы", value: "Пока не решено"
         }
 
     ];
@@ -55,7 +64,6 @@ var c_appl = {
     view: "fieldset",
     id: "appl_fs",
     label: "Заявка номер 44",
-    //borderless: true,
     body: {
         cols: [
             {rows: [
@@ -123,7 +131,7 @@ var complete = {
                 $$("context_menu").hide();
                 $$("complete_form").reconstruct();
                 }},
-            {view:"button", value:"Отправить", id: "send_result"}
+            {view:"button", value:"Отправить", id: "send_result", hotkey: "s+ctrl", tooltip: "<Ctrl>+S"}
             ]}
         ]
     };
@@ -132,50 +140,84 @@ webix.protoUI({
     name:"activeDataTable" 
 },webix.ui.datatable, webix.ActiveContent);
 
-var my_appl = {id: "view_1", view: "activeDataTable",
-    select: true,
+var history_appl = {id: "view_4", view: "activeDataTable",
+    //select: true,
     navigation: "row",
     select: true,
-    subview: {
-        view: 'form',
-        //height: 35,
-        elements: [
-            {cols: [
-                {view: "button", width: 150, label: "кнопка 1", height: 25, click:function(ii){
-                    var form = this.getFormView();
-                    var values = form.getValues();
-                    var changed = form.getDirtyValues();
-                    var master = form.getMasterView();
-                    console.log(ii);
-                    console.log(form);
-                    console.log(values);
-                    console.log(master);
-                    master.updateItem(values.id, changed);
-                    master.closeSub(values.id)
-                    }},
-                {view: "button", width: 150, label: "кнопка 2", height: 25},
-                {view: "button", width: 150, label: "кнопка 3", height: 25},
-                {view: "button", width: 150, label: "кнопка 4", height: 25},
-                {view: "button", width: 150, label: "кнопка 5", height: 25},
-                {view: "button", width: 150, label: "кнопка 6", height: 25},
-                ]}
-            ]
+    data: upd_history(),
+    resizeColumn:true,
+    fixedRowHeight:false,
+    rowLineHeight:32,
+    rowHeight:32,
+    onContext: {},
+    on:{
+        onSubViewCreate:function(view, item){
+            view.setValues(item);
+            },
+        onBeforeSelect: function(item) {
+            this.addRowCss(item.id, "r_css");
+            },
+        onBeforeUnselect: function(item) {
+            this.removeRowCss(item.id, "r_css");
+            },
+        onBeforeRender: function(d) {
+            var data = d.order
+            var format = webix.Date.strToDate("%d.%m.%Y");
+            data.forEach(function(item, i, data) {
+                var obj = d.getItem(item);
+                var f_date = format(obj.change_date);
+                obj.change_date = format(f_date);
+                });
+            }
         },
+    columns:[
+    { id:"num",
+      sort: "int",
+      css: "num_s",
+      width: 85,
+      header: [{text: "№ заявки", css: 'header_data'},
+        {content:"textFilter"}
+        ]
+        },
+    { id:"change_date",
+      width: 105,
+      format: webix.Date.dateToStr("%d.%m.%Y"),
+      css: "date_s",
+      sort:"date",
+      header: [
+        {text: "Дата", css: 'header_data'},
+        {content: "datepickerFilter"}
+        ]
+    },
+    { id:"client",
+      fillspace: 2,
+      width: 360,
+      sort: "text",
+      header:[
+        {text: "Клиент", css: 'header_data'},
+        {content:"textFilter"}],
+        },
+    { id:"topic",
+      width: 225,
+      fillspace: 1,
+      header: [
+        {text: "Тема", heigth: 18, css: 'header_data'},
+        { content:"selectFilter", height: 18}
+        ]}
+    ]};
+
+
+
+var my_appl = {id: "view_1", view: "activeDataTable",
+    //select: true,
+    navigation: "row",
+    select: true,
     data: upd_my(),
     resizeColumn:true,
     fixedRowHeight:false,
-    rowLineHeight:26,
-    rowHeight:26,
+    rowLineHeight:32,
+    rowHeight:32,
     onContext: {},
-    activeContent: {
-        deleteButton: {
-            id:"deleteButtonId",
-            view:"button",
-            label:"Del",
-            type: "form",
-            width:20
-            }
-        },
     on:{
         onSubViewCreate:function(view, item){
             view.setValues(item);
@@ -201,9 +243,6 @@ var my_appl = {id: "view_1", view: "activeDataTable",
             }
         },
     columns:[
-    //subview row:
-    //{width: 25,
-    //    template: "{common.subrow()}"},
     { id:"num",
       sort: "int",
       css: "num_s",
@@ -251,12 +290,12 @@ var my_appl = {id: "view_1", view: "activeDataTable",
       header:[
         {text: "Клиент", css: 'header_data'},
         {content:"textFilter"}],
-      //template: "<div>#client#</div>" + "<div>{common.deleteButton()}</div>"
         },
     { id:"in_work",
       width: 80,
       css: "num_s",
       sort: "int",
+      format: add_str,
       header: [{text: "В работе", css: 'header_data'},
                {content: "numberFilter"}]
         },
@@ -278,18 +317,9 @@ var all_appl = {id: "view_2", view: "activeDataTable",
     //multiselect: true,
     resizeColumn:true,
     fixedRowHeight:false,
-    rowLineHeight:26,
-    rowHeight:26,
+    rowLineHeight:32,
+    rowHeight:32,
     onContext: {},
-    activeContent: {
-        "deleteButton": {
-            id:"deleteButtonId",
-            view:"button",
-            label:"Del",
-            type: "form",
-            width:20
-            }
-        },
     on:{
         onBeforeSelect: function(item) {
             this.addRowCss(item.id, "r_css");
@@ -384,11 +414,12 @@ var all_appl = {id: "view_2", view: "activeDataTable",
       header:[
         {text: "Клиент", css: 'header_data'},
         {content:"textFilter"}],
-      //template: "<div>#client#</div>" + "<div>{common.deleteButton()}</div>"
         },
     { id:"in_work",
       width: 80,
       css: "num_s",
+      format: add_str,
+      //template: "<div>#in_work# дн.</div>",
       sort: "int",
       header: [{text: "В работе", css: 'header_data'},
                {content: "numberFilter"}]
@@ -412,11 +443,13 @@ var view_cells = [
 
 var buttons = [
     {view:"button", id: '_new_button', type:"imageButton", popup: "pop_send_form", image: './libs/img/add.svg',
-        label: 'Новая заявка', width: 140, tooltip: "Создание новой заявки"},
+        label: 'Новая заявка', width: 140, tooltip: "Создание новой заявки, <Shift>+A", hotkey: "a+shift"},//ctrl"},
     {view:"button", id: '_vendors', type:"form", popup: "pop_vendors_form",
         label: 'Поставщики', width: 120, tooltip: "Список поставщиков"},
     {view:"button", id: '_customers', type:"form", popup: "pop_customers_form",
         label: 'Клиенты', width: 120, tooltip: "Список клиентов"},
+    {view:"button", id: '_users', type:"form", popup: "pop_users_form",
+        label: 'Пользователи', width: 120, tooltip: "Админка пользователей"},
     {view:"button", id: '_knowledge_base', type:"form", popup: "pop_knowbase_form",
         label: 'База знаний', width: 120, tooltip: "Наиболее частые проблемы и их решения"},
     {},
@@ -424,7 +457,7 @@ var buttons = [
         label: "Обновить заявки", width: 160},
     {view:"button", id: "_filters", type:"imageButton", image: './libs/img/filter.svg',
         label: "Сбросить фильтры", width: 180},
-    {view:"button", id: "_excel", type:"imageButton", image: './libs/img/sync1.svg',
+    {view:"button", id: "_excel", type:"imageButton", image: './libs/img/excel.svg',
         label: "Экспорт в Excel", width: 180}
     ];
 
@@ -444,7 +477,7 @@ var buttons_2floor = [
     ];
 
 var bottom = [
-    {template: 'bottom' + '&nbsp;<span class="serv_info">' + location.hostname + "</span>",
+    {template: 'Вы находитесь на сервере: ' + '&nbsp;<span class="serv_info">' + location.hostname + "</span>",
         height: 30, id: "foot1"},
     {}
 ];
@@ -483,17 +516,16 @@ function set_appl_info(item) {
     $$("appl_author").setValue(item.create_user);
     $$("appl_topic").setValue(item.topic);
     $$("appl_desc").setValue(item.description);
+    console.log(item.res_desc);
+    $$("appl_res_desc").setValue(item.res_desc);
     $$("appl_form").refresh();
     }
 
 function open_appl(view, id) {
-    
-    //var c_item = view.getItem(id.row);
     var c_item = view.getSelectedItem();
     set_appl_info(c_item);
     $$("pop_application").show();
     };
-
 
 //main ui's
 webix.ui({
@@ -508,10 +540,16 @@ webix.ui({
             {view: "label", label: "Манускрипт солюшн: CRM", css: 'ms-logo-text'
                 },
             {},
-            {view: "label", label: "Пользователь: " + user, css: 'user-text'
+            {view: "label", label: "Пользователь: " + user, css: 'user-text', width: 250
                 },
-            {view:"button", id: '_login', type:"form", css: 'buttons',
-                label: 'Войти', width: 120}
+            {view:"button", id: "_logout", type:"form",
+                label: 'Выйти', width: 120, click: function() {
+                    deleteCookie('user');
+                    deleteCookie('admin');
+                    deleteCookie('auth_key');
+                    location.reload();
+                    }
+                }
             ]},
         {cols: [
             {},
@@ -543,11 +581,6 @@ webix.ui({
                 this.hide();
             } else {
                 var item = $$(cv).getSelectedItem();
-                if (item.status === 'Назначена') {
-                    $$('_to_work').enable();
-                } else {
-                    $$('_to_work').disable();
-                };
                 if (admin) {
                     $$('_order').enable();
                     $$('_archive').enable();
@@ -557,8 +590,24 @@ webix.ui({
                     $$('_archive').disable();
                     $$('_delete').disable();
                 };
-                console.log(item)
-                webix.message('selected')
+                if (item.status === 'Назначена') {
+                    $$('_to_work').enable();
+                } else {
+                    $$('_to_work').disable();
+                };
+                if (item.status === 'Решено' || item.status === 'Не решено') {
+                    $$('_to_work').enable();
+                    $$('_complete').disable();
+                    $$('_order').disable();
+                    $$('_ch_alert').disable();
+                } else {
+                    $$('_complete').enable();
+                    $$('_order').enable();
+                    $$('_ch_alert').enable();
+                };
+
+                //console.log(item)
+                //webix.message('selected')
             };
             }
         },
@@ -611,6 +660,12 @@ webix.ui({
 
 webix.ui({
     view: "popup",
+    id: "pop_users_form",
+    body: users_link
+    });
+
+webix.ui({
+    view: "popup",
     id: "pop_ch_alert_list",
     body: {
         view: "list",
@@ -631,8 +686,8 @@ webix.ui({
         view: "list",
         id: "ch_users_list",
         data: users,
-        height: 180,
-        width: 100,
+        height: 240,
+        width: 140,
         navigation: true,
         //scroll: false,
         template: "#display_name#"
@@ -673,7 +728,8 @@ $$("ch_users_list").attachEvent("onItemClick", function(i_id, ev, val){
     item["change_date"] = new Date(); //новое значение
     $$("context_menu").hide();
     var params = {"update_row": item};
-    webix.ajax().post(req_url, params, function(text, data){
+    request(req_url, params).then(function(data){
+    //webix.ajax().post(req_url, params, function(text, data){
         item = data.json()[0];
         $$(cv).updateItem(id, item)
         $$(cv).unselectAll();
@@ -691,7 +747,8 @@ $$('_to_work').attachEvent("onItemClick", function(){
     item["change_date"] = new Date(); //новое значение
     item["to_work_date"] = new Date(); //новое значение
     var params = {"update_row": item};
-    webix.ajax().post(req_url, params, function(text, data){
+    request(req_url, params).then(function(data){
+    //webix.ajax().post(req_url, params, function(text, data){
         item = data.json()[0];
         $$(cv).updateItem(id, item)
         $$(cv).unselectAll();
@@ -717,7 +774,8 @@ $$("ch_alert_list").attachEvent("onItemClick", function(i_id, ev, val){
     item["alert"] = alert; //новое значение
     $$("context_menu").hide();
     var params = {"update_row": item};
-    webix.ajax().post(req_url, params, function(text, data){
+    request(req_url, params).then(function(data){
+    //webix.ajax().post(req_url, params, function(text, data){
         item = data.json()[0];
         $$(cv).updateItem(id, item)
         $$(cv).unselectAll();
@@ -734,7 +792,8 @@ $$('_archive').attachEvent("onItemClick", function(){
     item["change_date"] = new Date(); //новое значение
     item["archived"] = true;
     var params = {"update_row": item};
-    webix.ajax().post(req_url, params, function(text, data){
+    request(req_url, params).then(function(data){
+    //webix.ajax().post(req_url, params, function(text, data){
         item = data.json()[0];
         $$(cv).remove(id);
         $$(cv).unselectAll();
@@ -752,7 +811,8 @@ $$('_delete').attachEvent("onItemClick", function(){
     item["change_date"] = new Date(); //новое значение
     item["deleted"] = true;
     var params = {"update_row": item};
-    webix.ajax().post(req_url, params, function(text, data){
+    request(req_url, params).then(function(data){
+    //webix.ajax().post(req_url, params, function(text, data){
         item = data.json()[0];
         $$(cv).remove(id);
         $$(cv).unselectAll();
@@ -763,11 +823,11 @@ $$('_delete').attachEvent("onItemClick", function(){
 
 $$("view_2").attachEvent("onBeforeFilter", function(id, value, config){
     if (id==='change_date') {
-        console.log(id);
-        console.log(value);
-        console.log(config);
+        //console.log(id);
+        //console.log(value);
+        //console.log(config);
     }
-})
+    })
 
 
 $$('_complete').attachEvent("onItemClick", function(){
@@ -791,9 +851,11 @@ $$("send_result").attachEvent("onItemClick", function(){
         item['status'] = (form_values['c_success'] === 1) ? "Решено":
             "Не решено";
         item['res_desc'] = form_values['c_description'];
+        console.log(item['res_desc']);
         $$("complete_form").reconstruct();
         var params = {"update_row": item};
-        webix.ajax().post(req_url, params, function(text, data){
+        request(req_url, params).then(function(data){
+        //webix.ajax().post(req_url, params, function(text, data){
             item = data.json()[0];
             $$(cv).updateItem(id, item)
             $$(cv).unselectAll();
@@ -817,14 +879,19 @@ $$("view_1").attachEvent("onItemDblClick", function(id, e){
     });
 
 $$("view_2").attachEvent("onItemDblClick", function(id, e){
-    console.log(this)
     open_appl($$("view_2"));
+    });
+
+$$("view_1").attachEvent("onKeyPress", function(code, e){
+    if (13 === code) {
+        //var ci = $$("view_1").getSelectedItem();
+        open_appl($$("view_1"));
+    }
     });
 
 $$("view_2").attachEvent("onKeyPress", function(code, e){
     if (13 === code) {
-        var ci = $$("view_2").getSelectedItem();
-        console.log(ci)
+        //var ci = $$("view_2").getSelectedItem();
         open_appl($$("view_2"));
     }
     });
@@ -834,6 +901,7 @@ $$("close_button").attachEvent("onItemClick", function(){
     });
 
 $$("_filters").attachEvent("onItemClick", function(){
+    webix.message('Пока работает не так, как надо. Чуть позже исправим.');
     var cv = get_current_view();
     var columns = $$(cv)._columns
     columns.forEach(function(item, i, data) {
@@ -843,7 +911,6 @@ $$("_filters").attachEvent("onItemClick", function(){
     });
 
 $$("_excel").attachEvent("onItemClick", function(){
-    //не работает, так как в заголовке есть наш ключ x-api-key
     var cv = get_current_view();
     webix.toExcel($$(cv), {
         filename: "requests", // for filename
@@ -855,15 +922,16 @@ $$("_excel").attachEvent("onItemClick", function(){
         //});
     });
 
+
 $$("_refresh").attachEvent("onItemClick", function(){
     upd_my();
     upd_all();
     //upd_mass();
-    //upd_history();
+    upd_history();
     $$("view_1").parse($$("my_upd"));
     $$("view_2").parse($$("all_upd"));
     //$$("view_3").parse($$("mass_upd"));
-    //$$("view_4").parse($$("hist_upd"));
+    $$("view_4").parse($$("hist_upd"));
     });
 
 function upd_views() {
@@ -871,9 +939,13 @@ function upd_views() {
     if (cv === "view_1") {
         upd_all();
         $$("view_2").parse($$("all_upd"));
-    } else {
+        upd_history();
+        $$("view_4").parse($$("hist_upd"));
+    } else if (cv === "view_2"){
         upd_my();
         $$("view_1").parse($$("my_upd"));
+        upd_history();
+        $$("view_4").parse($$("hist_upd"));
     }
     };
 

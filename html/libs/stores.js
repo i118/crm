@@ -1,18 +1,30 @@
 "use strict";
 
-var req_url = "/crm_logic";
-var auth_key = "11";
-var user = "Краснов";
-var admin = false;
+var user = getCookie("user");
+var admin = getCookie("admin");
+var auth_key = getCookie("auth_key");
 
 //webix events attaches
 webix.i18n.setLocale('ru-RU');
-webix.attachEvent("onBeforeAjax", 
-    function(mode, url, data, request, headers, files, promise){
-        headers["Content-type"] = "application/json";
-        headers["x-api-key"] = auth_key;
-        }
-    );
+//webix.attachEvent("onBeforeAjax", 
+    //function(mode, url, data, request, headers, files, promise){
+        //headers["Content-type"] = "application/json";
+        //headers["x-api-key"] = auth_key;
+        //}
+    //);
+
+
+function request(url, params){
+    var tt = webix.ajax().headers({'x-api-key': 'key', 'Content-type': 'application/json'}).post(url, params)
+    //console.log(tt);
+    return tt
+    };
+
+
+//request(req_url, params).then(function(data){
+    //data = data.json();
+    //console.log(data)
+    //});
 
 var clients = new webix.DataCollection({
     id: "clients_dc",
@@ -21,9 +33,10 @@ var clients = new webix.DataCollection({
         source: req_url,
         load: function(view, callback) {
             var params = {"get_clients": user};
-            webix.ajax().post(this.source, params)
-                .then(function(data){
-                    webix.ajax.$callback(view, callback, "", data, -1);
+            request(this.source, params).then(function(data){
+            //webix.ajax().post(this.source, params)
+                //.then(function(data){
+                    //webix.ajax.$callback(view, callback, "", data, -1);
                     $$("clients_dc").clearAll();
                     data = data.json();
                     $$("clients_dc").parse(data);
@@ -39,9 +52,10 @@ var alerts = new webix.DataCollection({
         source: req_url,
         load: function(view, callback) {
             var params = {"get_alerts": user};
-            webix.ajax().post(this.source, params)
-                .then(function(data){
-                    webix.ajax.$callback(view, callback, "", data, -1);
+            request(this.source, params).then(function(data){
+            //webix.ajax().post(this.source, params)
+                //.then(function(data){
+                    //webix.ajax.$callback(view, callback, "", data, -1);
                     $$("alerts_dc").clearAll();
                     data = data.json();
                     $$("alerts_dc").parse(data);
@@ -57,9 +71,10 @@ var users = new webix.DataCollection({
         source: req_url,
         load: function(view, callback) {
             var params = {"get_users": user};
-            webix.ajax().post(this.source, params)
-                .then(function(data){
-                    webix.ajax.$callback(view, callback, "", data, -1);
+            request(this.source, params).then(function(data){
+            //webix.ajax().post(this.source, params)
+                //.then(function(data){
+                    //webix.ajax.$callback(view, callback, "", data, -1);
                     $$("users_dc").clearAll();
                     data = data.json();
                     $$("users_dc").parse(data);
@@ -75,9 +90,10 @@ var topics = new webix.DataCollection({
         source: req_url,
         load: function(view, callback) {
             var params = {"get_topics": user};
-            webix.ajax().post(this.source, params)
-                .then(function(data){
-                    webix.ajax.$callback(view, callback, "", data, -1);
+            request(this.source, params).then(function(data){
+            //webix.ajax().post(this.source, params)
+                //.then(function(data){
+                    //webix.ajax.$callback(view, callback, "", data, -1);
                     $$("topics_dc").clearAll();
                     data = data.json();
                     $$("topics_dc").parse(data);
@@ -85,6 +101,29 @@ var topics = new webix.DataCollection({
                 }
         },
     });
+
+function upd_history() {
+    var tt = new webix.DataCollection({
+        id: "hist_upd",
+        url: {
+            $proxy:true,
+            source: req_url,
+            load: function(view, callback) {
+                var params = {"get_hist": user};
+                request(this.source, params).then(function(data){
+                //webix.ajax().post(this.source, params)
+                    //.then(function(data){
+                        //webix.ajax.$callback(view, callback, "", data, -1);
+                        $$("hist_upd").clearAll();
+                        data = data.json();
+                        $$("hist_upd").parse(data);
+                        });
+                    }
+            },
+        });
+    return tt
+    };
+
 
 function upd_all() {
     var tt = new webix.DataCollection({
@@ -94,9 +133,10 @@ function upd_all() {
             source: req_url,
             load: function(view, callback) {
                 var params = {"get_all": user};
-                webix.ajax().post(this.source, params)
-                    .then(function(data){
-                        webix.ajax.$callback(view, callback, "", data, -1);
+                request(this.source, params).then(function(data){
+                //webix.ajax().post(this.source, params)
+                    //.then(function(data){
+                        //webix.ajax.$callback(view, callback, "", data, -1);
                         $$("all_upd").clearAll();
                         data = data.json();
                         $$("all_upd").parse(data);
@@ -115,9 +155,10 @@ function upd_my() {
             source: req_url,
             load: function(view, callback) {
                 var params = {"get_my": user};
-                webix.ajax().post(this.source, params)
-                    .then(function(data){
-                        webix.ajax.$callback(view, callback, "", data, -1);
+                request(this.source, params).then(function(data){
+                //webix.ajax().post(this.source, params)
+                    //.then(function(data){
+                        //webix.ajax.$callback(view, callback, "", data, -1);
                         $$("my_upd").clearAll();
                         data = data.json();
                         $$("my_upd").parse(data);
@@ -140,9 +181,10 @@ function upd_cli_apps() {
                 item = $$(cv).getSelectedItem();
                 //console.log(item);
                 var params = {"get_reqs": item};
-                webix.ajax().post(this.source, params)
-                    .then(function(data){
-                        webix.ajax.$callback(view, callback, "", data, -1);
+                request(this.source, params).then(function(data){
+                //webix.ajax().post(this.source, params)
+                    //.then(function(data){
+                        //webix.ajax.$callback(view, callback, "", data, -1);
                         $$("cli_apps_upd").clearAll();
                         data = data.json();
                         $$("cli_apps_upd").parse(data);
@@ -153,21 +195,11 @@ function upd_cli_apps() {
     return cli_apps
     };
 
-//для образца оставим
-var all_appls = new webix.DataCollection({
-    id: "all_dc",
-    url: {
-        $proxy:true,
-        source: req_url,
-        load: function(view, callback) {
-            var params = {"get_all": user};
-            webix.ajax().post(this.source, params)
-                .then(function(data){
-                    webix.ajax.$callback(view, callback, "", data, -1);
-                    $$("all_dc").clearAll();
-                    data = data.json();
-                    $$("all_dc").parse(data);
-                    });
-                }
-        },
-    });
+
+
+    
+
+
+
+
+
