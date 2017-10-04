@@ -47,7 +47,24 @@ join topics
     on topics.uid = requests.topic
 join users as uu
     on uu.uid = requests.ordered
-where requests.archived = false and requests.deleted = false
+where requests.archived = false and requests.deleted = false and requests.mass = false
+order by num desc;
+""",
+'sql_mass': """select num, alerts.name, create_date, to_work_date, status.name, users.display_name, clients.display_name, topics.name, uu.display_name, description, change_date, current_date, res_desc
+from requests
+join alerts
+    on alerts.uid = requests.alert
+join users
+    on users.uid = requests.create_user
+join status
+    on status.uid = requests.status
+join clients
+    on clients.uid = requests.client
+join topics
+    on topics.uid = requests.topic
+join users as uu
+    on uu.uid = requests.ordered
+where requests.archived = false and requests.deleted = false and requests.mass = true
 order by num desc;
 """,
 'sql_hist': """select num, change_date, clients.display_name, topics.name
@@ -83,12 +100,12 @@ join users as uu
 where requests.archived = false and requests.deleted = false and requests.ordered = (select uid from users where display_name = '{0}')
 order by num desc;
 """,
-'sql_ins': """insert into requests (num, alert, create_date, to_work_date, status, create_user, client, topic, ordered, description, archived, deleted, change_date, res_desc) values
+'sql_ins': """insert into requests (num, alert, create_date, to_work_date, status, create_user, client, topic, ordered, description, archived, deleted, change_date, res_desc, mass) values
     (default, {0}, '{1}', '1971-01-01',
     (select uid from status where name = 'Заведена'),
     (select uid from users where display_name = '{3}'),
     {4}, {5}, 0, '{6}',
-    false, false, current_date, '{7}')
+    false, false, current_date, '{7}', {8})
     ON CONFLICT DO NOTHING
     RETURNING num;
 """,
@@ -109,26 +126,32 @@ order by num desc;
     where num = {9}
     returning num;
 """,
-'sql_select_res': """select num, alerts.name, create_date, to_work_date, status.name, users.display_name, clients.display_name, topics.name, uu.display_name, description, change_date, current_date, res_desc
-from requests
+'sql_ret' : """update requests
+    set archived = false,
+        change_date = current_date
+    where num = {0}
+    returning num;
+""",
+'sql_select_res': """select num, alerts.name, r.create_date, r.to_work_date, status.name, users.display_name, customers.display_name, topics.name, uu.display_name, r.description, r.change_date, current_date, r.res_desc, r.mass
+from requests as r
 join alerts
-    on alerts.uid = requests.alert
+    on alerts.uid = r.alert
 join users
-    on users.uid = requests.create_user
+    on users.uid = r.create_user
 join status
-    on status.uid = requests.status
-join clients
-    on clients.uid = requests.client
+    on status.uid = r.status
+join customers
+    on customers.uid = r.client
 join topics
-    on topics.uid = requests.topic
+    on topics.uid = r.topic
 join users as uu
-    on uu.uid = requests.ordered
-where requests.archived = false and requests.deleted = false and num = {0};
+    on uu.uid = r.ordered
+where r.archived = false and r.deleted = false and num = {0};
     """
         }
 
     def get_topics(self, params=None, x_hash=None):
-        sql = "select uid, name from topics"
+        sql = "select uid, name from topics where uid > 0;"
         cur = self._make_sql(sql)
         rl = []
         for row in cur:
@@ -154,7 +177,7 @@ where requests.archived = false and requests.deleted = false and num = {0};
         return ret_value
 
     def get_users(self, params=None, x_hash=None):
-        sql = "select uid, display_name from users where active=true and deleted=false"
+        sql = "select uid, display_name from users where active=true and deleted=false and uid > 0;"
         cur = self._make_sql(sql)
         rl = []
         for row in cur.fetchall():
@@ -167,13 +190,45 @@ where requests.archived = false and requests.deleted = false and num = {0};
         return ret_value
 
     def get_clients(self, params=None, x_hash=None):
-        sql = "select uid, display_name from clients"
+        sql = "select uid, display_name from customers where uid > 0;"
         cur = self._make_sql(sql)
         rl = []
         for row in cur.fetchall():
             re_dict = {}
             re_dict["id"]  = row[0]
             re_dict["display_name"] = row[1]
+            rl.append(re_dict)
+        cur.close()
+        ret_value = json.dumps(rl, ensure_ascii=False)
+        return ret_value
+
+    def get_c_points(self, params=None, x_hash=None):
+        print(params)
+        sql = "select uid, display_name, customer_id from points where uid > 0 and customer_id = {0};".format(params)
+        cur = self._make_sql(sql)
+        rl = []
+        for row in cur.fetchall():
+            re_dict = {}
+            re_dict["id"]  = row[0]
+            re_dict["display_name"] = row[1]
+            re_dict["customer_id"] = row[2]
+            rl.append(re_dict)
+        cur.close()
+        #print(rl)
+        ret_value = json.dumps(rl, ensure_ascii=False)
+
+        #ret_value = json.dumps('ok', ensure_ascii=False)
+        return ret_value
+
+    def get_points(self, params=None, x_hash=None):
+        sql = "select uid, display_name, customer_id from points where uid > 0;"
+        cur = self._make_sql(sql)
+        rl = []
+        for row in cur.fetchall():
+            re_dict = {}
+            re_dict["id"]  = row[0]
+            re_dict["display_name"] = row[1]
+            re_dict["customer_id"] = row[2]
             rl.append(re_dict)
         cur.close()
         ret_value = json.dumps(rl, ensure_ascii=False)
@@ -205,6 +260,28 @@ where requests.archived = false and requests.deleted = false and num = {0};
         #проверяем ключ
         user = params
         cur = self._make_sql(self.sqls['sql_all'])
+        rl = []
+        for row in cur.fetchall():
+            if row[3] < row[2]:
+                work_date = ''
+                in_work_d = ''
+            else:
+                in_work_d = (row[11] - row[3]).days
+                work_date = self._f_date(row[3])
+            qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
+                  "status": row[4], "create_user": row[5], "client": row[6], "in_work": in_work_d, "topic": row[7],
+                  "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10]),
+                  "res_desc": row[12]}
+            rl.append(qw)
+        cur.close()
+        ret_value = json.dumps(rl, ensure_ascii=False)
+        return ret_value
+
+    def get_mass(self, params=None, x_hash=None):
+
+        #проверяем ключ
+        user = params
+        cur = self._make_sql(self.sqls['sql_mass'])
         rl = []
         for row in cur.fetchall():
             if row[3] < row[2]:
@@ -268,16 +345,6 @@ where requests.archived = false and requests.deleted = false and num = {0};
         ret_value = json.dumps(rl, ensure_ascii=False)
         return ret_value
 
-
-    def get_mass(self, params=None, x_hash=None):
-        """
-        получаем массовые заявки (еще бы узнать что это и как выглядят)
-        """
-        #проверяем ключ
-        user = params
-        ret_value = json.dumps(data_3, ensure_ascii=False)
-        return ret_value
-
     def get_history(self, params=None, x_hash=None):
         """
         получаем историю заявок
@@ -292,12 +359,18 @@ where requests.archived = false and requests.deleted = false and num = {0};
         помещем заявку в базу
         """
 
-        #cr_date, _ = params['create_date'].split()
         t_date = params['create_date'].split('.')
         t_date.reverse()
         cr_date = '-'.join(t_date)
-        
-        sql_ins = self.sqls['sql_ins'].format(params['alert'], cr_date, None, params['create_user'], params['client'], params['topic'], params['description'], params['res_desc'])
+        if params['mass'] == 0:
+            mass = False
+            cli = params['client']
+            piont = params['client_point']
+        else:
+            mass = True
+            cli = 0
+            point = 0 
+        sql_ins = self.sqls['sql_ins'].format(params['alert'], cr_date, None, params['create_user'], point, params['topic'], params['description'], params['res_desc'], mass)
         ret = None
         cur = self._make_sql(sql_ins)
         try:
@@ -320,7 +393,7 @@ where requests.archived = false and requests.deleted = false and num = {0};
             work_date = self._f_date(row[3])
         qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
               "status": row[4], "create_user": row[5], "client": row[6], "in_work": str(in_work_d), "topic": row[7],
-              "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10]), "res_desc": row[12]}
+              "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10]), "res_desc": row[12], "mass": row[13]}
         ret.append(qw)
         ret_value = json.dumps(ret, ensure_ascii=False)
         return ret_value
@@ -342,6 +415,16 @@ where requests.archived = false and requests.deleted = false and num = {0};
             print(Err)
         return cur
 
+    def ret_row(self, params=None, x_hash=None):
+        sql_ret = self.sqls['sql_ret'].format(params['num'])
+        cur = self._make_sql(sql_ret)
+        self.con.commit()
+        if cur.fetchone():
+            ret_value = 'ok'
+        else:
+            ret_value = 'err'
+        return json.dumps(ret_value, ensure_ascii=False)
+
     def update_row(self, params=None, x_hash=None):
         """
         делаем апдейт строки таблицы запросов
@@ -361,11 +444,6 @@ where requests.archived = false and requests.deleted = false and num = {0};
             tw_date = '1971-01-01'
         arch = params.get('archived', False)
         deleted = params.get('deleted', False)
-        #if params['res_desc'] == 'None':
-        #    res_desc = params['res_desc']
-        #else:
-        #    res_desc = ''
-
         sql_update = self.sqls['sql_update'].format(params['alert'], cr_date, tw_date, params['status'], params['create_user'],
                    params['client'], params['topic'], params['ordered'], params['description'],
                    params['num'], arch, deleted, params['res_desc'])

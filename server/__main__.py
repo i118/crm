@@ -88,6 +88,7 @@ def application(env):
             args = json.loads(args)
             sys.APPCONF["log"](args)
         except Exception as Err:
+            sys.APPCONF["log"](args, kind='error')
             content = u'not applicable format. use JSON-formated string'
             #print(Err)
         else:

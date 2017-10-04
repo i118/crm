@@ -1,7 +1,5 @@
 "use strict";
 
-var mass_apl = {id: "view_3", template: 'Массовые заявки'};
-
 var customers_link = {template: "по нажатию кнопки будет переход на страницу 'Клиенты' (админка клиентов)"}
 var vendors = {template: "по нажатию кнопки будет переход на страницу 'Поставщики'(админка поставщиков)"}
 var knowbase = {template: "по нажатию кнопки будет переход на страницу 'База знаний'"}
@@ -140,8 +138,111 @@ webix.protoUI({
     name:"activeDataTable" 
 },webix.ui.datatable, webix.ActiveContent);
 
+var mass_apl = {id: "view_3", view: "activeDataTable",
+    navigation: "row",
+    select: true,
+    data: upd_mass(),
+    resizeColumn:true,
+    fixedRowHeight:false,
+    rowLineHeight:32,
+    rowHeight:32,
+    onContext: {},
+    on:{
+        onBeforeSelect: function(item) {
+            this.addRowCss(item.id, "r_css");
+            },
+        onBeforeUnselect: function(item) {
+            this.removeRowCss(item.id, "r_css");
+            },
+        onBeforeRender: function(d) {
+            var data = d.order
+            var format = webix.Date.strToDate("%d.%m.%Y");
+            data.forEach(function(item, i, data) {
+                var obj = d.getItem(item);
+                var f_date = format(obj.change_date);
+                obj.change_date = format(f_date);
+                obj.$css = (obj.alert === "Высокий") ? "high_pr":
+                           (obj.alert === "Средний") ? "med_pr":
+                           (obj.alert === "Низкий") ? "low_pr":
+                           "nothing";
+                });
+            }
+        },
+    columns:[
+    { id:"num",
+      sort: "int",
+      css: "num_s",
+      width: 85,
+      header: [{text: "№ заявки", css: 'header_data'},
+        {content:"textFilter"}
+        ]
+        },
+    { id:"alert",
+      width: 85,
+      sort:"text",
+      header: [
+        {text: "Приоритет", css: 'header_data'},
+        {content:"selectFilter"}
+        ]
+    },
+    { id:"change_date",
+      width: 105,
+      format: webix.Date.dateToStr("%d.%m.%Y"),
+      css: "date_s",
+      sort:"date",
+      header: [
+        {text: "Дата", css: 'header_data'},
+        {content: "datepickerFilter"}
+        ]
+    },
+    { id:"status",
+      width: 100,
+      sort: "text",
+      header: [
+        {text: "Статус", css: 'header_data'},
+        { content:"selectFilter"}
+        ]},
+    { id:"create_user",
+      width: 145,
+      sort: "text",
+      header: [
+        {text: "Создал", css: 'header_data'},
+        { content:"selectFilter"}
+        ]},
+    { id:"ordered",
+      width: 145,
+      sort: "text",
+      header: [
+        {text: "Назначен", css: 'header_data'},
+        { content:"selectFilter"}
+        ]},
+    { id:"description",
+      fillspace: 2,
+      width: 360,
+      sort: "text",
+      header:[
+        {text: "Описание", css: 'header_data'},
+        {content:"textFilter"}],
+        },
+    { id:"in_work",
+      width: 80,
+      css: "num_s",
+      format: add_str,
+      sort: "int",
+      header: [{text: "В работе", css: 'header_data'},
+               {content: "numberFilter"}]
+        },
+    { id:"topic",
+      width: 225,
+      fillspace: 1,
+      header: [
+        {text: "Тема", heigth: 18, css: 'header_data'},
+        { content:"selectFilter", height: 18}
+        ]}
+    ]}
+
+
 var history_appl = {id: "view_4", view: "activeDataTable",
-    //select: true,
     navigation: "row",
     select: true,
     data: upd_history(),
@@ -209,7 +310,6 @@ var history_appl = {id: "view_4", view: "activeDataTable",
 
 
 var my_appl = {id: "view_1", view: "activeDataTable",
-    //select: true,
     navigation: "row",
     select: true,
     data: upd_my(),
@@ -309,7 +409,6 @@ var my_appl = {id: "view_1", view: "activeDataTable",
     ]}
 
 var all_appl = {id: "view_2", view: "activeDataTable",
-    select: true,
     //hover: "myhover",
     navigation: "row",
     select: true,
@@ -443,22 +542,22 @@ var view_cells = [
 
 var buttons = [
     {view:"button", id: '_new_button', type:"imageButton", popup: "pop_send_form", image: './libs/img/add.svg',
-        label: 'Новая заявка', width: 140, tooltip: "Создание новой заявки, <Shift>+A", hotkey: "a+shift"},//ctrl"},
-    {view:"button", id: '_vendors', type:"form", popup: "pop_vendors_form",
-        label: 'Поставщики', width: 120, tooltip: "Список поставщиков"},
-    {view:"button", id: '_customers', type:"form", popup: "pop_customers_form",
-        label: 'Клиенты', width: 120, tooltip: "Список клиентов"},
-    {view:"button", id: '_users', type:"form", popup: "pop_users_form",
-        label: 'Пользователи', width: 120, tooltip: "Админка пользователей"},
-    {view:"button", id: '_knowledge_base', type:"form", popup: "pop_knowbase_form",
-        label: 'База знаний', width: 120, tooltip: "Наиболее частые проблемы и их решения"},
+        label: 'Новая заявка', width: 130, tooltip: "Создание новой заявки, <Ctrl>+A", hotkey: "a+ctrl"},//ctrl"},
+    {view:"button", id: '_vendors', type:"imageButton", popup: "pop_vendors_form", image: './libs/img/supplies.svg',
+        label: 'Поставщики', width: 130, tooltip: "Список поставщиков"},
+    {view:"button", id: '_customers', type:"imageButton", popup: "pop_customers_form", image: './libs/img/customers.svg',
+        label: '   Клиенты', width: 130, tooltip: "Список клиентов"},
+    {view:"button", id: '_users', type:"imageButton", popup: "pop_users_form", image: './libs/img/admin.svg',
+        label: 'Настройки', width: 130, tooltip: "Админка настроек"},
+    {view:"button", id: '_knowledge_base', type:"imageButton", popup: "pop_knowbase_form", image: './libs/img/kn_base.svg',
+        label: 'База знаний', width: 130, tooltip: "Наиболее частые проблемы и их решения"},
     {},
     {view:"button", id: "_refresh", type:"imageButton", image: './libs/img/sync.svg',
-        label: "Обновить заявки", width: 160},
+        label: "Обновить заявки", width: 160, tooltip: "Синхронизация с сервером, <Ctrl>+Q", hotkey: "q+ctrl"},
     {view:"button", id: "_filters", type:"imageButton", image: './libs/img/filter.svg',
-        label: "Сбросить фильтры", width: 180},
+        label: "Сбросить фильтры", width: 160},
     {view:"button", id: "_excel", type:"imageButton", image: './libs/img/excel.svg',
-        label: "Экспорт в Excel", width: 180}
+        label: "Экспорт в Excel", width: 160}
     ];
 
 var buttons_2floor = [
@@ -542,8 +641,8 @@ webix.ui({
             {},
             {view: "label", label: "Пользователь: " + user, css: 'user-text', width: 250
                 },
-            {view:"button", id: "_logout", type:"form",
-                label: 'Выйти', width: 120, click: function() {
+            {view:"button", id: "_logout", type:"imageButton", image: './libs/img/exit.svg',
+                label: 'Выйти', width: 100, click: function() {
                     deleteCookie('user');
                     deleteCookie('admin');
                     deleteCookie('auth_key');
@@ -569,6 +668,28 @@ webix.ui({
         {cols: bottom}
         ]
     });
+
+webix.ui({
+    view:"context",
+    id:"context_arch",
+    height: 60,
+    on: {
+        onShow: function(event) {
+            var cv = get_current_view();
+            var sid = $$(cv).getSelectedId();
+            if (!sid) this.hide();
+            }
+        },
+    body: {
+        view: 'toolbar',
+        rows: [
+            {view: 'button', id: "_return", height: 35, width: 150,
+                label: "Вернуть из архива"
+                }
+            ]
+        }
+    });
+
 
 webix.ui({
     view:"context",
@@ -605,9 +726,6 @@ webix.ui({
                     $$('_order').enable();
                     $$('_ch_alert').enable();
                 };
-
-                //console.log(item)
-                //webix.message('selected')
             };
             }
         },
@@ -618,8 +736,10 @@ webix.ui({
         }
     });
 
+$$("context_menu").attachTo($$("view_3"));
 $$("context_menu").attachTo($$("view_2"));
 $$("context_menu").attachTo($$("view_1"));
+$$("context_arch").attachTo($$("view_4"));
 
 
 webix.ui({
@@ -802,6 +922,22 @@ $$('_archive').attachEvent("onItemClick", function(){
     }
     });
 
+$$("_return").attachEvent("onItemClick", function(){
+    $$("context_arch").hide();
+    var cv = get_current_view();
+    var item = $$(cv).getSelectedItem();
+    var id = $$(cv).getSelectedId();
+    if (item) {
+        var params = {"ret_row": item};
+        request(req_url, params).then(function(data){
+            item = data.json()[0];
+            $$(cv).remove(id);
+            $$(cv).unselectAll();
+            upd_views();
+            });
+        }
+    });
+
 $$('_delete').attachEvent("onItemClick", function(){
     $$("context_menu").hide();
     var cv = get_current_view();
@@ -884,15 +1020,13 @@ $$("view_2").attachEvent("onItemDblClick", function(id, e){
 
 $$("view_1").attachEvent("onKeyPress", function(code, e){
     if (13 === code) {
-        //var ci = $$("view_1").getSelectedItem();
-        open_appl($$("view_1"));
+        $$("view_1").callEvent("onItemDblClick");
     }
     });
 
 $$("view_2").attachEvent("onKeyPress", function(code, e){
     if (13 === code) {
-        //var ci = $$("view_2").getSelectedItem();
-        open_appl($$("view_2"));
+        $$("view_2").callEvent("onItemDblClick");
     }
     });
 
@@ -926,11 +1060,11 @@ $$("_excel").attachEvent("onItemClick", function(){
 $$("_refresh").attachEvent("onItemClick", function(){
     upd_my();
     upd_all();
-    //upd_mass();
+    upd_mass();
     upd_history();
     $$("view_1").parse($$("my_upd"));
     $$("view_2").parse($$("all_upd"));
-    //$$("view_3").parse($$("mass_upd"));
+    $$("view_3").parse($$("mass_upd"));
     $$("view_4").parse($$("hist_upd"));
     });
 
@@ -939,13 +1073,31 @@ function upd_views() {
     if (cv === "view_1") {
         upd_all();
         $$("view_2").parse($$("all_upd"));
+        upd_mass();
+        $$("view_3").parse($$("mass_upd"));
         upd_history();
         $$("view_4").parse($$("hist_upd"));
     } else if (cv === "view_2"){
         upd_my();
         $$("view_1").parse($$("my_upd"));
+        upd_mass();
+        $$("view_3").parse($$("mass_upd"));
         upd_history();
         $$("view_4").parse($$("hist_upd"));
+    } else if (cv === "view_3"){
+        upd_my();
+        $$("view_1").parse($$("my_upd"));
+        upd_all();
+        $$("view_2").parse($$("all_upd"));
+        upd_history();
+        $$("view_4").parse($$("hist_upd"));
+    } else if (cv === "view_4"){
+        upd_my();
+        $$("view_1").parse($$("my_upd"));
+        upd_all();
+        $$("view_2").parse($$("all_upd"));
+        upd_mass();
+        $$("view_3").parse($$("mass_upd"));
     }
     };
 

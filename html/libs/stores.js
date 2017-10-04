@@ -16,15 +16,27 @@ webix.i18n.setLocale('ru-RU');
 
 function request(url, params){
     var tt = webix.ajax().headers({'x-api-key': 'key', 'Content-type': 'application/json'}).post(url, params)
-    //console.log(tt);
     return tt
     };
 
-
-//request(req_url, params).then(function(data){
-    //data = data.json();
-    //console.log(data)
-    //});
+function upd_points() {
+    var points = new webix.DataCollection({
+        id: "points_dc",
+        url: {
+            $proxy:true,
+            source: req_url,
+            load: function(view, callback) {
+                var params = {"get_points": user};
+                request(this.source, params).then(function(data){
+                        $$("points_dc").clearAll();
+                        data = data.json();
+                        $$("points_dc").parse(data);
+                        });
+                    }
+            },
+        });
+        return points;
+    }
 
 var clients = new webix.DataCollection({
     id: "clients_dc",
@@ -162,6 +174,25 @@ function upd_my() {
                         $$("my_upd").clearAll();
                         data = data.json();
                         $$("my_upd").parse(data);
+                        });
+                    }
+            },
+        });
+    return tt
+    };
+
+function upd_mass() {
+    var tt= new webix.DataCollection({
+        id: "mass_upd",
+        url: {
+            $proxy:true,
+            source: req_url,
+            load: function(view, callback) {
+                var params = {"get_mass": user};
+                request(this.source, params).then(function(data){
+                        $$("mass_upd").clearAll();
+                        data = data.json();
+                        $$("mass_upd").parse(data);
                         });
                     }
             },
