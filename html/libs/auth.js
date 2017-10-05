@@ -98,7 +98,7 @@ var auth_form = {
                 filter:filter_combo,
                 body: {
                     template:"#display_name#",
-                    yCount:15,
+                    yCount:10,
                     data: auth_users
                     }
                 },

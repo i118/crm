@@ -33,7 +33,7 @@ class API:
         params = {'dbname': 'crm', 'user': 'ms71', 'password': 'iKoosaishohvekohqua1zociGhiSei6w', 'host': '88.99.236.188', 'port': '30000'}
         self.con = psycopg2.connect(**params)
 
-        self.sqls = {'sql_all': """select num, alerts.name, create_date, to_work_date, status.name, users.display_name, clients.display_name, topics.name, uu.display_name, description, change_date, current_date, res_desc
+        self.sqls = {'sql_all': """select requests.num, alerts.name, requests.create_date, requests.to_work_date, status.name, users.display_name, points.display_name, topics.name, uu.display_name, requests.description, requests.change_date, current_date, requests.res_desc, customers.display_name
 from requests
 join alerts
     on alerts.uid = requests.alert
@@ -41,8 +41,10 @@ join users
     on users.uid = requests.create_user
 join status
     on status.uid = requests.status
-join clients
-    on clients.uid = requests.client
+join points
+    on points.uid = requests.client
+join customers
+    on customers.uid = points.customer_id
 join topics
     on topics.uid = requests.topic
 join users as uu
@@ -50,7 +52,7 @@ join users as uu
 where requests.archived = false and requests.deleted = false and requests.mass = false
 order by num desc;
 """,
-'sql_mass': """select num, alerts.name, create_date, to_work_date, status.name, users.display_name, clients.display_name, topics.name, uu.display_name, description, change_date, current_date, res_desc
+'sql_mass': """select requests.num, alerts.name, requests.create_date, requests.to_work_date, status.name, users.display_name, points.display_name, topics.name, uu.display_name, requests.description, requests.change_date, current_date, requests.res_desc, customers.display_name
 from requests
 join alerts
     on alerts.uid = requests.alert
@@ -58,8 +60,10 @@ join users
     on users.uid = requests.create_user
 join status
     on status.uid = requests.status
-join clients
-    on clients.uid = requests.client
+join points
+    on points.uid = requests.client
+join customers
+    on customers.uid = points.customer_id
 join topics
     on topics.uid = requests.topic
 join users as uu
@@ -67,10 +71,12 @@ join users as uu
 where requests.archived = false and requests.deleted = false and requests.mass = true
 order by num desc;
 """,
-'sql_hist': """select num, change_date, clients.display_name, topics.name
+'sql_hist': """select requests.num, requests.change_date, points.display_name, topics.name, customers.display_name
 from requests
-join clients
-    on clients.uid = requests.client
+join points
+    on points.uid = requests.client
+join customers
+    on customers.uid = points.customer_id
 join topics
     on topics.uid = requests.topic
 where requests.archived = true and requests.deleted = false
@@ -80,10 +86,17 @@ order by num asc;
 from requests
 join topics
     on topics.uid = requests.topic
-where requests.deleted = false and requests.num != {0} and requests.client = (select uid from clients where display_name = '{1}')
+where requests.deleted = false and requests.num != {0} and requests.client = (select uid from points where display_name = '{1}')
 order by num desc;
 """,
-'sql_my': """select num, alerts.name, create_date, to_work_date, status.name, users.display_name, clients.display_name, topics.name, uu.display_name, description, change_date, current_date, res_desc
+'sql_top': """select requests.num, requests.create_date, topics.name, requests.description, current_date, requests.res_desc
+from requests
+join topics
+    on topics.uid = requests.topic
+where requests.deleted = false and requests.num != {0} and requests.topic = (select uid from topics where name = '{1}')
+order by num desc;
+""",
+'sql_my': """select requests.num, alerts.name, requests.create_date, requests.to_work_date, status.name, users.display_name, points.display_name, topics.name, uu.display_name, requests.description, requests.change_date, current_date, requests.res_desc, customers.display_name
 from requests
 join alerts
     on alerts.uid = requests.alert
@@ -91,8 +104,10 @@ join users
     on users.uid = requests.create_user
 join status
     on status.uid = requests.status
-join clients
-    on clients.uid = requests.client
+join points
+    on points.uid = requests.client
+join customers
+    on customers.uid = points.customer_id
 join topics
     on topics.uid = requests.topic
 join users as uu
@@ -115,7 +130,7 @@ order by num desc;
         to_work_date = '{2}',
         status = (select uid from status where name = '{3}'),
         create_user = (select uid from users where display_name = '{4}'),
-        client = (select uid from clients where display_name = '{5}'),
+        client = (select uid from points where display_name = '{5}'),
         topic = (select uid from topics where name = '{6}'),
         ordered = (select uid from users where display_name = '{7}'),
         description = '{8}',
@@ -151,7 +166,7 @@ where r.archived = false and r.deleted = false and num = {0};
         }
 
     def get_topics(self, params=None, x_hash=None):
-        sql = "select uid, name from topics where uid > 0;"
+        sql = "select uid, name from topics where uid > 0 order by name asc;"
         cur = self._make_sql(sql)
         rl = []
         for row in cur:
@@ -164,7 +179,7 @@ where r.archived = false and r.deleted = false and num = {0};
         return ret_value
 
     def get_alerts(self, params=None, x_hash=None):
-        sql = "select uid, name from alerts;"
+        sql = "select uid, name from alerts order by uid asc;"
         cur = self._make_sql(sql)
         rl = []
         for row in cur.fetchall():
@@ -177,7 +192,7 @@ where r.archived = false and r.deleted = false and num = {0};
         return ret_value
 
     def get_users(self, params=None, x_hash=None):
-        sql = "select uid, display_name from users where active=true and deleted=false and uid > 0;"
+        sql = "select uid, display_name from users where active=true and deleted=false and uid > 0 order by display_name asc;"
         cur = self._make_sql(sql)
         rl = []
         for row in cur.fetchall():
@@ -190,7 +205,7 @@ where r.archived = false and r.deleted = false and num = {0};
         return ret_value
 
     def get_clients(self, params=None, x_hash=None):
-        sql = "select uid, display_name from customers where uid > 0;"
+        sql = "select uid, display_name from customers where uid > 0 order by display_name asc;"
         cur = self._make_sql(sql)
         rl = []
         for row in cur.fetchall():
@@ -203,8 +218,8 @@ where r.archived = false and r.deleted = false and num = {0};
         return ret_value
 
     def get_c_points(self, params=None, x_hash=None):
-        print(params)
-        sql = "select uid, display_name, customer_id from points where uid > 0 and customer_id = {0};".format(params)
+        #print(params)
+        sql = "select uid, display_name, customer_id from points where uid > 0 and customer_id = {0} order by display_name asc;".format(params)
         cur = self._make_sql(sql)
         rl = []
         for row in cur.fetchall():
@@ -214,14 +229,13 @@ where r.archived = false and r.deleted = false and num = {0};
             re_dict["customer_id"] = row[2]
             rl.append(re_dict)
         cur.close()
-        #print(rl)
         ret_value = json.dumps(rl, ensure_ascii=False)
 
         #ret_value = json.dumps('ok', ensure_ascii=False)
         return ret_value
 
     def get_points(self, params=None, x_hash=None):
-        sql = "select uid, display_name, customer_id from points where uid > 0;"
+        sql = "select uid, display_name, customer_id from points where uid > 0 order by display_name asc;"
         cur = self._make_sql(sql)
         rl = []
         for row in cur.fetchall():
@@ -230,6 +244,23 @@ where r.archived = false and r.deleted = false and num = {0};
             re_dict["display_name"] = row[1]
             re_dict["customer_id"] = row[2]
             rl.append(re_dict)
+        cur.close()
+        ret_value = json.dumps(rl, ensure_ascii=False)
+        return ret_value
+
+    def get_reqs_by_topic(self, params=None, x_hash=None):
+        """
+        получаем все запросы с заданной темой для массовых заявок
+        """
+        topic = params['topic']
+        m_num = params['num']
+        sql_top = self.sqls['sql_top'].format(m_num, topic)
+        cur = self._make_sql(sql_top)
+        rl = []
+        for row in cur.fetchall():
+            qw = {"num": row[0], "create_date": self._f_date(row[1]), 
+                  "topic": row[2], "description" : row[3], "result_desc": row[5]}
+            rl.append(qw)
         cur.close()
         ret_value = json.dumps(rl, ensure_ascii=False)
         return ret_value
@@ -239,10 +270,9 @@ where r.archived = false and r.deleted = false and num = {0};
         получаем все запросы по заданному клиенту
         """
         #проверяем ключ
-        #user = params
-        cli = params['client']
+        point = params['point']
         m_num = params['num']
-        sql_cli = self.sqls['sql_cli'].format(m_num, cli)
+        sql_cli = self.sqls['sql_cli'].format(m_num, point)
         cur = self._make_sql(sql_cli)
         rl = []
         for row in cur.fetchall():
@@ -269,9 +299,9 @@ where r.archived = false and r.deleted = false and num = {0};
                 in_work_d = (row[11] - row[3]).days
                 work_date = self._f_date(row[3])
             qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
-                  "status": row[4], "create_user": row[5], "client": row[6], "in_work": in_work_d, "topic": row[7],
+                  "status": row[4], "create_user": row[5], "client": row[13], "in_work": in_work_d, "topic": row[7],
                   "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10]),
-                  "res_desc": row[12]}
+                  "res_desc": row[12], "point": row[6]}
             rl.append(qw)
         cur.close()
         ret_value = json.dumps(rl, ensure_ascii=False)
@@ -291,9 +321,9 @@ where r.archived = false and r.deleted = false and num = {0};
                 in_work_d = (row[11] - row[3]).days
                 work_date = self._f_date(row[3])
             qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
-                  "status": row[4], "create_user": row[5], "client": row[6], "in_work": in_work_d, "topic": row[7],
+                  "status": row[4], "create_user": row[5], "client": row[13], "in_work": in_work_d, "topic": row[7],
                   "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10]),
-                  "res_desc": row[12]}
+                  "res_desc": row[12], "point": row[6]}
             rl.append(qw)
         cur.close()
         ret_value = json.dumps(rl, ensure_ascii=False)
@@ -309,7 +339,7 @@ where r.archived = false and r.deleted = false and num = {0};
         rl = []
         for row in cur.fetchall():
             qw = {"num": row[0], "change_date": self._f_date(row[1]),
-                  "client": row[2], "topic": row[3]
+                  "client": row[4], "topic": row[3], "point": row[2]
                   }
             rl.append(qw)
         cur.close()
@@ -337,26 +367,42 @@ where r.archived = false and r.deleted = false and num = {0};
                 in_work_d = (row[11] - row[3]).days
                 work_date = self._f_date(row[3])
             qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
-                  "status": row[4], "create_user": row[5], "client": row[6], "in_work": in_work_d, "topic": row[7],
+                  "status": row[4], "create_user": row[5], "client": row[13], "in_work": in_work_d, "topic": row[7],
                   "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10]),
-                  "res_desc": row[12]}
+                  "res_desc": row[12], 'point': row[6]}
             rl.append(qw)
         cur.close()
         ret_value = json.dumps(rl, ensure_ascii=False)
         return ret_value
 
-    def get_history(self, params=None, x_hash=None):
+    def get_item(self, params=None, x_hash=None):
         """
-        получаем историю заявок
+        get single item
         """
-        #проверяем ключ
-        user = params
-        ret_value = json.dumps(data_4, ensure_ascii=False)
+        num = params
+        cur = self._make_sql(self.sqls['sql_select_res'].format(int(num)))
+        ret = []
+        row = cur.fetchone()
+        cur.close()
+        if not row:
+            return json.dumps('error', ensure_ascii=False)
+        if row[3] < row[2]:
+            work_date = ''
+            in_work_d = ''
+        else:
+            in_work_d = (row[11] - row[3]).days
+            work_date = self._f_date(row[3])
+        qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
+              "status": row[4], "create_user": row[5], "client": row[6], "in_work": str(in_work_d), "topic": row[7],
+              "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10]), "res_desc": row[12], "mass": row[13]}
+        ret.append(qw)
+        ret_value = json.dumps(ret, ensure_ascii=False)
         return ret_value
+
 
     def put_apply(self, params=None, x_hash=None):
         """
-        помещем заявку в базу
+        помещаем заявку в базу
         """
 
         t_date = params['create_date'].split('.')
@@ -365,7 +411,7 @@ where r.archived = false and r.deleted = false and num = {0};
         if params['mass'] == 0:
             mass = False
             cli = params['client']
-            piont = params['client_point']
+            point = params['point']
         else:
             mass = True
             cli = 0
@@ -400,7 +446,6 @@ where r.archived = false and r.deleted = false and num = {0};
 
         
         num = ret[0] if ret else 0
-        #возвращвем выборку с этой строкой и добавляем его в наш датасторе на клиенте - доделать!!!!!!!!!!!!!!!
         ret_value = json.dumps(num, ensure_ascii=False)
         return ret_value
 
@@ -445,7 +490,7 @@ where r.archived = false and r.deleted = false and num = {0};
         arch = params.get('archived', False)
         deleted = params.get('deleted', False)
         sql_update = self.sqls['sql_update'].format(params['alert'], cr_date, tw_date, params['status'], params['create_user'],
-                   params['client'], params['topic'], params['ordered'], params['description'],
+                   params['point'], params['topic'], params['ordered'], params['description'],
                    params['num'], arch, deleted, params['res_desc'])
         ret = None
         cur = self._make_sql(sql_update)

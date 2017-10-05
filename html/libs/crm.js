@@ -3,59 +3,144 @@
 var customers_link = {template: "по нажатию кнопки будет переход на страницу 'Клиенты' (админка клиентов)"}
 var vendors = {template: "по нажатию кнопки будет переход на страницу 'Поставщики'(админка поставщиков)"}
 var knowbase = {template: "по нажатию кнопки будет переход на страницу 'База знаний'"}
-var users_link = {template: "по нажатию кнопки будет переход на страницу 'Пользователи' (админка пользователей)"}
+var users_link = {template: "по нажатию кнопки будет переход на страницу 'Пользователи' (админка пользователей, тем и пр.)"}
 
 function add_str(data) {
     var len = data.toString(10).length;
     if (0 < len) data = data + " дн.";
-
     return data;
     }
 
+var appl_from_mass = [
+    {cols: [
+        {view: "text", labelPosition: "left", readonly: true, id: "m_appl_work",
+            label: "В работе с", value: "10.10.1999", height: 30, labelWidth: 70
+            },
+        {view: "text", labelPosition: "left", readonly: true, id: "m_appl_ch",
+            label: "Последнее изменение", value: "10.10.1999", height: 30, labelWidth: 100
+            }
+        ]},
+    {cols: [
+        {view: "text", labelPosition: "left", readonly: true, id: "m_appl_stat",
+            label: "Статус", value: "Заведена", height: 30
+            },
+        {view: "text", labelPosition: "left", id: "m_appl_alert",
+            label: "Приоритет", value: "Обычный", height: 30, labelWidth: 100
+            }
+        ]},
+    {cols: [
+        {view: "text", readonly: true, id: "m_appl_author",
+            label: "Автор запроса", value: "Овсянников", height: 48
+            },
+        {view: "text", id: "m_appl_ordered",
+            label: "Назначен", value: "Овсянников", height: 48
+            }
+        ]},
+    {view: "text", id: "m_appl_topic",
+        label: "Тема", value: "Не работает", height: 48
+        },
+    {view: "textarea", height: 256, id: "m_appl_desc", 
+        label: "Описание проблемы", value: "Жутко длинное описание проблемы"
+        },
+    {view: "textarea", height: 256, id: "m_appl_res_desc", 
+        label: "Решение проблемы", value: "Пока не решено"
+        }
+    ];
+
+
+var mass_appl = {
+    view: "fieldset",
+    id: "appl_mass_fs",
+    label: "Заявка номер 45",
+    body: {
+        cols: [
+            {rows: [
+                {view: "form",
+                    id:"appl_form_mass",
+                    width: 500,
+                    height: 600,
+                    //readonly: true,
+                    disabled: true,
+                    elementsConfig:{
+                        labelWidth: 50,
+                        labelPosition: "top",
+                        css: "shrink"
+                        },
+                    elements: appl_from_mass
+                    },
+                {cols: [
+                    {},
+                    {view:"button", type:"form", tooltip: "Нажать для редактирования заявки. пока недоступно", //disabled: true,
+                        label: 'Редактировать', width: 120},
+                    {view:"button", id: 'close_button_mass', type:"form", 
+                        label: 'Закрыть', width: 100}
+                    ]}
+            ]},
+            {view: "list",
+                id: "topic_mass_list",
+                width: 550,
+                tooltip: {
+                    template: "<div> <span class='f_list_cl_2'>Описание: </span> <span class='f_list_cl_txt'>#description#</span></div>" +
+                          "<div> <span class='f_list_cl_2'>Решение: </span> <span class='f_list_cl_txt'>#result_desc#</span></div>"
+                    },
+                type: {
+                    css: 'f_list_cl',
+                    height: "auto",
+                    },
+                navigation: true,
+                scroll: true,
+                template: "<div> <span class='f_list_cl'>Заявка номер: </span> <span class='f_list_cl_txt'>#num#</span>  <span class='f_list_cl_2'>от: </span> <span class='f_list_cl_txt'>#create_date#</span></div>" +
+                          "<div> <span class='f_list_cl_2'>Описание: </span> <span class='f_list_cl_txt'>#description#</span></div>" +
+                          "<div> <span class='f_list_cl_2'>Решение: </span> <span class='f_list_cl_txt'>#result_desc#</span></div>"
+                }
+        ]
+        }
+    };
+
+
 var appl_form_var = [
     {cols: [
-        {view: "text", labelPosition: "left", readonly: true, id: "appl_cre",
-            label: "Создана", value: "10.10.1999"
-            },
+        //{view: "text", labelPosition: "left", readonly: true, id: "appl_cre",
+            //label: "Создана", value: "10.10.1999", height: 25,
+            //},
         {view: "text", labelPosition: "left", readonly: true, id: "appl_work",
-            label: "В работе с", value: "10.10.1999"
+            label: "В работе с", value: "10.10.1999", height: 30, labelWidth: 70
             },
         {view: "text", labelPosition: "left", readonly: true, id: "appl_ch",
-            label: "Последнее изменение", value: "10.10.1999"
+            label: "Последнее изменение", value: "10.10.1999", height: 30, labelWidth: 100
             }
         ]},
     {cols: [
         {view: "text", labelPosition: "left", readonly: true, id: "appl_stat",
-            label: "Статус", value: "Заведена"
+            label: "Статус", value: "Заведена", height: 30
             },
         {view: "text", labelPosition: "left", id: "appl_alert",
-            label: "Приоритет", value: "Обычный"
+            label: "Приоритет", value: "Обычный", height: 30, labelWidth: 100
             }
         ]},
     {view: "text", id: "appl_cli",
-        label: "Организация", value: "Аптека"
+        label: "Организация", value: "Аптека", height: 48
         },
     {view: "text", id: "appl_point",
-        label: "Точка", value: "точка за углом"
+        label: "Точка", value: "точка за углом", height: 48
         },
     {cols: [
         {view: "text", readonly: true, id: "appl_author",
-            label: "Автор запроса", value: "Овсянников"
+            label: "Автор запроса", value: "Овсянников", height: 48
             },
         {view: "text", id: "appl_ordered",
-            label: "Назначен", value: "Овсянников"
+            label: "Назначен", value: "Овсянников", height: 48
             }
         ]},
     {view: "text", id: "appl_topic",
-        label: "Тема", value: "Не работает"
+        label: "Тема", value: "Не работает", height: 48
         },
-    {view: "textarea", height: 84, id: "appl_desc", 
+    {view: "textarea", height: 176, id: "appl_desc", 
         label: "Описание проблемы", value: "Жутко длинное описание проблемы"
         },
-    {view: "textarea", height: 84, id: "appl_res_desc", 
+    {view: "textarea", height: 176, id: "appl_res_desc", 
         label: "Решение проблемы", value: "Пока не решено"
         }
-
     ];
 
 var c_appl = {
@@ -67,12 +152,14 @@ var c_appl = {
             {rows: [
                 {view: "form",
                     id:"appl_form",
-                    width: 650,
+                    width: 500,
+                    height: 600,
                     //readonly: true,
                     disabled: true,
                     elementsConfig:{
-                        labelWidth: 120,
-                        labelPosition: "top"
+                        labelWidth: 50,
+                        labelPosition: "top",
+                        css: "shrink"
                         },
                     elements: appl_form_var
                     },
@@ -88,15 +175,19 @@ var c_appl = {
                 id: "cli_apps_list",
                 //data: clients,
                 //height: 140,
-                width: 350,
+                width: 550,
+                tooltip: {
+                    template: "<div> <span class='f_list_cl_2'>Описание: </span> <span class='f_list_cl_txt'>#description#</span></div>" +
+                          "<div> <span class='f_list_cl_2'>Решение: </span> <span class='f_list_cl_txt'>#result_desc#</span></div>"
+                    },
                 type: {
                     css: 'f_list_cl',
                     height: "auto",
                     },
                 navigation: true,
                 scroll: true,
-                template: "<div> <span class='f_list_cl'>Номер: </span> <span class='f_list_cl_txt'>#num#</span></div>" +
-                          "<div> <span class='f_list_cl_2'>Дата: </span> <span class='f_list_cl_txt'>#create_date#</span></div>" +
+                template: "<div> <span class='f_list_cl'>Заявка номер: </span> <span class='f_list_cl_txt'>#num#</span>  <span class='f_list_cl_2'>от: </span> <span class='f_list_cl_txt'>#create_date#</span>        </div>" +
+                          //"<div> <span class='f_list_cl_2'>Дата: </span> <span class='f_list_cl_txt'>#create_date#</span></div>" +
                           "<div> <span class='f_list_cl_2'>Тема: </span> <span class='f_list_cl_txt'>#topic#</span></div>" +
                           "<div> <span class='f_list_cl_2'>Описание: </span> <span class='f_list_cl_txt'>#description#</span></div>" +
                           "<div> <span class='f_list_cl_2'>Решение: </span> <span class='f_list_cl_txt'>#result_desc#</span></div>"                          
@@ -138,6 +229,12 @@ webix.protoUI({
     name:"activeDataTable" 
 },webix.ui.datatable, webix.ActiveContent);
 
+function oneForAll(value, filter, obj){
+    if (obj.point.toString().toLowerCase().indexOf(filter) != -1) return true;
+    if (obj.client.toString().toLowerCase().indexOf(filter)!= -1) return true;
+    return false;
+    }
+
 var mass_apl = {id: "view_3", view: "activeDataTable",
     navigation: "row",
     select: true,
@@ -145,7 +242,7 @@ var mass_apl = {id: "view_3", view: "activeDataTable",
     resizeColumn:true,
     fixedRowHeight:false,
     rowLineHeight:32,
-    rowHeight:32,
+    rowHeight:row_height,
     onContext: {},
     on:{
         onBeforeSelect: function(item) {
@@ -161,9 +258,9 @@ var mass_apl = {id: "view_3", view: "activeDataTable",
                 var obj = d.getItem(item);
                 var f_date = format(obj.change_date);
                 obj.change_date = format(f_date);
-                obj.$css = (obj.alert === "Высокий") ? "high_pr":
-                           (obj.alert === "Средний") ? "med_pr":
-                           (obj.alert === "Низкий") ? "low_pr":
+                obj.$css = (obj.alert === prior[0]) ? "high_pr":
+                           (obj.alert === prior[1]) ? "med_pr":
+                           (obj.alert === prior[3]) ? "low_pr":
                            "nothing";
                 });
             }
@@ -178,7 +275,7 @@ var mass_apl = {id: "view_3", view: "activeDataTable",
         ]
         },
     { id:"alert",
-      width: 85,
+      width: 90,
       sort:"text",
       header: [
         {text: "Приоритет", css: 'header_data'},
@@ -198,6 +295,7 @@ var mass_apl = {id: "view_3", view: "activeDataTable",
     { id:"status",
       width: 100,
       sort: "text",
+
       header: [
         {text: "Статус", css: 'header_data'},
         { content:"selectFilter"}
@@ -249,7 +347,7 @@ var history_appl = {id: "view_4", view: "activeDataTable",
     resizeColumn:true,
     fixedRowHeight:false,
     rowLineHeight:32,
-    rowHeight:32,
+    rowHeight:row_height,
     onContext: {},
     on:{
         onSubViewCreate:function(view, item){
@@ -290,13 +388,14 @@ var history_appl = {id: "view_4", view: "activeDataTable",
         {content: "datepickerFilter"}
         ]
     },
-    { id:"client",
+    { id:"point",
       fillspace: 2,
       width: 360,
       sort: "text",
       header:[
-        {text: "Клиент", css: 'header_data'},
-        {content:"textFilter"}],
+        {text: "Точка / Клиент", css: 'header_data'},
+        {content:"textFilter", compare: oneForAll}],
+      template: "#point#" + "<br>" + "#client#"
         },
     { id:"topic",
       width: 225,
@@ -316,7 +415,7 @@ var my_appl = {id: "view_1", view: "activeDataTable",
     resizeColumn:true,
     fixedRowHeight:false,
     rowLineHeight:32,
-    rowHeight:32,
+    rowHeight:row_height,
     onContext: {},
     on:{
         onSubViewCreate:function(view, item){
@@ -335,9 +434,9 @@ var my_appl = {id: "view_1", view: "activeDataTable",
                 var obj = d.getItem(item);
                 var f_date = format(obj.change_date);
                 obj.change_date = format(f_date);
-                obj.$css = (obj.alert === "Высокий") ? "high_pr":
-                           (obj.alert === "Средний") ? "med_pr":
-                           (obj.alert === "Низкий") ? "low_pr":
+                obj.$css = (obj.alert === prior[0]) ? "high_pr":
+                           (obj.alert === prior[1]) ? "med_pr":
+                           (obj.alert === prior[3]) ? "low_pr":
                            "nothing";
                 });
             }
@@ -352,7 +451,7 @@ var my_appl = {id: "view_1", view: "activeDataTable",
         ]
         },
     { id:"alert",
-      width: 85,
+      width: 90,
       sort:"text",
       header: [
         {text: "Приоритет", css: 'header_data'},
@@ -367,6 +466,7 @@ var my_appl = {id: "view_1", view: "activeDataTable",
       header: [
         {text: "Дата", css: 'header_data'},
         {content: "datepickerFilter"}
+        //{content: "dateRangeFilter"}
         ]
     },
     { id:"status",
@@ -383,13 +483,14 @@ var my_appl = {id: "view_1", view: "activeDataTable",
         {text: "Создал", css: 'header_data'},
         { content:"selectFilter"}
         ]},
-    { id:"client",
+    { id:"point",
       fillspace: 2,
       width: 360,
       sort: "text",
       header:[
-        {text: "Клиент", css: 'header_data'},
+        {text: "Точка / Клиент", css: 'header_data'},
         {content:"textFilter"}],
+        template: "#point#" + "<br>" + "#client#"
         },
     { id:"in_work",
       width: 80,
@@ -407,6 +508,8 @@ var my_appl = {id: "view_1", view: "activeDataTable",
         { content:"selectFilter", height: 18}
         ]}
     ]}
+
+
 
 var all_appl = {id: "view_2", view: "activeDataTable",
     //hover: "myhover",
@@ -433,9 +536,9 @@ var all_appl = {id: "view_2", view: "activeDataTable",
                 var obj = d.getItem(item);
                 var f_date = format(obj.change_date);
                 obj.change_date = format(f_date);
-                obj.$css = (obj.alert === "Высокий") ? "high_pr":
-                           (obj.alert === "Средний") ? "med_pr":
-                           (obj.alert === "Низкий") ? "low_pr":
+                obj.$css = (obj.alert === prior[0]) ? "high_pr":
+                           (obj.alert === prior[1]) ? "med_pr":
+                           (obj.alert === prior[3]) ? "low_pr":
                            "nothing";
                 });
             },
@@ -461,14 +564,14 @@ var all_appl = {id: "view_2", view: "activeDataTable",
     { id:"num",
       sort: "int",
       css: "num_s",
-      //cssFormat: shrink, 
+      //cssFormat: shrink1, 
       width: 85,
       header: [{text: "№ заявки", css: 'header_data'},
         {content:"textFilter"}
         ]
         },
     { id:"alert",
-      width: 85,
+      width: 90,
       sort:"text",
       header: [
         {text: "Приоритет", css: 'header_data'},
@@ -506,19 +609,19 @@ var all_appl = {id: "view_2", view: "activeDataTable",
         {text: "Назначен", css: 'header_data'},
         { content:"selectFilter"}
         ]},
-    { id:"client",
+    { id:"point",
       fillspace: 2,
       width: 360,
       sort: "text",
       header:[
-        {text: "Клиент", css: 'header_data'},
+        {text: "Точка / Клиент", css: 'header_data'},
         {content:"textFilter"}],
+        template: "#point#" + "<br>" + "#client#"
         },
     { id:"in_work",
       width: 80,
       css: "num_s",
       format: add_str,
-      //template: "<div>#in_work# дн.</div>",
       sort: "int",
       header: [{text: "В работе", css: 'header_data'},
                {content: "numberFilter"}]
@@ -555,7 +658,7 @@ var buttons = [
     {view:"button", id: "_refresh", type:"imageButton", image: './libs/img/sync.svg',
         label: "Обновить заявки", width: 160, tooltip: "Синхронизация с сервером, <Ctrl>+Q", hotkey: "q+ctrl"},
     {view:"button", id: "_filters", type:"imageButton", image: './libs/img/filter.svg',
-        label: "Сбросить фильтры", width: 160},
+        label: "Сбросить фильтры", width: 170},
     {view:"button", id: "_excel", type:"imageButton", image: './libs/img/excel.svg',
         label: "Экспорт в Excel", width: 160}
     ];
@@ -595,35 +698,71 @@ function get_current_view() {
     return c_view;
     };
 
-function shrink(value, config) {
+function shrink1(value, config) {
     var ret = (value > 999) ? {"font-size":"95%", "padding-left": "5px !important"}:
               (value > 9999) ? {"font-size":"85%", "padding-left": "2px !important"}:
               value;
     return ret;
 };
 
+
+function set_m_appl_info(item) {
+    $$("appl_mass_fs").label_setter('Заявка номер ' + item.num + ' от ' + item.create_date);
+    $$("m_appl_work").setValue(item.to_work_date);
+    $$("m_appl_ordered").setValue(item.ordered);
+    $$("m_appl_ch").setValue(item.change_date.toLocaleDateString());
+    $$("m_appl_stat").setValue(item.status);
+    $$("m_appl_alert").setValue(item.alert);
+    $$("m_appl_author").setValue(item.create_user);
+    $$("m_appl_topic").setValue(item.topic);
+    $$("m_appl_desc").setValue(item.description);
+    $$("m_appl_res_desc").setValue(item.res_desc);
+    $$("appl_form_mass").refresh();
+    }
+
+
 function set_appl_info(item) {
-    $$("appl_fs").label_setter('Заявка номер ' + item.num);
-    $$("appl_cre").setValue(item.create_date);
+    $$("appl_fs").label_setter('Заявка номер ' + item.num + ' от ' + item.create_date);
+    //$$("appl_cre").setValue(item.create_date);
     $$("appl_work").setValue(item.to_work_date);
     $$("appl_ordered").setValue(item.ordered);
     $$("appl_ch").setValue(item.change_date.toLocaleDateString());
     $$("appl_stat").setValue(item.status);
     $$("appl_alert").setValue(item.alert);
     $$("appl_cli").setValue(item.client);
-    $$("appl_point").setValue("Неизвестная точка за углом");
+    $$("appl_point").setValue(item.point);
     $$("appl_author").setValue(item.create_user);
     $$("appl_topic").setValue(item.topic);
     $$("appl_desc").setValue(item.description);
-    console.log(item.res_desc);
     $$("appl_res_desc").setValue(item.res_desc);
     $$("appl_form").refresh();
     }
 
+
 function open_appl(view, id) {
     var c_item = view.getSelectedItem();
-    set_appl_info(c_item);
-    $$("pop_application").show();
+    var num = c_item.num;
+    let item;
+    var params = {"get_item": num};
+    request(req_url, params).then(function fn (data){
+        //console.log(data.json()[0]);
+        //console.log(this);
+        item = data.json()[0];
+        });
+
+    //console.log(item);
+    //console.log(item.state);
+    
+    if (view.config.id === "view_3") {
+        set_m_appl_info(c_item);
+        $$("pop_m_application").show();
+    } else if (view.config.id === "view_4"){
+        //set_h_appl_info(c_item);
+        //$$("pop_h_application").show();
+    } else {
+        set_appl_info(c_item);
+        $$("pop_application").show();
+    }
     };
 
 //main ui's
@@ -774,6 +913,19 @@ webix.ui({
 
 webix.ui({
     view: "popup",
+    autofit: true,
+    header: "текущая заяка",
+    id: "pop_m_application",
+    position:"center",
+    //height:600,
+    //width:800,
+    //modal:true,
+    move:true,
+    body: mass_appl
+    });
+
+webix.ui({
+    view: "popup",
     id: "pop_customers_form",
     body: customers_link
     });
@@ -849,7 +1001,6 @@ $$("ch_users_list").attachEvent("onItemClick", function(i_id, ev, val){
     $$("context_menu").hide();
     var params = {"update_row": item};
     request(req_url, params).then(function(data){
-    //webix.ajax().post(req_url, params, function(text, data){
         item = data.json()[0];
         $$(cv).updateItem(id, item)
         $$(cv).unselectAll();
@@ -868,7 +1019,6 @@ $$('_to_work').attachEvent("onItemClick", function(){
     item["to_work_date"] = new Date(); //новое значение
     var params = {"update_row": item};
     request(req_url, params).then(function(data){
-    //webix.ajax().post(req_url, params, function(text, data){
         item = data.json()[0];
         $$(cv).updateItem(id, item)
         $$(cv).unselectAll();
@@ -895,7 +1045,6 @@ $$("ch_alert_list").attachEvent("onItemClick", function(i_id, ev, val){
     $$("context_menu").hide();
     var params = {"update_row": item};
     request(req_url, params).then(function(data){
-    //webix.ajax().post(req_url, params, function(text, data){
         item = data.json()[0];
         $$(cv).updateItem(id, item)
         $$(cv).unselectAll();
@@ -913,7 +1062,6 @@ $$('_archive').attachEvent("onItemClick", function(){
     item["archived"] = true;
     var params = {"update_row": item};
     request(req_url, params).then(function(data){
-    //webix.ajax().post(req_url, params, function(text, data){
         item = data.json()[0];
         $$(cv).remove(id);
         $$(cv).unselectAll();
@@ -987,7 +1135,6 @@ $$("send_result").attachEvent("onItemClick", function(){
         item['status'] = (form_values['c_success'] === 1) ? "Решено":
             "Не решено";
         item['res_desc'] = form_values['c_description'];
-        console.log(item['res_desc']);
         $$("complete_form").reconstruct();
         var params = {"update_row": item};
         request(req_url, params).then(function(data){
@@ -1005,10 +1152,15 @@ $$("pop_application").attachEvent("onBeforeShow", function(item, e){
     $$("cli_apps_list").data.sync(data);
     });
 
-$$("pop_application").attachEvent("onHide", function(){
-    var cv = get_current_view();
-    $$(cv).getSelectedId();
+$$("pop_m_application").attachEvent("onBeforeShow", function(item, e){
+    var data = upd_top_apps();
+    $$("topic_mass_list").data.sync(data);
     });
+
+//$$("pop_application").attachEvent("onHide", function(){
+//    var cv = get_current_view();
+//    $$(cv).getSelectedId();
+//    });
 
 $$("view_1").attachEvent("onItemDblClick", function(id, e){
     open_appl($$("view_1"));
@@ -1016,6 +1168,10 @@ $$("view_1").attachEvent("onItemDblClick", function(id, e){
 
 $$("view_2").attachEvent("onItemDblClick", function(id, e){
     open_appl($$("view_2"));
+    });
+
+$$("view_3").attachEvent("onItemDblClick", function(id, e){
+    open_appl($$("view_3"));
     });
 
 $$("view_1").attachEvent("onKeyPress", function(code, e){
@@ -1030,18 +1186,27 @@ $$("view_2").attachEvent("onKeyPress", function(code, e){
     }
     });
 
+$$("view_3").attachEvent("onKeyPress", function(code, e){
+    if (13 === code) {
+        $$("view_3").callEvent("onItemDblClick");
+    }
+    });
+
 $$("close_button").attachEvent("onItemClick", function(){
     $$("pop_application").hide();
     });
 
+$$("close_button_mass").attachEvent("onItemClick", function(){
+    $$("pop_m_application").hide();
+    });
+
 $$("_filters").attachEvent("onItemClick", function(){
-    webix.message('Пока работает не так, как надо. Чуть позже исправим.');
     var cv = get_current_view();
     var columns = $$(cv)._columns
-    columns.forEach(function(item, i, data) {
-        $$(cv).refreshFilter(item.id);
-        $$(cv).filter(item.id,"");
+    columns.forEach(function(item){//, i, data) {
+        $$(cv).getFilter(item.id).value = '';
         });
+    $$(cv).filterByAll();
     });
 
 $$("_excel").attachEvent("onItemClick", function(){
@@ -1068,7 +1233,16 @@ $$("_refresh").attachEvent("onItemClick", function(){
     $$("view_4").parse($$("hist_upd"));
     });
 
+function upd_filters(cv){
+    cv.filterByAll();
+    }
+
 function upd_views() {
+    upd_filters($$("view_1"));
+    upd_filters($$("view_2"));
+    upd_filters($$("view_3"));
+    upd_filters($$("view_4"));
+
     var cv = get_current_view();
     if (cv === "view_1") {
         upd_all();
@@ -1100,4 +1274,3 @@ function upd_views() {
         $$("view_3").parse($$("mass_upd"));
     }
     };
-

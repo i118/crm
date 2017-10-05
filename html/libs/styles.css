@@ -3,8 +3,6 @@
     src: url(../libs/fonts/Roboto-Regular-webfont.ttf);
 }
 
-/*#d4e9ff*/
-
 .webix_message_area{width: 800px;}
 
 .myhover{
@@ -40,10 +38,6 @@
 .webix_form label {
     font-size: 10px !important;
     }
-/*
-.webix_el_text input {
-    font-size: 12px !important;
-    }*/
     
 .webix_el_textarea textarea {
     font-size: 13px;
@@ -51,25 +45,35 @@
 
 input {
     font-size: 13px !important;
-    border: 1px dotted grey !important;
+    border: 1px solid #cfddda;
     padding-left: 5px !important;
     /*border-bottom-color: transparent !important;*/
     }
 
+.webix_view .webix_layout_form input {
+    border: 1px solid #cfddda;
+    }
+
 .high_pr {
-    color: tomato;
+    /*color: tomato;*/
+    color: #ff0000 !important;
     }
 
 .med_pr {
-    color: blue;
+    /*color: blue;*/
+    color: #bf4040 !important;
     }
 
 .low_pr {
-    color: green;
+    /*color: green;
+    color: #66ff66;
+    color: #00ff00;*/
+    color: #40bf40 !important;
     }
 
 .nothing {
-    color: grey;
+    /*color: grey;*/
+    color: darkgrey !important;
     }
 
 
@@ -108,10 +112,6 @@ input {
     border: none !important;
     }
 
-/*.webix_el_box {
-    line-height: 10px !important;
-    height: 24px !important;
-    }*/
 
 .webix_richfilter .webix_inp_static {
     height: 22px !important;
@@ -139,11 +139,6 @@ input {
     padding: 0 !important;
     }
 
-/*.webix_ss_header TD {
-    font-size: 12px !important;
-    border-bottom-style: hidden !important;
-}*/
-
 .webix_ss_header table {
     margin-bottom: 5px !important;
     
@@ -160,7 +155,6 @@ input {
     padding-bottom: 0px !important;*/
     }
 
-
 button {
     font-size: 10px !important;
     border-radius: 6px !important;
@@ -170,9 +164,6 @@ button {
 
 .webix_ss_header {
     font-size: 12px !important;
-/*    height: 60px !important;
-    margin-bottom: 8px !important;
-    margin-top: 8px !important;*/
     }
 
 .header_css {
@@ -220,19 +211,19 @@ select {
     background-image: url(img/ms_logo.jpg);
     display: block;
     background-repeat: round;
-}
+    }
 .ms-logo-text {
     color: #666 !important;
     font-size: large !important;
-}
+    }
 .user-text {
     text-align: left;
     color: #666 !important;
     /*font-size: small !important;*/
-}
+    }
 .serv_info {
     font-size: small;
-}
+    }
 .s_header {
     text-align: center;
     }
@@ -242,7 +233,7 @@ select {
     }
 
 .r_css {
-    height: 64px !important;
+    height: 96px !important;
     }
 
 .app_info {
@@ -276,4 +267,17 @@ select {
     outline-offset: 0 !important;
 }
 
+.shrink {
+    margin-top: 1px !important;
+    line-height: 10px !important;
+    }
 
+.webix_view .webix_layout_form textarea {
+    border: 1px solid #cfddda;
+    }
+
+.webix_el_box .webix_disabled {
+    border-style: solid !important;
+    border-width: 0px !important;
+    borde
+    }

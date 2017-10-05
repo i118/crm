@@ -4,7 +4,6 @@ var user = getCookie("user");
 var admin = getCookie("admin");
 var auth_key = getCookie("auth_key");
 
-//webix events attaches
 webix.i18n.setLocale('ru-RU');
 //webix.attachEvent("onBeforeAjax", 
     //function(mode, url, data, request, headers, files, promise){
@@ -13,11 +12,27 @@ webix.i18n.setLocale('ru-RU');
         //}
     //);
 
+var prior = {0: "О", 1: "В", 2: "О", 3: "Н"}
+var row_height = 32;
 
 function request(url, params){
     var tt = webix.ajax().headers({'x-api-key': 'key', 'Content-type': 'application/json'}).post(url, params)
     return tt
     };
+
+var request1 =  function(url, params, f){
+    var tt = webix.ajax().sync().headers({'x-api-key': 'key', 'Content-type': 'application/json'}).post(url, params,f)
+    };
+
+var gm = function() {
+    var params = {"get_item": 1}, r = 0;
+    return request1(req_url, params, function(e) {
+        var t = JSON.parse(e);
+        r = t[0]
+        }), r
+    }
+
+console.log(gm());
 
 function upd_points() {
     var points = new webix.DataCollection({
@@ -68,11 +83,14 @@ var alerts = new webix.DataCollection({
             //webix.ajax().post(this.source, params)
                 //.then(function(data){
                     //webix.ajax.$callback(view, callback, "", data, -1);
-                    $$("alerts_dc").clearAll();
-                    data = data.json();
-                    $$("alerts_dc").parse(data);
-                    });
-                }
+                $$("alerts_dc").clearAll();
+                data = data.json();
+                $$("alerts_dc").parse(data);
+                data.forEach(function(i, q, data) {
+                    prior[q] = i.name;
+                    })
+                });
+            }
         },
     });
 
@@ -198,6 +216,30 @@ function upd_mass() {
             },
         });
     return tt
+    };
+
+
+//"topic_mass_list"
+function upd_top_apps() {
+    var cli_apps = new webix.DataCollection({
+        id: "top_apps_upd",
+        url: {
+            $proxy:true,
+            source: req_url,
+            load: function(view, callback) {
+                var item;
+                var cv = get_current_view();
+                item = $$(cv).getSelectedItem();
+                var params = {"get_reqs_by_topic": item};
+                request(this.source, params).then(function(data){
+                        $$("top_apps_upd").clearAll();
+                        data = data.json();
+                        $$("top_apps_upd").parse(data);
+                        });
+                    }
+            },
+        });
+    return cli_apps
     };
 
 function upd_cli_apps() {

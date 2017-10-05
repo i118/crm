@@ -5,7 +5,6 @@ function c_date() {
     var date = new Date();
     var format = webix.Date.dateToStr("%d.%m.%Y");
     date = format(date);
-    //console.log(date);
     return date;
 }
 
@@ -33,15 +32,28 @@ var input_form = [
 
             }
         ]},
-    {view:"combo", label: "Приоритет", name: "alert", id: "alert_input", value: 3, labelWidth: 120,
+    {view:"combo", label: "Приоритет", name: "alert",
+        id: "alert_input", value: 2, labelWidth: 120,
         options:  {
             filter: filter_combo_c,
             body: {
                 template:"#name#",
-                yCount:15,
+                yCount:10,
                 data: alerts
                 }
             },
+        on: {
+            onBeforeRender: function(d) {
+                var data = $$("alerts_dc").data.order;
+                data.forEach(function(item, i, data) {
+                    var obj = $$("alerts_dc").getItem(item);
+                    obj.$css = (obj.name === prior[0]) ? "high_pr":
+                               (obj.name === prior[1]) ? "med_pr":
+                               (obj.name === prior[3]) ? "low_pr":
+                               "nothing";
+                    });
+                }
+            }
         },
     {cols: [
         {view:"combo", label:"Клиент", name:"client", id: 'customer_new', invalidMessage: "Выберите клиента",
@@ -50,29 +62,25 @@ var input_form = [
                 filter: filter_combo_c,
                 body: {
                     template:"#display_name#",
-                    yCount:15,
+                    yCount:10,
                     data: clients
                     }
                 },
             on: {
-
-
-                //breakpoints
                 onChange: function(rid){
-                    var cpo = $$("customer_point").getValue();
-                    console.log(cpo);
-                    var c_po = $$("points_dc").getItem(cpo).customer_id;
-                    console.log(c_po);
-                    if (c_po === cpo) {
+                    if ($$("send_form").config.client_ch === 1) {
                         var params = {"get_c_points": rid};
                         request(req_url, params).then(function(data){
                             $$("points_dc").clearAll();
                             data = data.json();
+                            $$("send_form").config.point_ch = 0;
                             $$('customer_point').setValue('');
+                            $$('customer_point').refresh();
                             $$("points_dc").parse(data);
-                            //console.log(data);
                             })
-                    }
+                    } else if ( $$("send_form").config.client_ch === 0 && $$("send_form").config.point_ch === 1 ) {
+                        $$("send_form").config.client_ch = 1;
+                    };
                     }
                 }
             },
@@ -88,29 +96,19 @@ var input_form = [
                 filter: filter_combo_c,
                 body: {
                     template:"#display_name#",
-                    yCount:15,
+                    yCount:10,
                     data: upd_points()
                     }
                 },
             on: {
                 onChange: function(rid){
-                    var c_po = $$("points_dc").getItem(rid).customer_id;
-                    var cli = $$("customer_new").getValue();
-                    //if (!cli) {
+                    if ($$("send_form").config.point_ch === 1) {
+                        $$("send_form").config.client_ch = 0;
+                        var c_po = $$("points_dc").getItem(rid).customer_id;
+                        var cli = $$("customer_new").getValue();
                         $$("customer_new").setValue(c_po);
                         $$("customer_new").refresh()
-                    //}
-                    //console.log(cli);
-                    //var params = {"get_c_points": rid};
-                    //request(req_url, params).then(function(data){
-                        //$$("points_dc").clearAll();
-                        //data = data.json();
-                        //$$('customer_point').setValue('');
-                        //$$("points_dc").parse(data);
-                        //console.log(data);
-                        //$$('customer_point').getList().data.sync(data);
-                        //$$('customer_point').refresh();
-                        //})
+                    };
                     }
                 }
             },
@@ -120,13 +118,13 @@ var input_form = [
             }
         ]},
     {cols: [
-        {view:"combo", label:"Тема", id: "n_topic", name:"topic", required: true,
+        {view:"combo", label:"Тема", id: "n_topic", name:"topic", required: true, value: 3,
             invalidMessage: "Выберите тему", placeholder: "Выберите тему", labelWidth: 120, width: 530,
             options:  {
                 filter: filter_combo,
                 body: {
                     template:"#name#",
-                    yCount: 15,
+                    yCount: 10,
                     data: topics
                     }
                 },
@@ -147,6 +145,8 @@ var input_form = [
             }
             },
         {view:"button", value:"Отменить", click: function(){
+            $$("send_form").config.point_ch = 1;
+            $$("send_form").config.client_ch = 1;
             $$("pop_send_form").hide();
             $$("send_form").reconstruct();
             upd_points();
@@ -164,6 +164,8 @@ var send_form_body = {
     id:"send_form",
     width: 600,
     mass: 0,
+    point_ch: 1,
+    client_ch: 1,
     rules:{
         "topic": webix.rules.isNotEmpty,
         "description": webix.rules.isNotEmpty,
