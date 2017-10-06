@@ -147,7 +147,7 @@ order by num desc;
     where num = {0}
     returning num;
 """,
-'sql_select_res': """select num, alerts.name, r.create_date, r.to_work_date, status.name, users.display_name, customers.display_name, topics.name, uu.display_name, r.description, r.change_date, current_date, r.res_desc, r.mass
+'sql_select_res': """select num, alerts.name, r.create_date, r.to_work_date, status.name, users.display_name, points.display_name, topics.name, uu.display_name, r.description, r.change_date, current_date, r.res_desc, r.mass, customers.display_name
 from requests as r
 join alerts
     on alerts.uid = r.alert
@@ -155,14 +155,31 @@ join users
     on users.uid = r.create_user
 join status
     on status.uid = r.status
+join points
+    on points.uid = r.client
 join customers
-    on customers.uid = r.client
+    on customers.uid = points.customer_id
 join topics
     on topics.uid = r.topic
 join users as uu
     on uu.uid = r.ordered
 where r.archived = false and r.deleted = false and num = {0};
-    """
+    """,
+'sql_get_user': """select * from users where uid = {0};
+""",
+'sql_upd_user': """update users set
+    display_name = '{0}',
+    last_name = '{1}',
+    first_name = '{2}',
+    admin  = {3},
+    active = {4},
+    deleted = {5},
+    phone_number = '{6}',
+    int_number = '{7}',
+    skype_name = '{8}',
+    email = '{9}',
+    customer = {10}
+"""
         }
 
     def get_topics(self, params=None, x_hash=None):
@@ -191,8 +208,29 @@ where r.archived = false and r.deleted = false and num = {0};
         ret_value = json.dumps(rl, ensure_ascii=False)
         return ret_value
 
+    def get_c_user(self, params=None, x_hash=None):
+        sql = self.sqls['sql_get_user'].format(params)
+        cur = self._make_sql(sql)
+        rl = []
+        row = cur.fetchone()
+        qw = {"uid": row[0], "display_name": row[1], "last_name": row[2], "first_name": row[3], "admin": row[4],
+              "active": row[5], "deleted": row[6], "phone_number": row[7], "int_number": row[8],
+              "skype_name": row[9], "email": row[10], "customer": row[11]
+            }
+        rl.append(qw)
+        cur.close()
+        ret_value = json.dumps(rl, ensure_ascii=False)
+        return ret_value
+
+    def set_c_user(self, params=None, x_hash=None):
+        rl = []
+        print(params)
+        
+        ret_value = json.dumps(rl, ensure_ascii=False)
+        return ret_value
+
     def get_users(self, params=None, x_hash=None):
-        sql = "select uid, display_name from users where active=true and deleted=false and uid > 0 order by display_name asc;"
+        sql = "select uid, display_name from users where active=true and deleted=false and uid > 0 order by uid asc;"
         cur = self._make_sql(sql)
         rl = []
         for row in cur.fetchall():
@@ -377,10 +415,11 @@ where r.archived = false and r.deleted = false and num = {0};
 
     def get_item(self, params=None, x_hash=None):
         """
-        get single item
+        get single item for mass
         """
         num = params
-        cur = self._make_sql(self.sqls['sql_select_res'].format(int(num)))
+        sql = self.sqls['sql_select_res'].format(int(num))
+        cur = self._make_sql(sql)
         ret = []
         row = cur.fetchone()
         cur.close()
@@ -393,8 +432,9 @@ where r.archived = false and r.deleted = false and num = {0};
             in_work_d = (row[11] - row[3]).days
             work_date = self._f_date(row[3])
         qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
-              "status": row[4], "create_user": row[5], "client": row[6], "in_work": str(in_work_d), "topic": row[7],
-              "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10]), "res_desc": row[12], "mass": row[13]}
+              "status": row[4], "create_user": row[5], "client": row[14], "in_work": str(in_work_d), "topic": row[7],
+              "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10]), "res_desc": row[12], "mass": row[13],
+              "point": row[6]}
         ret.append(qw)
         ret_value = json.dumps(ret, ensure_ascii=False)
         return ret_value
@@ -411,7 +451,7 @@ where r.archived = false and r.deleted = false and num = {0};
         if params['mass'] == 0:
             mass = False
             cli = params['client']
-            point = params['point']
+            point = params['client_point']
         else:
             mass = True
             cli = 0
@@ -438,8 +478,9 @@ where r.archived = false and r.deleted = false and num = {0};
             in_work_d = (row[11] - row[3]).days
             work_date = self._f_date(row[3])
         qw = {"alert": row[1], "num": row[0], "create_date": self._f_date(row[2]), "to_work_date": work_date,
-              "status": row[4], "create_user": row[5], "client": row[6], "in_work": str(in_work_d), "topic": row[7],
-              "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10]), "res_desc": row[12], "mass": row[13]}
+              "status": row[4], "create_user": row[5], "client": row[14], "in_work": str(in_work_d), "topic": row[7],
+              "ordered": row[8], "description" : row[9], "change_date": self._f_date(row[10]), "res_desc": row[12], "mass": row[13],
+              "point": row[6]}
         ret.append(qw)
         ret_value = json.dumps(ret, ensure_ascii=False)
         return ret_value
@@ -753,12 +794,19 @@ class SCGIServer:
         scgi_cache                off;
     }
     
+    #location /crm/options {
+    #    add_header Cache_Control no-cache;
+    #    alias html/crm/options;
+    #    index options.html;
+    #    #try_files $uri $uri/index.html $uri/options.html $uri.html =404;
+    #}
+    
     location /crm {
         add_header Cache_Control no-cache;
         alias html/crm;
         index index.html;
+    #    try_files $uri $uri/index.html $uri.html =404;
     }
-    
     """
         filelocation = self._getfilename("location")
         dn = os.path.dirname(filelocation)

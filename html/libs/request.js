@@ -18,6 +18,7 @@ var input_form = [
         {view: "checkbox", labelRight: "Массовая заявка", width: 180, labelAlign: "left", name: "mass",
             on: {
                 onChange: function(c_item) {
+                    $$("send_form").focus("description");
                     $$("send_form").clearValidation();
                     $$("send_form").config.mass = c_item
                     if (c_item === 1) {
@@ -152,10 +153,10 @@ var input_form = [
             upd_points();
             $$('customer_point').getList().data.sync($$("points_dc"));
             }},
-        {view:"button", value:"Отправить", click: function(){
+        {view:"button", id: "_send", value:"Отправить", click: function(){
             var vv = $$("send_form").validate({disabled:false});
             if (vv) submit();
-            }, hotkey: "enter+ctrl", tooltip: "<Cnrl>+Enter"}
+            }, tooltip: "<Cnrl>+Enter"}
         ]
     }];
 
@@ -187,7 +188,7 @@ var result_box = {
         {view: "label", label:"Номер заявки № ", align:"center", id: "l2"},
         {cols: [
             {},
-            {view: "button", label: "OK", width: 100, click: function(){
+            {view: "button", label: "OK", width: 100, id: "ok_but",click: function(){
                     $$("pop_result").hide();
                     $$("res_box").reconstruct();
                     }
@@ -202,7 +203,30 @@ webix.ui({
     position:"center",
     id: "pop_result",
     modal: true,
-    body: result_box
+    body: result_box,
+    on: {
+        onShow: function(id){
+            $$("ok_but").focus();
+            }
+        }
+    });
+
+webix.ui({
+    view: "popup",
+    id: "pop_send_form",
+    body: send_form_body,
+    on: {
+        onBeforeShow: function() {
+            $$("_send").hotkey_setter("enter+ctrl");
+            $$("_send").refresh();
+            },
+        onHide: function() {
+            //console.log('hide');
+            },
+        onShow: function() {
+            $$("send_form").focus("description");
+            }
+        }
     });
 
 function submit(){
@@ -212,7 +236,6 @@ function submit(){
     var params = {"put_apply": data_send};
     $$("send_form").reconstruct();
     request(req_url, params).then(function(data){
-    //webix.ajax().post(req_url, params, function(text, data){
         var item = data.json()[0];
         if (item != "error") {
             if (item.mass) {

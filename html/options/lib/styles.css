@@ -164,7 +164,6 @@ button {
 
 .webix_ss_header {
     font-size: 12px !important;
-    height: 66px !important;
     }
 
 .header_css {
@@ -234,7 +233,7 @@ select {
     }
 
 .r_css {
-    height: 64px !important;
+    height: 96px !important;
     }
 
 .app_info {
@@ -277,18 +276,8 @@ select {
     border: 1px solid #cfddda;
     }
 
-.webix_property_label_line {
-    font-size: 12px;
-    font-weight: bold;
-    background-color: #d8f1ff;
-    text-align: center;
-    text-transform: uppercase;
-    color: #b2adad;
-    }
-
 .webix_el_box .webix_disabled {
     border-style: solid !important;
     border-width: 0px !important;
     borde
     }
-

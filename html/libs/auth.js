@@ -78,7 +78,8 @@ function a_action() {
     setTimeout(function() {
         include("./libs/request.js");
         include("./libs/crm.js");
-         }, 200);
+        include("./libs/options.js");
+         }, 100);
     };
 
 function validate_user(user, password) {
@@ -135,8 +136,6 @@ webix.ui({
     header: "Логин",
     id: "pop_auth",
     position:"center",
-    //height:600,
-    //width:800,
     modal:true,
     move:true,
     body: auth_form

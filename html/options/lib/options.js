@@ -11,21 +11,6 @@ function add_str(data) {
     return data;
     }
 
-var dt_formating = function (d) {
-    var data = d.order;
-    var format = webix.Date.strToDate("%d.%m.%Y");
-    data.forEach(function(item, i, data) {
-        var obj = d.getItem(item);
-        var f_date = format(obj.change_date);
-        obj.change_date = format(f_date);
-        obj.$css = (obj.alert === prior[0]) ? "high_pr":
-                   (obj.alert === prior[1]) ? "med_pr":
-                   (obj.alert === prior[3]) ? "low_pr":
-                   "nothing";
-        });
-    }
-
-
 var appl_from_mass = [
     {cols: [
         {view: "text", labelPosition: "left", readonly: true, id: "m_appl_work",
@@ -115,6 +100,9 @@ var mass_appl = {
 
 var appl_form_var = [
     {cols: [
+        //{view: "text", labelPosition: "left", readonly: true, id: "appl_cre",
+            //label: "Создана", value: "10.10.1999", height: 25,
+            //},
         {view: "text", labelPosition: "left", readonly: true, id: "appl_work",
             label: "В работе с", value: "10.10.1999", height: 30, labelWidth: 70
             },
@@ -207,6 +195,7 @@ var c_appl = {
         ]}
     };
 
+
 var complete = {
     view:"form", 
     id:"complete_form",
@@ -246,8 +235,6 @@ function oneForAll(value, filter, obj){
     return false;
     }
 
-
-
 var mass_apl = {id: "view_3", view: "activeDataTable",
     navigation: "row",
     select: true,
@@ -264,7 +251,19 @@ var mass_apl = {id: "view_3", view: "activeDataTable",
         onBeforeUnselect: function(item) {
             this.removeRowCss(item.id, "r_css");
             },
-        onBeforeRender: dt_formating
+        onBeforeRender: function(d) {
+            var data = d.order
+            var format = webix.Date.strToDate("%d.%m.%Y");
+            data.forEach(function(item, i, data) {
+                var obj = d.getItem(item);
+                var f_date = format(obj.change_date);
+                obj.change_date = format(f_date);
+                obj.$css = (obj.alert === prior[0]) ? "high_pr":
+                           (obj.alert === prior[1]) ? "med_pr":
+                           (obj.alert === prior[3]) ? "low_pr":
+                           "nothing";
+                });
+            }
         },
     columns:[
     { id:"num",
@@ -296,6 +295,7 @@ var mass_apl = {id: "view_3", view: "activeDataTable",
     { id:"status",
       width: 100,
       sort: "text",
+
       header: [
         {text: "Статус", css: 'header_data'},
         { content:"selectFilter"}
@@ -334,8 +334,8 @@ var mass_apl = {id: "view_3", view: "activeDataTable",
       width: 225,
       fillspace: 1,
       header: [
-        {text: "Тема", css: 'header_data'},//, heigth: 18},
-        { content:"selectFilter"}//, height: 18}
+        {text: "Тема", heigth: 18, css: 'header_data'},
+        { content:"selectFilter", height: 18}
         ]}
     ]}
 
@@ -350,9 +350,9 @@ var history_appl = {id: "view_4", view: "activeDataTable",
     rowHeight:row_height,
     onContext: {},
     on:{
-        //onSubViewCreate:function(view, item){
-            //view.setValues(item);
-            //},
+        onSubViewCreate:function(view, item){
+            view.setValues(item);
+            },
         onBeforeSelect: function(item) {
             this.addRowCss(item.id, "r_css");
             },
@@ -395,7 +395,7 @@ var history_appl = {id: "view_4", view: "activeDataTable",
       header:[
         {text: "Точка / Клиент", css: 'header_data'},
         {content:"textFilter", compare: oneForAll}],
-      template: "#point#" + " / " + "#client#"
+      template: "#point#" + "<br>" + "#client#"
         },
     { id:"topic",
       width: 225,
@@ -405,6 +405,8 @@ var history_appl = {id: "view_4", view: "activeDataTable",
         { content:"selectFilter", height: 18}
         ]}
     ]};
+
+
 
 var my_appl = {id: "view_1", view: "activeDataTable",
     navigation: "row",
@@ -425,7 +427,19 @@ var my_appl = {id: "view_1", view: "activeDataTable",
         onBeforeUnselect: function(item) {
             this.removeRowCss(item.id, "r_css");
             },
-        onBeforeRender: dt_formating
+        onBeforeRender: function(d) {
+            var data = d.order
+            var format = webix.Date.strToDate("%d.%m.%Y");
+            data.forEach(function(item, i, data) {
+                var obj = d.getItem(item);
+                var f_date = format(obj.change_date);
+                obj.change_date = format(f_date);
+                obj.$css = (obj.alert === prior[0]) ? "high_pr":
+                           (obj.alert === prior[1]) ? "med_pr":
+                           (obj.alert === prior[3]) ? "low_pr":
+                           "nothing";
+                });
+            }
         },
     columns:[
     { id:"num",
@@ -476,7 +490,7 @@ var my_appl = {id: "view_1", view: "activeDataTable",
       header:[
         {text: "Точка / Клиент", css: 'header_data'},
         {content:"textFilter"}],
-        template: "#point#" + " / " + "#client#"
+        template: "#point#" + "<br>" + "#client#"
         },
     { id:"in_work",
       width: 80,
@@ -498,13 +512,15 @@ var my_appl = {id: "view_1", view: "activeDataTable",
 
 
 var all_appl = {id: "view_2", view: "activeDataTable",
+    //hover: "myhover",
     navigation: "row",
     select: true,
     data: upd_all(),
+    //multiselect: true,
     resizeColumn:true,
     fixedRowHeight:false,
     rowLineHeight:32,
-    rowHeight:row_height,
+    rowHeight:32,
     onContext: {},
     on:{
         onBeforeSelect: function(item) {
@@ -513,7 +529,19 @@ var all_appl = {id: "view_2", view: "activeDataTable",
         onBeforeUnselect: function(item) {
             this.removeRowCss(item.id, "r_css");
             },
-        onBeforeRender: dt_formating,
+        onBeforeRender: function(d) {
+            var data = d.order
+            var format = webix.Date.strToDate("%d.%m.%Y");
+            data.forEach(function(item, i, data) {
+                var obj = d.getItem(item);
+                var f_date = format(obj.change_date);
+                obj.change_date = format(f_date);
+                obj.$css = (obj.alert === prior[0]) ? "high_pr":
+                           (obj.alert === prior[1]) ? "med_pr":
+                           (obj.alert === prior[3]) ? "low_pr":
+                           "nothing";
+                });
+            },
         "onresize": webix.once(function(){ 
             //this.adjustRowHeight();
             })
@@ -588,7 +616,7 @@ var all_appl = {id: "view_2", view: "activeDataTable",
       header:[
         {text: "Точка / Клиент", css: 'header_data'},
         {content:"textFilter"}],
-        template: "#point#" + " / " + "#client#"
+        template: "#point#" + "<br>" + "#client#"
         },
     { id:"in_work",
       width: 80,
@@ -622,7 +650,7 @@ var buttons = [
         label: 'Поставщики', width: 130, tooltip: "Список поставщиков"},
     {view:"button", id: '_customers', type:"imageButton", popup: "pop_customers_form", image: './libs/img/customers.svg',
         label: '   Клиенты', width: 130, tooltip: "Список клиентов"},
-    {view:"button", id: '_users', type:"imageButton", image: './libs/img/admin.svg', click: function() { $$("pop_options").show()},//popup: "pop_options",//popup: "pop_users_form",
+    {view:"button", id: '_users', type:"imageButton", popup: "pop_users_form", image: './libs/img/admin.svg',
         label: 'Настройки', width: 130, tooltip: "Админка настроек"},
     {view:"button", id: '_knowledge_base', type:"imageButton", popup: "pop_knowbase_form", image: './libs/img/kn_base.svg',
         label: 'База знаний', width: 130, tooltip: "Наиболее частые проблемы и их решения"},
@@ -755,11 +783,11 @@ webix.ui({
             ]},
         {cols: [
             {},
+            //{rows: buttons_2floor},
             {rows: [
                 {height: 36, cols:buttons},
                 {view: "tabview",
-                    width: document.documentElement.clientWidth,
-                    //width: 1280,
+                    width: 1280,
                     id:"tabview1",
                     animate:false,
                     cells: view_cells,

@@ -3,8 +3,10 @@
 var user = getCookie("user");
 var admin = getCookie("admin");
 var auth_key = getCookie("auth_key");
+var prior = {0: "О", 1: "В", 2: "О", 3: "Н"}
+var row_height = 32;
 
-webix.i18n.setLocale('ru-RU');
+//webix.i18n.setLocale('ru-RU');
 //webix.attachEvent("onBeforeAjax", 
     //function(mode, url, data, request, headers, files, promise){
         //headers["Content-type"] = "application/json";
@@ -12,29 +14,14 @@ webix.i18n.setLocale('ru-RU');
         //}
     //);
 
-var prior = {0: "О", 1: "В", 2: "О", 3: "Н"}
-var row_height = 32;
 
-function request(url, params){
-    var tt = webix.ajax().headers({'x-api-key': 'key', 'Content-type': 'application/json'}).post(url, params)
-    return tt
+var request = function (url, params, ss) {
+    var req = (ss === !0) ? webix.ajax().sync().headers({'x-api-key': 'key', 'Content-type': 'application/json'}).post(url, params):
+        webix.ajax().headers({'x-api-key': 'key', 'Content-type': 'application/json'}).post(url, params)
+    return req
     };
 
-var request1 =  function(url, params, f){
-    var tt = webix.ajax().sync().headers({'x-api-key': 'key', 'Content-type': 'application/json'}).post(url, params,f)
-    };
-
-var gm = function() {
-    var params = {"get_item": 1}, r = 0;
-    return request1(req_url, params, function(e) {
-        var t = JSON.parse(e);
-        r = t[0]
-        }), r
-    }
-
-console.log(gm());
-
-function upd_points() {
+var upd_points = function () {
     var points = new webix.DataCollection({
         id: "points_dc",
         url: {
@@ -99,18 +86,20 @@ var users = new webix.DataCollection({
     url: {
         $proxy:true,
         source: req_url,
-        load: function(view, callback) {
+        load: function(view) {
             var params = {"get_users": user};
             request(this.source, params).then(function(data){
-            //webix.ajax().post(this.source, params)
-                //.then(function(data){
-                    //webix.ajax.$callback(view, callback, "", data, -1);
-                    $$("users_dc").clearAll();
+                    view.clearAll();
                     data = data.json();
-                    $$("users_dc").parse(data);
+                    view.parse(data);
                     });
                 }
         },
+    on: {
+        onAfterLoad: function(){
+            //this.sort("#id#","asc","int");
+            }
+        }
     });
 
 var topics = new webix.DataCollection({
