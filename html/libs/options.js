@@ -21,22 +21,6 @@ var user_opt_data = new webix.DataCollection({
         }
     });
 
-var color_options = [
-        {id:1, value:"red"},
-        {id:2, value:"blue"},
-        {id:3, value:"green"},
-        {id:4, value:"orange"},
-        {id:5, value:"grey"},
-        {id:6, value:"yellow"}
-    ];
-
-    var position_options = [
-        {id:1, value:"left"},
-        {id:2, value:"right"},
-        {id:3, value:"top"},
-        {id:4, value:"bottom"}
-    ];
-
 var users_view = {
     cols: [
         {},
@@ -63,13 +47,13 @@ var users_view = {
                     }
                 ],
             on: {
-                onBeforeSelect: function(item) {
-                    this.addRowCss(item.id, "r_css");
-                    },
                 onBeforeUnselect: function(item) {
                     this.removeRowCss(item.id, "r_css");
                     },
-                onItemClick: function(c_row) {
+                onBeforeSelect: function(c_row) {
+                    $$("_ch_password").enable();
+                    $$("_change").enable();
+                    this.addRowCss(c_row.id, "r_css");
                     //console.log(c_row);
                     var uid = c_row.row;
                     var params = {"get_c_user": uid};
@@ -81,6 +65,7 @@ var users_view = {
                 },
             data: users
         },
+        {view: "resizer"},
         {rows: [
             {view: "property", id: "user_prop", width:850,
                 complexData:true,
@@ -108,28 +93,33 @@ var users_view = {
             },
             {cols: [
                 {},
-                {view:"button", id: "_ch_password", type:"imageButton", image: './libs/img/excel.svg',label: "Сменить пароль", width: 150,
+                {view:"button", id: "_add_user", type:"imageButton", image: './libs/img/add-user.svg',
+                    label: "Добавить пользователя", width: 200, tooltip: "Добавление пользователя",
+                    click: function() {
+                        webix.message('добавление пользователя');
+                        }
+                    },
+                {view:"button", id: "_ch_password", type:"imageButton", image: './libs/img/password.svg',label: "Сменить пароль", width: 150, disabled: true,
                     click: function() {webix.message('смена пароля')}
                     },
-                {view:"button", id: "_change", type:"imageButton", image: './libs/img/excel.svg',label: "Изменить данные", width: 180,
+                {view:"button", id: "_change", type:"imageButton", image: './libs/img/edit.svg',label: "Редактировать", width: 150, disabled: true,
                     click: function() {
                         $$("user_prop").enable();
                         $$("_apply_chgs").enable();
                         $$("_change").disable();
                         }
                     },
-                {view:"button", id: "_apply_chgs", type:"imageButton", image: './libs/img/excel.svg',label: "Применить изменения", width: 200, disabled: true,
+                {view:"button", id: "_apply_chgs", type:"imageButton", image: './libs/img/confirm.svg',label: "Применить изменения", width: 200, disabled: true,
                     click: function() {
                         $$("_apply_chgs").disable();
                         $$("_change").enable();
                         $$("user_prop").disable();
-                        let item = $$("user_prop").getValues();
+                        var item = $$("user_prop").getValues();
                         var params = {"set_c_user": item};
-                        let tem = request(req_url, params, !0).response
-                        //item = JSON.parse(item)[0];
+                        item = request(req_url, params, !0).response
+                        item = JSON.parse(item)[0];
                         $$("user_prop").parse(item);
                         $$("user_prop").refresh()
-                        console.log(item);
                         }
                     }
                 ]}
@@ -139,22 +129,27 @@ var users_view = {
     };
 
 
-var topics_view = {template: "темы"};
-var status_view = {template: "статусы"};
-var alerst_view = {template: "алерты"};
+var topics_view = {id: "topics_dt", template: "темы"};
+var status_view = {id: "status_dt", template: "статусы"};
+var alerts_view = {id: "alerts_dt", template: "алерты"};
 
 var view_cells_options = [
             {header: 'Пользователи', body: users_view},
             {header: 'Темы', body: topics_view},
             {header: 'Статусы', body: status_view},
-            {header: 'Приоритеты', body: alerst_view}
+            {header: 'Приоритеты', body: alerts_view}
             ];
 
 var u_buttons = [
     {},
     {view:"button", id: "_opt_refresh", type:"imageButton", image: './libs/img/sync.svg',
-        label: "Обновить", width: 120, tooltip: "Синхронизация с сервером, <Ctrl>+Q", hotkey: "q+ctrl"},
-    {view:"button", id: "_back", type:"imageButton", image: './libs/img/excel.svg',label: "Назад", width: 90,
+        label: "Обновить", width: 120, tooltip: "Синхронизация с сервером, <Ctrl>+Q", hotkey: "q+ctrl",
+        click: function() {
+            opt_refresh();
+            webix.message('refresh');
+            }
+        },
+    {view:"button", id: "_back", type:"imageButton", image: './libs/img/back.svg',label: "Назад", width: 90,
         click: function() {$$("pop_options").hide()}
         }
     ];
@@ -173,7 +168,7 @@ var opt = webix.ui({
             cols: [
                 {view: "label", label: "<a href='http://ms71.org'><span class='ms-logo'></span></a>",
                     width: 60, align: 'center', height: 36},
-                {view: "label", label: "Манускрипт солюшн: настройки CRM", css: 'ms-logo-text'
+                {view: "label", label: "Манускрипт солюшн: CRM: настройки", css: 'ms-logo-text'
                     },
                 {},
                 {view: "label", label: "Пользователь: " + user, css: 'user-text', width: 250
@@ -211,18 +206,16 @@ var opt = webix.ui({
         }
     });
 
-$$("user_prop").setValues({
-        layout:{
-            width:250,
-            height:480
-        },
-        data:{
-            url:"https://webix.com/data",
-            type:"json"
-        },
-        style:{
-            position:2,
-            color:1
-        }
+var get_c_view_opt = function () {
+    var c_view = ($$("users_dt").isVisible()) ? "users_dt":
+                 ($$("topics_dt").isVisible()) ? "topics_dt":
+                 ($$("status_dt").isVisible()) ? "status_dt":
+                 "alerts_dt";
+    return c_view;
+    };
 
-    });
+var opt_refresh = function () {
+    var cv = get_c_view_opt();
+    $$(cv).refreshColumns();
+    $$(cv).refresh();
+    };

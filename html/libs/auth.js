@@ -79,6 +79,7 @@ function a_action() {
         include("./libs/request.js");
         include("./libs/crm.js");
         include("./libs/options.js");
+        include("./libs/customers.js");
          }, 100);
     };
 

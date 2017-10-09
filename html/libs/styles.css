@@ -73,9 +73,17 @@ input {
 
 .nothing {
     /*color: grey;*/
-    color: darkgrey !important;
+    color: #696969 !important;
     }
 
+.webix_view {
+    /*color: grey;*/
+    color: #696969 !important;
+    }
+
+.webix_inp_label, .webix_inp_top_label, .webix_label_right {
+    color: #696969;
+    }
 
 .num_s {
     font-size: 13px !important;

@@ -179,7 +179,12 @@ where r.archived = false and r.deleted = false and num = {0};
     skype_name = '{8}',
     email = '{9}',
     customer = {10}
-"""
+    where uid  = {11}
+    returning uid;
+""",
+'sql_points_c': """select * from points where uid > 0 and customer_id = {0};""",
+'sql_customer_c': """select * from customers where uid = {0};""",
+'sql_point_c': """select * from points where uid = {0};"""
         }
 
     def get_topics(self, params=None, x_hash=None):
@@ -208,6 +213,36 @@ where r.archived = false and r.deleted = false and num = {0};
         ret_value = json.dumps(rl, ensure_ascii=False)
         return ret_value
 
+    def get_c_customer(self, params=None, x_hash=None):
+        sql = self.sqls['sql_customer_c'].format(params)
+        cur = self._make_sql(sql)
+        rl = []
+        row = cur.fetchone()
+        qw = {"uid": row[0], "display_name": row[1], "full_name": row[2], "address": row[3], "inn": row[4],
+              "kpp": row[5], "phone_num": row[6], "email": row[7], "director": row[8],
+              "contact": row[9], "create_date": self._f_date(row[10]), "create_user": row[11], "change_date": self._f_date(row[12]),
+              "active": row[13], "deleted": row[14], "id_old": row[15]
+            }
+        rl.append(qw)
+        cur.close()
+        ret_value = json.dumps(rl, ensure_ascii=False)
+        return ret_value
+
+    def get_c_point(self, params=None, x_hash=None):
+        sql = self.sqls['sql_point_c'].format(params)
+        cur = self._make_sql(sql)
+        rl = []
+        row = cur.fetchone()
+        qw = {"uid": row[0], "display_name": row[1], "customer_id": row[2], "address": row[3], "phone_num": row[4],
+              "email": row[5], "contact": row[6], "create_date": self._f_date(row[7]), "create_user": row[8],
+              "change_date": self._f_date(row[9]), "active": row[10], "deleted": row[11], "id_old": row[12],
+              "comments": row[13]
+            }
+        rl.append(qw)
+        cur.close()
+        ret_value = json.dumps(rl, ensure_ascii=False)
+        return ret_value
+
     def get_c_user(self, params=None, x_hash=None):
         sql = self.sqls['sql_get_user'].format(params)
         cur = self._make_sql(sql)
@@ -225,8 +260,16 @@ where r.archived = false and r.deleted = false and num = {0};
     def set_c_user(self, params=None, x_hash=None):
         rl = []
         print(params)
-        
-        ret_value = json.dumps(rl, ensure_ascii=False)
+        sql = self.sqls['sql_upd_user'].format(params['display_name'], params['last_name'], params['first_name'], params['admin'], params['active'],
+                                               params['deleted'], params['phone_number'], params['int_number'], params['skype_name'], params['email'],
+                                               params['customer'], params['uid'])
+        cur = self._make_sql(sql)
+        self.con.commit()
+        row = cur.fetchone()[0]
+        cur.close()
+        #rl = []
+        ret_value = self.get_c_user(row)
+        #ret_value = json.dumps(rl, ensure_ascii=False)
         return ret_value
 
     def get_users(self, params=None, x_hash=None):
@@ -243,7 +286,7 @@ where r.archived = false and r.deleted = false and num = {0};
         return ret_value
 
     def get_clients(self, params=None, x_hash=None):
-        sql = "select uid, display_name from customers where uid > 0 order by display_name asc;"
+        sql = "select uid, display_name from customers where uid > 0 order by uid asc;"
         cur = self._make_sql(sql)
         rl = []
         for row in cur.fetchall():

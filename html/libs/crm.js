@@ -1,15 +1,13 @@
 "use strict";
 
-var customers_link = {template: "по нажатию кнопки будет переход на страницу 'Клиенты' (админка клиентов)"}
 var vendors = {template: "по нажатию кнопки будет переход на страницу 'Поставщики'(админка поставщиков)"}
 var knowbase = {template: "по нажатию кнопки будет переход на страницу 'База знаний'"}
-var users_link = {template: "по нажатию кнопки будет переход на страницу 'Пользователи' (админка пользователей, тем и пр.)"}
 
 function add_str(data) {
     var len = data.toString(10).length;
     if (0 < len) data = data + " дн.";
     return data;
-    }
+    };
 
 var dt_formating = function (d) {
     var data = d.order;
@@ -23,8 +21,17 @@ var dt_formating = function (d) {
                    (obj.alert === prior[3]) ? "low_pr":
                    "nothing";
         });
-    }
-
+    };
+var _appl_from_mass = [
+                    { label:"Информация о заявке", type:"label" },
+                    { label:"В работе с", type:"text", id:"to_work_date"},
+                    { label:"Последнее изменение", type:"text", id:"change_date"},
+                    { label:"Статус", type:"text", id:"status"},
+                    { label:"Приоритет", type:"text", id:"alert"},
+                    { label:"Автор запроса", type:"text", id:"create_user"},
+                    { label:"Назначен", type:"text", id:"ordered"},
+                    { label:"Тема", type:"text", id:"topic"},
+                ]
 
 var appl_from_mass = [
     {cols: [
@@ -70,19 +77,33 @@ var mass_appl = {
     body: {
         cols: [
             {rows: [
-                {view: "form",
-                    id:"appl_form_mass",
-                    width: 500,
-                    height: 600,
-                    //readonly: true,
+                {view: "property", id: "request_prop",
+                    complexData:true,
                     disabled: true,
-                    elementsConfig:{
-                        labelWidth: 50,
-                        labelPosition: "top",
-                        css: "shrink"
-                        },
-                    elements: appl_from_mass
+                    width: 500,
+                    //autoheight: true,
+                    height: 200,
+                    nameWidth: 160,
+                    elements: _appl_from_mass
                     },
+                {view: "textarea", id: "_app_desc", disabled: true,
+                    label:"Описание проблемы", labelPosition: "top", height: 180},
+                {view: "textarea", id: "_app_res_desc", disabled: true,
+                    label:"Решение проблемы", labelPosition: "top", height: 180},
+                {},
+                //{view: "form",
+                    //id:"appl_form_mass",
+                    //width: 500,
+                    //height: 600,
+                    ////readonly: true,
+                    //disabled: true,
+                    //elementsConfig:{
+                        //labelWidth: 50,
+                        //labelPosition: "top",
+                        //css: "shrink"
+                        //},
+                    //elements: appl_from_mass
+                    //},
                 {cols: [
                     {},
                     {view:"button", type:"form", tooltip: "Нажать для редактирования заявки. пока недоступно", //disabled: true,
@@ -617,11 +638,11 @@ var view_cells = [
 
 var buttons = [
     {view:"button", id: '_new_button', type:"imageButton", popup: "pop_send_form", image: './libs/img/add.svg',
-        label: 'Новая заявка', width: 130, tooltip: "Создание новой заявки, <Ctrl>+A", hotkey: "a+ctrl"},//ctrl"},
+        label: 'Новая заявка', width: 140, tooltip: "Создание новой заявки, <Ctrl>+A", hotkey: "a+ctrl"},//ctrl"},
     {view:"button", id: '_vendors', type:"imageButton", popup: "pop_vendors_form", image: './libs/img/supplies.svg',
         label: 'Поставщики', width: 130, tooltip: "Список поставщиков"},
-    {view:"button", id: '_customers', type:"imageButton", popup: "pop_customers_form", image: './libs/img/customers.svg',
-        label: '   Клиенты', width: 130, tooltip: "Список клиентов"},
+    {view:"button", id: '_customers', type:"imageButton", image: './libs/img/customers.svg', //popup: "pop_customers_form", 
+        label: '   Клиенты', width: 130, tooltip: "Список клиентов", click: function() { $$("pop_customers").show()}},
     {view:"button", id: '_users', type:"imageButton", image: './libs/img/admin.svg', click: function() { $$("pop_options").show()},//popup: "pop_options",//popup: "pop_users_form",
         label: 'Настройки', width: 130, tooltip: "Админка настроек"},
     {view:"button", id: '_knowledge_base', type:"imageButton", popup: "pop_knowbase_form", image: './libs/img/kn_base.svg',
@@ -681,16 +702,22 @@ function shrink1(value, config) {
 function set_m_appl_info(item) {
     console.log(item);
     $$("appl_mass_fs").label_setter('Заявка номер ' + item.num + ' от ' + item.create_date);
-    $$("m_appl_work").setValue(item.to_work_date);
-    $$("m_appl_ordered").setValue(item.ordered);
-    $$("m_appl_ch").setValue(item.change_date);
-    $$("m_appl_stat").setValue(item.status);
-    $$("m_appl_alert").setValue(item.alert);
-    $$("m_appl_author").setValue(item.create_user);
-    $$("m_appl_topic").setValue(item.topic);
-    $$("m_appl_desc").setValue(item.description);
-    $$("m_appl_res_desc").setValue(item.res_desc);
-    $$("appl_form_mass").refresh();
+    $$("request_prop").parse(item);
+    $$("request_prop").refresh();
+    $$("_app_desc").setValue(item.description);
+    $$("_app_desc").refresh();
+    $$("_app_desc").setValue(item.description);
+    $$("_app_res_desc").refresh();
+    //$$("m_appl_work").setValue(item.to_work_date);
+    //$$("m_appl_ordered").setValue(item.ordered);
+    //$$("m_appl_ch").setValue(item.change_date);
+    //$$("m_appl_stat").setValue(item.status);
+    //$$("m_appl_alert").setValue(item.alert);
+    //$$("m_appl_author").setValue(item.create_user);
+    //$$("m_appl_topic").setValue(item.topic);
+    //$$("m_appl_desc").setValue(item.description);
+    //$$("m_appl_res_desc").setValue(item.res_desc);
+    //$$("appl_form_mass").refresh();
     }
 
 
@@ -894,18 +921,6 @@ webix.ui({
 
 webix.ui({
     view: "popup",
-    id: "pop_customers_form",
-    body: customers_link
-    });
-
-webix.ui({
-    view: "popup",
-    id: "pop_users_form",
-    body: users_link
-    });
-
-webix.ui({
-    view: "popup",
     id: "pop_ch_alert_list",
     body: {
         view: "list",
@@ -940,9 +955,6 @@ webix.ui({
     id: "pop_vendors_form",
     body: vendors
     });
-
-
-
 
 //elemnts attachs
 
@@ -1206,7 +1218,6 @@ function upd_views() {
     upd_filters($$("view_2"));
     upd_filters($$("view_3"));
     upd_filters($$("view_4"));
-
     var cv = get_current_view();
     if (cv === "view_1") {
         upd_all();

@@ -30,9 +30,9 @@ var upd_points = function () {
             load: function(view, callback) {
                 var params = {"get_points": user};
                 request(this.source, params).then(function(data){
-                        $$("points_dc").clearAll();
+                        view.clearAll();
                         data = data.json();
-                        $$("points_dc").parse(data);
+                        view.parse(data);
                         });
                     }
             },
@@ -48,14 +48,11 @@ var clients = new webix.DataCollection({
         load: function(view, callback) {
             var params = {"get_clients": user};
             request(this.source, params).then(function(data){
-            //webix.ajax().post(this.source, params)
-                //.then(function(data){
-                    //webix.ajax.$callback(view, callback, "", data, -1);
-                    $$("clients_dc").clearAll();
-                    data = data.json();
-                    $$("clients_dc").parse(data);
-                    });
-                }
+                view.clearAll();
+                data = data.json();
+                view.parse(data);
+                });
+            }
         },
     });
 
@@ -67,9 +64,6 @@ var alerts = new webix.DataCollection({
         load: function(view, callback) {
             var params = {"get_alerts": user};
             request(this.source, params).then(function(data){
-            //webix.ajax().post(this.source, params)
-                //.then(function(data){
-                    //webix.ajax.$callback(view, callback, "", data, -1);
                 $$("alerts_dc").clearAll();
                 data = data.json();
                 $$("alerts_dc").parse(data);
@@ -110,14 +104,11 @@ var topics = new webix.DataCollection({
         load: function(view, callback) {
             var params = {"get_topics": user};
             request(this.source, params).then(function(data){
-            //webix.ajax().post(this.source, params)
-                //.then(function(data){
-                    //webix.ajax.$callback(view, callback, "", data, -1);
-                    $$("topics_dc").clearAll();
-                    data = data.json();
-                    $$("topics_dc").parse(data);
-                    });
-                }
+                $$("topics_dc").clearAll();
+                data = data.json();
+                $$("topics_dc").parse(data);
+                });
+            }
         },
     });
 
