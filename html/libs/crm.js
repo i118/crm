@@ -700,17 +700,11 @@ webix.ui({
     width: 186,
     height: 60,
     on: {
-        onBindRequest: function(i, ii){
-            console.log(i);
-            console.log(ii);
-            },
         onBeforeShow: function(i){
-            var row = i.srcElement.attributes[1].value-1;
-            var qq = $$("view_4").getIdByIndex(row);
-            //console.log(qq);
-            $$("view_4").select(qq);
-            //console.log($$("view_4"));
-            //console.log(i.srcElement.attributes[1].value);
+            var row = i.srcElement.attributes[1].value - 1;
+            var cv = get_current_view();
+            var qq = $$(cv).getIdByIndex(row);
+            $$(cv).select(qq);
             },
         onShow: function(event) {
             var cv = get_current_view();
@@ -734,6 +728,12 @@ webix.ui({
     view:"context",
     id:"context_menu",
     on: {
+        onBeforeShow: function(i){
+            var row = i.srcElement.attributes[1].value - 1;
+            var cv = get_current_view();
+            var qq = $$(cv).getIdByIndex(row);
+            $$(cv).select(qq);
+            },
         onShow: function(event) {
             var cv = get_current_view();
             var sid = $$(cv).getSelectedId();
