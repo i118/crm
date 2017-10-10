@@ -22,6 +22,7 @@ var dt_formating = function (d) {
                    "nothing";
         });
     };
+    
 var _appl_from_mass = [
                     { label:"Информация о заявке", type:"label" },
                     { label:"В работе с", type:"text", id:"to_work_date"},
@@ -32,43 +33,6 @@ var _appl_from_mass = [
                     { label:"Назначен", type:"text", id:"ordered"},
                     { label:"Тема", type:"text", id:"topic"},
                 ]
-
-var appl_from_mass = [
-    {cols: [
-        {view: "text", labelPosition: "left", readonly: true, id: "m_appl_work",
-            label: "В работе с", value: "10.10.1999", height: 30, labelWidth: 70
-            },
-        {view: "text", labelPosition: "left", readonly: true, id: "m_appl_ch",
-            label: "Последнее изменение", value: "10.10.1999", height: 30, labelWidth: 100
-            }
-        ]},
-    {cols: [
-        {view: "text", labelPosition: "left", readonly: true, id: "m_appl_stat",
-            label: "Статус", value: "Заведена", height: 30
-            },
-        {view: "text", labelPosition: "left", id: "m_appl_alert",
-            label: "Приоритет", value: "Обычный", height: 30, labelWidth: 100
-            }
-        ]},
-    {cols: [
-        {view: "text", readonly: true, id: "m_appl_author",
-            label: "Автор запроса", value: "Овсянников", height: 48
-            },
-        {view: "text", id: "m_appl_ordered",
-            label: "Назначен", value: "Овсянников", height: 48
-            }
-        ]},
-    {view: "text", id: "m_appl_topic",
-        label: "Тема", value: "Не работает", height: 48
-        },
-    {view: "textarea", height: 256, id: "m_appl_desc", 
-        label: "Описание проблемы", value: "Жутко длинное описание проблемы"
-        },
-    {view: "textarea", height: 256, id: "m_appl_res_desc", 
-        label: "Решение проблемы", value: "Пока не решено"
-        }
-    ];
-
 
 var mass_appl = {
     view: "fieldset",
@@ -81,7 +45,6 @@ var mass_appl = {
                     complexData:true,
                     disabled: true,
                     width: 500,
-                    //autoheight: true,
                     height: 200,
                     nameWidth: 160,
                     elements: _appl_from_mass
@@ -91,90 +54,54 @@ var mass_appl = {
                 {view: "textarea", id: "_app_res_desc", disabled: true,
                     label:"Решение проблемы", labelPosition: "top", height: 180},
                 {},
-                //{view: "form",
-                    //id:"appl_form_mass",
-                    //width: 500,
-                    //height: 600,
-                    ////readonly: true,
-                    //disabled: true,
-                    //elementsConfig:{
-                        //labelWidth: 50,
-                        //labelPosition: "top",
-                        //css: "shrink"
-                        //},
-                    //elements: appl_from_mass
-                    //},
                 {cols: [
                     {},
-                    {view:"button", type:"form", tooltip: "Нажать для редактирования заявки. пока недоступно", //disabled: true,
-                        label: 'Редактировать', width: 120},
-                    {view:"button", id: 'close_button_mass', type:"form", 
+                    {view:"button", type:"imageButton", image: './libs/img/edit.svg', tooltip: "Нажать для редактирования заявки. пока недоступно", //disabled: true,
+                        label: 'Редактировать', width: 160},
+                    {view:"button", id: 'close_button_mass', type:"imageButton", image: './libs/img/cancel.svg', 
                         label: 'Закрыть', width: 100}
                     ]}
             ]},
-            {view: "list",
-                id: "topic_mass_list",
-                width: 550,
-                tooltip: {
-                    template: "<div> <span class='f_list_cl_2'>Описание: </span> <span class='f_list_cl_txt'>#description#</span></div>" +
-                          "<div> <span class='f_list_cl_2'>Решение: </span> <span class='f_list_cl_txt'>#result_desc#</span></div>"
+            {rows: [
+                {view: "property",
+                    disabled: true,
+                    height: 24,
+                    elements: [{ label:"История заявок по теме", type:"label" },]
                     },
-                type: {
-                    css: 'f_list_cl',
-                    height: "auto",
-                    },
-                navigation: true,
-                scroll: true,
-                template: "<div> <span class='f_list_cl'>Заявка номер: </span> <span class='f_list_cl_txt'>#num#</span>  <span class='f_list_cl_2'>от: </span> <span class='f_list_cl_txt'>#create_date#</span></div>" +
-                          "<div> <span class='f_list_cl_2'>Описание: </span> <span class='f_list_cl_txt'>#description#</span></div>" +
-                          "<div> <span class='f_list_cl_2'>Решение: </span> <span class='f_list_cl_txt'>#result_desc#</span></div>"
+                {view: "list",
+                    id: "topic_mass_list",
+                    width: 550,
+                    tooltip: {
+                        template: "<div> <span class='f_list_cl_2'>Описание: </span> <span class='f_list_cl_txt'>#description#</span></div>" +
+                              "<div> <span class='f_list_cl_2'>Решение: </span> <span class='f_list_cl_txt'>#result_desc#</span></div>"
+                        },
+                    type: {
+                        css: 'f_list_cl',
+                        height: "auto",
+                        },
+                    navigation: true,
+                    scroll: true,
+                    template: "<div> <span class='f_list_cl'>Заявка номер: </span> <span class='f_list_cl_txt'>#num#</span>  <span class='f_list_cl_2'>от: </span> <span class='f_list_cl_txt'>#create_date#</span></div>" +
+                              "<div> <span class='f_list_cl_2'>Описание: </span> <span class='f_list_cl_txt'>#description#</span></div>" +
+                              "<div> <span class='f_list_cl_2'>Решение: </span> <span class='f_list_cl_txt'>#result_desc#</span></div>"
                 }
+                ]}
         ]
         }
     };
 
-
-var appl_form_var = [
-    {cols: [
-        {view: "text", labelPosition: "left", readonly: true, id: "appl_work",
-            label: "В работе с", value: "10.10.1999", height: 30, labelWidth: 70
-            },
-        {view: "text", labelPosition: "left", readonly: true, id: "appl_ch",
-            label: "Последнее изменение", value: "10.10.1999", height: 30, labelWidth: 100
-            }
-        ]},
-    {cols: [
-        {view: "text", labelPosition: "left", readonly: true, id: "appl_stat",
-            label: "Статус", value: "Заведена", height: 30
-            },
-        {view: "text", labelPosition: "left", id: "appl_alert",
-            label: "Приоритет", value: "Обычный", height: 30, labelWidth: 100
-            }
-        ]},
-    {view: "text", id: "appl_cli",
-        label: "Организация", value: "Аптека", height: 48
-        },
-    {view: "text", id: "appl_point",
-        label: "Точка", value: "точка за углом", height: 48
-        },
-    {cols: [
-        {view: "text", readonly: true, id: "appl_author",
-            label: "Автор запроса", value: "Овсянников", height: 48
-            },
-        {view: "text", id: "appl_ordered",
-            label: "Назначен", value: "Овсянников", height: 48
-            }
-        ]},
-    {view: "text", id: "appl_topic",
-        label: "Тема", value: "Не работает", height: 48
-        },
-    {view: "textarea", height: 176, id: "appl_desc", 
-        label: "Описание проблемы", value: "Жутко длинное описание проблемы"
-        },
-    {view: "textarea", height: 176, id: "appl_res_desc", 
-        label: "Решение проблемы", value: "Пока не решено"
-        }
-    ];
+var _appl_from_var = [
+                    { label:"Информация о заявке", type:"label" },
+                    { label:"В работе с", type:"text", id:"to_work_date"},
+                    { label:"Последнее изменение", type:"text", id:"change_date"},
+                    { label:"Статус", type:"text", id:"status"},
+                    { label:"Приоритет", type:"text", id:"alert"},
+                    { label:"Организация", type:"text", id:"client"},
+                    { label:"Точка", type:"text", id:"point"},
+                    { label:"Автор запроса", type:"text", id:"create_user"},
+                    { label:"Назначен", type:"text", id:"ordered"},
+                    { label:"Тема", type:"text", id:"topic"},
+                ]
 
 var c_appl = {
     view: "fieldset",
@@ -183,48 +110,52 @@ var c_appl = {
     body: {
         cols: [
             {rows: [
-                {view: "form",
-                    id:"appl_form",
-                    width: 500,
-                    height: 600,
-                    //readonly: true,
+                {view: "property", id: "request_prop_1",
+                    complexData:true,
                     disabled: true,
-                    elementsConfig:{
-                        labelWidth: 50,
-                        labelPosition: "top",
-                        css: "shrink"
-                        },
-                    elements: appl_form_var
+                    width: 500,
+                    height: 246,
+                    nameWidth: 160,
+                    elements: _appl_from_var
                     },
+                {view: "textarea", id: "_app_desc_1", disabled: true,
+                    label:"Описание проблемы", labelPosition: "top", height: 180},
+                {view: "textarea", id: "_app_res_desc_1", disabled: true,
+                    label:"Решение проблемы", labelPosition: "top", height: 180},
+                {},
                 {cols: [
                     {},
-                    {view:"button", type:"form", tooltip: "Нажать для редактирования заявки. пока недоступно", //disabled: true,
-                        label: 'Редактировать', width: 120},
-                    {view:"button", id: 'close_button', type:"form", 
+                    {view:"button", type:"imageButton", image: './libs/img/edit.svg', tooltip: "Нажать для редактирования заявки. пока недоступно", //disabled: true,
+                        label: 'Редактировать', width: 160},
+                    {view:"button", id: 'close_button', type:"imageButton", image: './libs/img/cancel.svg',
                         label: 'Закрыть', width: 100}
                     ]}
             ]},
-            {view: "list",
-                id: "cli_apps_list",
-                //data: clients,
-                //height: 140,
-                width: 550,
-                tooltip: {
-                    template: "<div> <span class='f_list_cl_2'>Описание: </span> <span class='f_list_cl_txt'>#description#</span></div>" +
-                          "<div> <span class='f_list_cl_2'>Решение: </span> <span class='f_list_cl_txt'>#result_desc#</span></div>"
+            {rows: [
+                {view: "property",
+                    disabled: true,
+                    height: 24,
+                    elements: [{ label:"История заявок по клиенту", type:"label" },]
                     },
-                type: {
-                    css: 'f_list_cl',
-                    height: "auto",
-                    },
-                navigation: true,
-                scroll: true,
-                template: "<div> <span class='f_list_cl'>Заявка номер: </span> <span class='f_list_cl_txt'>#num#</span>  <span class='f_list_cl_2'>от: </span> <span class='f_list_cl_txt'>#create_date#</span>        </div>" +
-                          //"<div> <span class='f_list_cl_2'>Дата: </span> <span class='f_list_cl_txt'>#create_date#</span></div>" +
-                          "<div> <span class='f_list_cl_2'>Тема: </span> <span class='f_list_cl_txt'>#topic#</span></div>" +
-                          "<div> <span class='f_list_cl_2'>Описание: </span> <span class='f_list_cl_txt'>#description#</span></div>" +
-                          "<div> <span class='f_list_cl_2'>Решение: </span> <span class='f_list_cl_txt'>#result_desc#</span></div>"                          
-                }
+                {view: "list",
+                    id: "cli_apps_list",
+                    width: 550,
+                    tooltip: {
+                        template: "<div> <span class='f_list_cl_2'>Описание: </span> <span class='f_list_cl_txt'>#description#</span></div>" +
+                              "<div> <span class='f_list_cl_2'>Решение: </span> <span class='f_list_cl_txt'>#result_desc#</span></div>"
+                        },
+                    type: {
+                        css: 'f_list_cl',
+                        height: "auto",
+                        },
+                    navigation: true,
+                    scroll: true,
+                    template: "<div> <span class='f_list_cl'>Заявка номер: </span> <span class='f_list_cl_txt'>#num#</span>  <span class='f_list_cl_2'>от: </span> <span class='f_list_cl_txt'>#create_date#</span>        </div>" +
+                              "<div> <span class='f_list_cl_2'>Тема: </span> <span class='f_list_cl_txt'>#topic#</span></div>" +
+                              "<div> <span class='f_list_cl_2'>Описание: </span> <span class='f_list_cl_txt'>#description#</span></div>" +
+                              "<div> <span class='f_list_cl_2'>Решение: </span> <span class='f_list_cl_txt'>#result_desc#</span></div>"                          
+                    }
+                ]}
         ]}
     };
 
@@ -269,7 +200,7 @@ function oneForAll(value, filter, obj){
 
 
 
-var mass_apl = {id: "view_3", view: "activeDataTable",
+var mass_apl = {id: "view_3", view: "datatable",
     navigation: "row",
     select: true,
     data: upd_mass(),
@@ -361,7 +292,7 @@ var mass_apl = {id: "view_3", view: "activeDataTable",
     ]}
 
 
-var history_appl = {id: "view_4", view: "activeDataTable",
+var history_appl = {id: "view_4", view: "datatable",
     navigation: "row",
     select: true,
     data: upd_history(),
@@ -371,9 +302,6 @@ var history_appl = {id: "view_4", view: "activeDataTable",
     rowHeight:row_height,
     onContext: {},
     on:{
-        //onSubViewCreate:function(view, item){
-            //view.setValues(item);
-            //},
         onBeforeSelect: function(item) {
             this.addRowCss(item.id, "r_css");
             },
@@ -427,7 +355,7 @@ var history_appl = {id: "view_4", view: "activeDataTable",
         ]}
     ]};
 
-var my_appl = {id: "view_1", view: "activeDataTable",
+var my_appl = {id: "view_1", view: "datatable",
     navigation: "row",
     select: true,
     data: upd_my(),
@@ -437,9 +365,6 @@ var my_appl = {id: "view_1", view: "activeDataTable",
     rowHeight:row_height,
     onContext: {},
     on:{
-        onSubViewCreate:function(view, item){
-            view.setValues(item);
-            },
         onBeforeSelect: function(item) {
             this.addRowCss(item.id, "r_css");
             },
@@ -496,7 +421,7 @@ var my_appl = {id: "view_1", view: "activeDataTable",
       sort: "text",
       header:[
         {text: "Точка / Клиент", css: 'header_data'},
-        {content:"textFilter"}],
+        {content:"textFilter", compare: oneForAll}],
         template: "#point#" + " / " + "#client#"
         },
     { id:"in_work",
@@ -516,8 +441,6 @@ var my_appl = {id: "view_1", view: "activeDataTable",
         ]}
     ]}
 
-
-
 var all_appl = {id: "view_2", view: "activeDataTable",
     navigation: "row",
     select: true,
@@ -534,24 +457,7 @@ var all_appl = {id: "view_2", view: "activeDataTable",
         onBeforeUnselect: function(item) {
             this.removeRowCss(item.id, "r_css");
             },
-        onBeforeRender: dt_formating,
-        "onresize": webix.once(function(){ 
-            //this.adjustRowHeight();
-            })
-        },
-    scheme: {
-        $init: function(obj){
-            //obj.$css = (obj.alert === "Высокий") ? "high_pr":
-                       //(obj.alert === "Средний") ? "med_pr":
-                       //(obj.alert === "Низкий") ? "low_pr":
-                       //"nothing";
-
-
-            //obj - data object from incoming data
-            //obj.count = obj.cells[0]; //set value based on some data in incoming dataset
-            //obj.price = obj.cells[1];
-            //obj.total = obj.price * obj.count;   //or calculate values on the fly
-            }
+        onBeforeRender: dt_formating
         },
     columns:[
     { id:"num",
@@ -608,7 +514,7 @@ var all_appl = {id: "view_2", view: "activeDataTable",
       sort: "text",
       header:[
         {text: "Точка / Клиент", css: 'header_data'},
-        {content:"textFilter"}],
+        {content:"textFilter", compare: oneForAll}],
         template: "#point#" + " / " + "#client#"
         },
     { id:"in_work",
@@ -660,9 +566,21 @@ var buttons_2floor = [
     {view:"button", id: '_to_work', type:"form", height: 35,
         label: 'Взять в работу', width: 150},
     {view:"button", id: '_order', type:"form", height: 35, popup: "pop_ch_users_list",
-        label: 'Назначить', width: 150},
+        label: 'Назначить', width: 150, click: function(){
+            var cv = get_current_view();
+            var item = $$(cv).getSelectedItem();
+            if (!item) {
+                $$("context_menu").hide();
+            }}
+        },
     {view:"button", id: '_ch_alert', type:"form", height: 35, popup: "pop_ch_alert_list",
-        label: 'Сменить приоритет', width: 150},
+        label: 'Сменить приоритет', width: 150, click: function(){
+            var cv = get_current_view();
+            var item = $$(cv).getSelectedItem();
+            if (!item) {
+                $$("context_menu").hide();
+            }}
+        },
     {view:"button", id: '_complete', type:"form", popup: "pop_complete_form", height: 35,
         label: 'Выполненно', width: 150},
     {view:"button", id: '_archive', type:"form", height: 35,
@@ -680,14 +598,10 @@ var bottom = [
 //functions
 
 function get_current_view() {
-    var hide1 = $$("view_1").isVisible();
-    var hide2 = $$("view_2").isVisible();
-    var hide3 = $$("view_3").isVisible();
-    var hide4 = $$("view_4").isVisible();
-    var c_view = (hide1) ? "view_1":
-               (hide2) ? "view_2":
-               (hide3) ? "view_3":
-               "view_4";
+    var c_view = ($$("view_1").isVisible()) ? "view_1":
+                 ($$("view_2").isVisible()) ? "view_2":
+                 ($$("view_3").isVisible()) ? "view_3":
+                 "view_4";
     return c_view;
     };
 
@@ -700,46 +614,28 @@ function shrink1(value, config) {
 
 
 function set_m_appl_info(item) {
-    console.log(item);
     $$("appl_mass_fs").label_setter('Заявка номер ' + item.num + ' от ' + item.create_date);
     $$("request_prop").parse(item);
     $$("request_prop").refresh();
     $$("_app_desc").setValue(item.description);
     $$("_app_desc").refresh();
-    $$("_app_desc").setValue(item.description);
+    $$("_app_res_desc").setValue(item.res_desc);
     $$("_app_res_desc").refresh();
-    //$$("m_appl_work").setValue(item.to_work_date);
-    //$$("m_appl_ordered").setValue(item.ordered);
-    //$$("m_appl_ch").setValue(item.change_date);
-    //$$("m_appl_stat").setValue(item.status);
-    //$$("m_appl_alert").setValue(item.alert);
-    //$$("m_appl_author").setValue(item.create_user);
-    //$$("m_appl_topic").setValue(item.topic);
-    //$$("m_appl_desc").setValue(item.description);
-    //$$("m_appl_res_desc").setValue(item.res_desc);
-    //$$("appl_form_mass").refresh();
     }
 
 
 function set_appl_info(item) {
     $$("appl_fs").label_setter('Заявка номер ' + item.num + ' от ' + item.create_date);
-    $$("appl_work").setValue(item.to_work_date);
-    $$("appl_ordered").setValue(item.ordered);
-    $$("appl_ch").setValue(item.change_date); 
-    $$("appl_stat").setValue(item.status);
-    $$("appl_alert").setValue(item.alert);
-    $$("appl_cli").setValue(item.client);
-    $$("appl_point").setValue(item.point);
-    $$("appl_author").setValue(item.create_user);
-    $$("appl_topic").setValue(item.topic);
-    $$("appl_desc").setValue(item.description);
-    $$("appl_res_desc").setValue(item.res_desc);
-    $$("appl_form").refresh();
+    $$("request_prop_1").parse(item);
+    $$("request_prop_1").refresh();
+    $$("_app_desc_1").setValue(item.description);
+    $$("_app_desc_1").refresh();
+    $$("_app_res_desc_1").setValue(item.res_desc);
+    $$("_app_res_desc_1").refresh();
     }
 
 
 function open_appl(view, id) {
-    //var c_item = view.getSelectedItem();
     var num = view.getSelectedItem().num;
     var params = {"get_item": num};
     var item = request(req_url, params, !0).response
@@ -786,7 +682,6 @@ webix.ui({
                 {height: 36, cols:buttons},
                 {view: "tabview",
                     width: document.documentElement.clientWidth,
-                    //width: 1280,
                     id:"tabview1",
                     animate:false,
                     cells: view_cells,
@@ -802,22 +697,36 @@ webix.ui({
 webix.ui({
     view:"context",
     id:"context_arch",
+    width: 186,
     height: 60,
     on: {
+        onBindRequest: function(i, ii){
+            console.log(i);
+            console.log(ii);
+            },
+        onBeforeShow: function(i){
+            var row = i.srcElement.attributes[1].value-1;
+            var qq = $$("view_4").getIdByIndex(row);
+            //console.log(qq);
+            $$("view_4").select(qq);
+            //console.log($$("view_4"));
+            //console.log(i.srcElement.attributes[1].value);
+            },
         onShow: function(event) {
             var cv = get_current_view();
             var sid = $$(cv).getSelectedId();
             if (!sid) this.hide();
             }
         },
-    body: {
-        view: 'toolbar',
-        rows: [
-            {view: 'button', id: "_return", height: 35, width: 150,
+    body: //{
+        
+        //view: 'toolbar',
+        //rows: [
+            {view: 'button', id: "_return", height: 35, width: 156,
                 label: "Вернуть из архива"
                 }
-            ]
-        }
+            //]
+        //}
     });
 
 
@@ -861,7 +770,6 @@ webix.ui({
         },
     body: {
         view: 'toolbar',
-        //height: 150,
         rows: buttons_2floor
         }
     });
@@ -899,9 +807,6 @@ webix.ui({
     header: "текущая заяка",
     id: "pop_application",
     position:"center",
-    //height:600,
-    //width:800,
-    //modal:true,
     move:true,
     body: c_appl
     });
@@ -912,9 +817,6 @@ webix.ui({
     header: "текущая заяка",
     id: "pop_m_application",
     position:"center",
-    //height:600,
-    //width:800,
-    //modal:true,
     move:true,
     body: mass_appl
     });
@@ -925,7 +827,7 @@ webix.ui({
     body: {
         view: "list",
         id: "ch_alert_list",
-        data: alerts,
+        data: alerts(),
         height: 140,
         width: 100,
         navigation: true,
@@ -942,13 +844,11 @@ webix.ui({
         id: "ch_users_list",
         data: users,
         height: 240,
-        width: 140,
+        width: 170,
         navigation: true,
-        //scroll: false,
         template: "#display_name#"
         }
     });
-
 
 webix.ui({
     view: "popup",
@@ -957,14 +857,6 @@ webix.ui({
     });
 
 //elemnts attachs
-
-$$('_order').attachEvent("onItemClick", function(){
-    var cv = get_current_view();
-    var item = $$(cv).getSelectedItem();
-    if (!item) {
-        $$("context_menu").hide();
-    }
-    });
 
 $$("ch_users_list").attachEvent("onItemClick", function(i_id, ev, val){
     var ordered = $$("users_dc").getItem(i_id).display_name;
@@ -1000,14 +892,6 @@ $$('_to_work').attachEvent("onItemClick", function(){
         $$(cv).unselectAll();
         upd_views();
         });
-    }
-    });
-
-$$('_ch_alert').attachEvent("onItemClick", function(){
-    var cv = get_current_view();
-    var item = $$(cv).getSelectedItem();
-    if (!item) {
-        $$("context_menu").hide();
     }
     });
 
@@ -1072,7 +956,6 @@ $$('_delete').attachEvent("onItemClick", function(){
     item["deleted"] = true;
     var params = {"update_row": item};
     request(req_url, params).then(function(data){
-    //webix.ajax().post(req_url, params, function(text, data){
         item = data.json()[0];
         $$(cv).remove(id);
         $$(cv).unselectAll();
@@ -1132,11 +1015,6 @@ $$("pop_m_application").attachEvent("onBeforeShow", function(item, e){
     var data = upd_top_apps();
     $$("topic_mass_list").data.sync(data);
     });
-
-//$$("pop_application").attachEvent("onHide", function(){
-//    var cv = get_current_view();
-//    $$(cv).getSelectedId();
-//    });
 
 $$("view_1").attachEvent("onItemDblClick", function(id, e){
     open_appl($$("view_1"));

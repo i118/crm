@@ -1,12 +1,11 @@
 "use strict";
 
-
 function c_date() {
     var date = new Date();
     var format = webix.Date.dateToStr("%d.%m.%Y");
     date = format(date);
     return date;
-}
+    }
 
 var input_form = [
     {view:"text", label:"Пользователь", name:"create_user", id: 'input_user',
@@ -40,7 +39,7 @@ var input_form = [
             body: {
                 template:"#name#",
                 yCount:10,
-                data: alerts
+                data: alerts()
                 }
             },
         on: {
@@ -58,7 +57,7 @@ var input_form = [
         },
     {cols: [
         {view:"combo", label:"Клиент", name:"client", id: 'customer_new', invalidMessage: "Выберите клиента",
-            required: true, placeholder: "Выберите клиента", width: 530, labelWidth: 120,
+            required: true, placeholder: "Выберите клиента", width: 630, labelWidth: 120,
             options:  {
                 filter: filter_combo_c,
                 body: {
@@ -92,7 +91,7 @@ var input_form = [
         ]},
     {cols: [
         {view:"combo", label:"Точка", name:"client_point", id: 'customer_point', invalidMessage: "Выберите точку",
-            required: true, placeholder: "Выберите точку", width: 530, labelWidth: 120,
+            required: true, placeholder: "Выберите точку", width: 630, labelWidth: 120,
             options:  {
                 filter: filter_combo_c,
                 body: {
@@ -120,7 +119,7 @@ var input_form = [
         ]},
     {cols: [
         {view:"combo", label:"Тема", id: "n_topic", name:"topic", required: true, value: 3,
-            invalidMessage: "Выберите тему", placeholder: "Выберите тему", labelWidth: 120, width: 530,
+            invalidMessage: "Выберите тему", placeholder: "Выберите тему", labelWidth: 120, width: 630,
             options:  {
                 filter: filter_combo,
                 body: {
@@ -163,7 +162,7 @@ var input_form = [
 var send_form_body = {
     view:"form", 
     id:"send_form",
-    width: 600,
+    width: 700,
     mass: 0,
     point_ch: 1,
     client_ch: 1,
@@ -219,9 +218,6 @@ webix.ui({
         onBeforeShow: function() {
             $$("_send").hotkey_setter("enter+ctrl");
             $$("_send").refresh();
-            },
-        onHide: function() {
-            //console.log('hide');
             },
         onShow: function() {
             $$("send_form").focus("description");

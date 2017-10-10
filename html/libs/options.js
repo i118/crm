@@ -54,7 +54,6 @@ var users_view = {
                     $$("_ch_password").enable();
                     $$("_change").enable();
                     this.addRowCss(c_row.id, "r_css");
-                    //console.log(c_row);
                     var uid = c_row.row;
                     var params = {"get_c_user": uid};
                     var item = request(req_url, params, !0).response
@@ -83,14 +82,8 @@ var users_view = {
                     { label:"Администратор", type:"checkbox", id:"admin", value: false},
                     { label:"Клиент", type:"checkbox", id:"customer", value: false},
                     { label:"Активный", type:"checkbox", id:"active", value: false},
-                    
-                    //{ label:"Type", type:"select", options:["json","xml","csv"], id:"data.type"},
-                    //{ label:"Password", type:"password", id:"data.pass"},
-                    //{ label:"Use JSONP", type:"checkbox", id:"data.jsonp"},
-                    //{ label:"Position", type:"select", options:position_options, id:"style.position"},
-                    //{ label:"Color", type:"combo", options:color_options, id:"style.color"}
-                ]
-            },
+                    ]
+                },
             {cols: [
                 {},
                 {view:"button", id: "_add_user", type:"imageButton", image: './libs/img/add-user.svg',
@@ -109,7 +102,12 @@ var users_view = {
                         $$("_change").disable();
                         }
                     },
-                {view:"button", id: "_apply_chgs", type:"imageButton", image: './libs/img/confirm.svg',label: "Применить изменения", width: 200, disabled: true,
+                {view:"button", id: "_cancel", type:"imageButton", image: './libs/img/cancel.svg', label: "Отменить", width: 120, disabled: true,
+                    click: function() {
+                        console.log("cancel");
+                        }
+                    },
+                {view:"button", id: "_apply_chgs", type:"imageButton", image: './libs/img/confirm.svg',label: "Применить", width: 120, disabled: true,
                     click: function() {
                         $$("_apply_chgs").disable();
                         $$("_change").enable();
@@ -148,15 +146,18 @@ var u_buttons = [
             opt_refresh();
             webix.message('refresh');
             }
-        },
-    {view:"button", id: "_back", type:"imageButton", image: './libs/img/back.svg',label: "Назад", width: 90,
-        click: function() {$$("pop_options").hide()}
-        }
+        }//,
+    //{view:"button", id: "_back", type:"imageButton", image: './libs/img/back.svg',label: "Назад", width: 90,
+        //click: function() {$$("pop_options").hide()}
+        //}
     ];
 
 //main ui's
 var opt = webix.ui({
-    view: "popup",
+    view: "cWindow",
+    modal: false,
+    fullscreen:true,
+    //view: "popup",
     id: "pop_options",
     position: "center",
     body: {
@@ -188,7 +189,7 @@ var opt = webix.ui({
                         {height: 36, cols: u_buttons},
                         {view: "tabview",
                             width: document.documentElement.clientWidth,
-                            height: document.documentElement.clientHeight-72-30-14,
+                            height: document.documentElement.clientHeight-72-30-14-28,
                             id:"tabview2",
                             animate:false,
                             cells: view_cells_options,

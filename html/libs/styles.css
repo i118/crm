@@ -13,12 +13,12 @@
     /*background-color: #fff !important;*/
     border: none !important;
     }
-
-
 .webix_el_button button {
     /*background-color: #f0f7ff !important;
     background-color: #f5faff;*/
-    padding-left: 5px !important;
+    text-align: center !important;
+    padding-left: 1px !important;
+    padding-right: 1px !important;
     }
 
 .webix_view > .webix_disabled {
@@ -82,7 +82,7 @@ input {
     }
 
 .webix_inp_label, .webix_inp_top_label, .webix_label_right {
-    color: #696969;
+    /*color: #696969;*/
     }
 
 .num_s {
@@ -238,7 +238,7 @@ select {
     }
 
 .webix_win_content {
-    padding: 7px !important;
+    /*padding: 7px !important;*/
     }
 
 .r_css {
@@ -250,18 +250,21 @@ select {
     }
 
 .f_list_cl {
-    font-size: 10px;
+    font-size: 12px;
+    color: #696969;
     /*height: 32px;*/
     }
 
 .f_list_cl_2 {
-    font-size: 10px;
+    font-size: 12px;
+    color: #696969;
     padding-left: 10px;
     /*height: 32px;*/
     }
     
 .f_list_cl_txt {
-    font-size: 12px;
+    font-size: 14px;
+    color: #696969;
     /*height: 32px;*/
     }
 
@@ -293,10 +296,25 @@ select {
     text-transform: uppercase;
     color: #b2adad;
     }
-
+    
 .webix_el_box .webix_disabled {
     border-style: solid !important;
     border-width: 0px !important;
-    borde
     }
 
+.webix_view .webix_dtable {
+    border-color: transparent !important;
+    }
+
+.webix_view .webix_toolbar .webix_layout_toolbar {
+    border-color: transparent !important;
+    }
+
+
+.w_n {
+    border-color: transparent !important;
+    }
+
+.webix_win_head {
+    border: none !important;
+    }

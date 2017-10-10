@@ -222,21 +222,22 @@ var cu_buttons = [
             $$("customers_prop").parse(clean_customer_data);
             $$("points_prop").parse(clean_point_data);
             }
-        },
-    {view:"button", id: "_back_1", type:"imageButton", image: './libs/img/back.svg',label: "Назад", width: 90,
-        click: function() {
-            $$("pop_customers").hide();
-            }
-        }
+        }//,
+    //{view:"button", id: "_back_1", type:"imageButton", image: './libs/img/back.svg',label: "Назад", width: 90,
+        //click: function() {
+            //$$("pop_customers").hide();
+            //}
+        //}
     ];
 
 
 //main ui's
 var customs = webix.ui({
-    view: "popup",
+    view: "cWindow",
+    modal: false,
+    fullscreen: true,
+    //view: "popup",
     id: "pop_customers",
-    //width: document.documentElement.clientWidth,
-    //height: document.documentElement.clientHeight,
     position: "center",
     body: {
         id: "customers_ui",
@@ -247,7 +248,7 @@ var customs = webix.ui({
             cols: [
                 {view: "label", label: "<a href='http://ms71.org'><span class='ms-logo'></span></a>",
                     width: 60, align: 'center', height: 36},
-                {view: "label", label: "Манускрипт солюшн: CRM: пользователи", css: 'ms-logo-text'
+                {view: "label", label: "Манускрипт солюшн: CRM: клиенты", css: 'ms-logo-text'
                     },
                 {},
                 {view: "label", label: "Пользователь: " + user, css: 'user-text', width: 250
@@ -267,9 +268,10 @@ var customs = webix.ui({
                     {height: 36, cols: cu_buttons},
                     {view: "toolbar",
                         width: document.documentElement.clientWidth,
-                        height: document.documentElement.clientHeight-72-30-14,
+                        height: document.documentElement.clientHeight-72-30-14-28,
                         id:"c_tool",
                         animate:false,
+                        css: "w_n",
                         cols: [
                             {rows: customers_list},
                             {view: "resizer"},
@@ -297,5 +299,4 @@ var customs = webix.ui({
                 {}
                 ]}
             ]}
-        //]}
     });
