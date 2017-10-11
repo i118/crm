@@ -34,7 +34,7 @@ define([
                         undel:{
                             view:"icon",
                             css: 'untrash_btn',
-                            tooltip: "Востановить"
+                            tooltip: "Восстановить"
                             //icon: "trash-o"
                         }
                     },
