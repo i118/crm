@@ -13,64 +13,56 @@ var clean_customer_data = {"uid": "", "display_name": "", "full_name": "", "addr
             }
 
 var customers_list = [
-                {view: "datatable",
-                    id: "customers_dt",
-                    navigation: "row",
-                    select: true,
-                    width: 700,
-                    resizeColumn:true,
-                    fixedRowHeight:false,
-                    rowLineHeight:32,
-                    rowHeight:row_height,
-                    columns: [
-                        {id: "id", width: 70, sort: "int", css: "num_s",
-                        header: [{text: "uid", css: 'header_data'},
-                            {content:"textFilter"}]
-                            },
-                        {id: "display_name",
-                        fillspace: 1,
-                        sort: "text",
-                        header:[
-                            {text: "Клиент", css: 'header_data'},
-                            {content:"textFilter"}],
-                            }
-                        ],
-                    on: {
-                        onBeforeUnselect: function(item) {
-                            this.removeRowCss(item.id, "r_css");
-                            },
-                        onBeforeSelect: function(c_row) {
-                            $$("_cedit").enable();
-                            $$("_cedit").refresh();
-                            $$("_pedit").disable();
-                            $$("_pedit").refresh();
-                            this.addRowCss(c_row.id, "r_css");
-                            var params = {"get_c_customer": c_row.row};
-                            var item = request(req_url, params, !0).response;
-                            $$("customers_prop").parse(item);
-                            $$("customers_prop").refresh();
-                            params = {"get_c_points": c_row.row};
-                            item = request(req_url, params, !0).response;
-                            item = JSON.parse(item);
-                            $$("points_dt").clearAll();
-                            $$("points_dt").parse(item);
-                            $$("points_dt").refresh();
-                            $$("points_prop").parse(clean_point_data);
-                            $$("points_prop").refresh();
-                            }
-                        },
-                    data: clients
-                    },
-            {cols: [
-                {},
-                {view:"button", id: "_a_c", type:"imageButton", image: './libs/img/add.svg',
-                    label: "Добавить клиента", width: 160, tooltip: "Добавление клиента",
-                    click: function() {
-                        webix.message('добавление клиента');
-                        }
-                    },
-                ]},
-            ];
+    {view: "datatable",
+        id: "customers_dt",
+        navigation: "row",
+        select: true,
+        width: 700,
+        resizeColumn:true,
+        fixedRowHeight:false,
+        rowLineHeight:32,
+        rowHeight:row_height,
+        columns: [
+            {id: "id", width: 70, sort: "int", css: "num_s",
+            header: [{text: "uid", css: 'header_data'},
+                {content:"textFilter"}]
+                },
+            {id: "display_name",
+            fillspace: 1,
+            sort: "text",
+            header:[
+                {text: "Клиент", css: 'header_data'},
+                {content:"textFilter"}],
+                }
+            ],
+        on: {
+            onBeforeUnselect: function(item) {
+                this.removeRowCss(item.id, "r_css");
+                },
+            onBeforeSelect: function(c_row) {
+                $$("_a_p").enable();
+                $$("_cedit").enable();
+                $$("_cedit").refresh();
+                $$("_pedit").disable();
+                $$("_pedit").refresh();
+                this.addRowCss(c_row.id, "r_css");
+                var params = {"get_c_customer": c_row.row};
+                var item = request(req_url, params, !0).response;
+                $$("customers_prop").parse(item);
+                $$("customers_prop").refresh();
+                params = {"get_c_points": c_row.row};
+                item = request(req_url, params, !0).response;
+                item = JSON.parse(item);
+                $$("points_dt").clearAll();
+                $$("points_dt").parse(item);
+                $$("points_dt").refresh();
+                $$("points_prop").parse(clean_point_data);
+                $$("points_prop").refresh();
+                }
+            },
+        data: clients
+        },
+    ];
 
 var customer_property = [
             {view: "property", id: "customers_prop",// width:450,
@@ -103,7 +95,6 @@ var customer_property = [
                         $$("customers_dt").config.width = 500;
                         $$("customers_dt").refresh();
                         $$("cell_2").show();
-                        console.log('points');
                         }
                     },
                 {view:"button", id: "_cedit", type:"imageButton", image: './libs/img/edit.svg',label: "Редактировать", width: 160, disabled: true,
@@ -156,14 +147,13 @@ var points_list = [
                         $$("points_prop").refresh();
                         }
                     },
-                //data: clients
                 },
             {cols: [
                 {},
                 {view:"button", id: "_a_p", type:"imageButton", image: './libs/img/add-point.svg',
-                    label: "Добавить точку", width: 160, tooltip: "Добавление точки",
+                    label: "Добавить точку", width: 160, tooltip: "Добавление точки", disabled: true,
                     click: function() {
-                        webix.message('добавление точки');
+                        $$("pop_new_point_form").show();
                         }
                     },
                 ]},
@@ -214,13 +204,17 @@ var point_property = [
             ];
 
 var cu_buttons = [
+    {view:"button", id: "_a_c", type:"imageButton", image: './libs/img/add.svg',
+        label: "Добавить контрагента", width: 160, tooltip: "Добавление контрагента",
+        click: function() {
+            $$("pop_new_customer_form").show();
+            }
+        },
     {},
     {view:"button", id: "_custom_refresh", type:"imageButton", image: './libs/img/sync.svg',
-        label: "Обновить", width: 120, tooltip: "Синхронизация с сервером",// hotkey: "q+ctrl",
+        label: "Обновить", width: 120, tooltip: "Синхронизация с сервером",
         click: function() {
-            $$("customers_ui").reconstruct();
-            $$("customers_prop").parse(clean_customer_data);
-            $$("points_prop").parse(clean_point_data);
+            webix.message("обновление");
             }
         }//,
     //{view:"button", id: "_back_1", type:"imageButton", image: './libs/img/back.svg',label: "Назад", width: 90,
@@ -230,6 +224,39 @@ var cu_buttons = [
         //}
     ];
 
+var all_cust_view = {template: "все контрагенты"};
+var suppl_view = {template: "поставщики"};
+var consums_view = {view: "toolbar",
+    width: document.documentElement.clientWidth,
+    height: document.documentElement.clientHeight-72-30-14-28-42,
+    id:"c_tool",
+    animate:false,
+    css: "w_n",
+    cols: [
+        {rows: customers_list},
+        {view: "resizer"},
+        {view: "multiview",
+            animate: false,
+            id: 'm_view',
+            cells: [
+                {view: "layout", id: "cell_1", header: 'Клиент', rows: customer_property },
+                {view: "layout", id: "cell_2",
+                    cols: [
+                        {rows: points_list},
+                        {view: "resizer"},
+                        {rows: point_property}
+                        ]
+                    },
+                ]
+            }
+        ]}
+
+
+var view_cells_customers = [
+    {header: 'Клиенты(аптеки)', body: consums_view},
+    {header: 'Поставщики', body: suppl_view},
+    {header: 'Все контрагенты', body: all_cust_view}
+    ]
 
 //main ui's
 var customs = webix.ui({
@@ -248,7 +275,7 @@ var customs = webix.ui({
             cols: [
                 {view: "label", label: "<a href='http://ms71.org'><span class='ms-logo'></span></a>",
                     width: 60, align: 'center', height: 36},
-                {view: "label", label: "Манускрипт солюшн: CRM: клиенты", css: 'ms-logo-text'
+                {view: "label", label: "Манускрипт солюшн: CRM: контрагенты", css: 'ms-logo-text'
                     },
                 {},
                 {view: "label", label: "Пользователь: " + user, css: 'user-text', width: 250
@@ -259,37 +286,22 @@ var customs = webix.ui({
                         deleteCookie('admin');
                         deleteCookie('auth_key');
                         location.reload();
-                        }
+                        },
+                    hotkey: "x+ctrl"
                     }
                 ]},
             {cols: [
                 {},
                 {rows: [
                     {height: 36, cols: cu_buttons},
-                    {view: "toolbar",
-                        width: document.documentElement.clientWidth,
-                        height: document.documentElement.clientHeight-72-30-14-28,
-                        id:"c_tool",
-                        animate:false,
-                        css: "w_n",
-                        cols: [
-                            {rows: customers_list},
-                            {view: "resizer"},
-                            {view: "multiview",
-                                animate: false,
-                                id: 'm_view',
-                                cells: [
-                                    {view: "layout", id: "cell_1", header: 'Клиент', rows: customer_property },
-                                    {view: "layout", id: "cell_2",
-                                        cols: [
-                                            {rows: points_list},
-                                            {view: "resizer"},
-                                            {rows: point_property}
-                                            ]
-                                        },
-                                    ]
-                                }
-                            ]}
+                    {view: "tabview",
+                            width: document.documentElement.clientWidth,
+                            height: document.documentElement.clientHeight-72-30-14-28,
+                            id:"tabview3",
+                            animate:false,
+                            cells: view_cells_customers,
+                            multiview: true
+                            }
                     ]},
                 {}
                 ]},

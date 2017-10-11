@@ -7,6 +7,11 @@ function c_date() {
     return date;
     }
 
+    
+var new_point_elements;
+var new_user_elements;
+
+
 var input_form = [
     {view:"text", label:"Пользователь", name:"create_user", id: 'input_user',
         value: user, readonly: true, disabled: true, labelWidth: 120},
@@ -85,7 +90,7 @@ var input_form = [
                 }
             },
         {view: "button", type:"icon", icon: 'plus', autoWidth: true, id: "add_client", click: function(){
-            webix.message('Будет добавление клиента');
+            $$("pop_new_customer_form").show();
             }
             }
         ]},
@@ -102,18 +107,23 @@ var input_form = [
                 },
             on: {
                 onChange: function(rid){
+                    var cli = $$("customer_new").getValue();
+                    if (cli) {
+                        $$("add_point").enable();
+                    } else {
+                        $$("add_point").disable();
+                    };
                     if ($$("send_form").config.point_ch === 1) {
                         $$("send_form").config.client_ch = 0;
                         var c_po = $$("points_dc").getItem(rid).customer_id;
-                        var cli = $$("customer_new").getValue();
                         $$("customer_new").setValue(c_po);
                         $$("customer_new").refresh()
                     };
                     }
                 }
             },
-        {view: "button", type:"icon", icon: 'plus', autoWidth: true, id: "add_point", click: function(){
-            webix.message('Будет добавление точки');
+        {view: "button", type:"icon", icon: 'plus', autoWidth: true, id: "add_point", disabled: true, click: function(){
+            $$("pop_new_point_form").show();
             }
             }
         ]},
@@ -141,6 +151,7 @@ var input_form = [
         {},
         {view:"button", value:"test", click: function(){
                 var vv = $$("send_form").validate({disabled:false});
+                console.log(vv);
                 console.log($$("send_form").getValues());
             }
             },
@@ -159,6 +170,107 @@ var input_form = [
         ]
     }];
 
+var new_customer_form = {
+    view:"form", 
+    id: "_new_customer",
+    width: 700,
+    rules:{
+        "display_name": webix.rules.isNotEmpty,
+        "full_name": webix.rules.isNotEmpty,
+        "address": webix.rules.isNotEmpty,
+        "inn":  webix.rules.isNotEmpty,
+        "kpp":  webix.rules.isNotEmpty
+        },
+    elements: [
+        {view:"text", label:"Отображаемое имя", name: "display_name", id: '_dname', invalidMessage: "Введите имя для отображения",
+            placeholder: "Аптека", width: 730, labelWidth: 220, required: true},
+        {view:"text", label:"Полное наименование организации", name: "full_name", id: '_fname', invalidMessage: "Введите полное название организации",
+            placeholder: "ООО ХХХ", width: 730, labelWidth: 220, required: true},
+        {view: "checkbox", label: "Клиент(аптека)", labelWidth: 220, id: '_cli', name: "client", value: true},
+        {view: "checkbox", label: "Поставщик", labelWidth: 220, id: '_suppl', name: "supplier"},
+        {view:"text", label:"Юридический адрес", name: "address", id: '_addr', invalidMessage: "Введите юридичесский адрес организации",
+            placeholder: "Россия, г. Тула, пр. Ленина, 77, оф. 111", width: 730, labelWidth: 220, required: true},
+        {view:"text", label:"ИНН организации", name: "inn", id: '_inn', invalidMessage: "Введите ИНН организации",
+            placeholder: "2255448877", width: 730, labelWidth: 220, required: true},
+        {view:"text", label:"КПП организации", name: "kpp", id: '_kpp', invalidMessage: "Введите КПП организации",
+            placeholder: "2255448877", width: 730, labelWidth: 220, required: true},
+        {view:"text", label:"ФИО директора", name: "director", id: '_dir', placeholder: "Петров Петр Петрович", width: 730, labelWidth: 220},
+        {view:"text", label:"ФИО контактного лица", name: "contact", id: '_cont', placeholder: "Петров Петр Петрович", width: 730, labelWidth: 220},
+        {view:"text", label:"Контактный телефон", name: "phone_num", id: '_phone', placeholder: "+7(XXX)XXX-XXXX", width: 730, labelWidth: 220},
+        {view:"text", label:"Адрес электронной почты", name: "email", id: '_email', placeholder: "email@domain.ru", width: 730, labelWidth: 220},
+        {cols: [
+            {},
+            {view:"button", value:"test", click: function(){
+                let qq = $$("_new_customer").validate({disabled:false});
+                console.log(qq);
+                console.log($$("_new_customer").getValues());
+                }
+                },
+            {view:"button", value:"Отменить", click: function(){
+                $$("pop_new_customer_form").hide();
+                $$("_new_customer").reconstruct();
+                }
+                },
+            {view:"button", id: "_send_customer", value:"Отправить", click: function(){
+                let qq = $$("_new_customer").validate({disabled:false});
+                if (qq) {
+                    let item = $$("_new_customer").getValues(); 
+                    submit_new_customer(item);
+                    };
+                }
+                }
+            ]}
+        ]
+    };
+
+var new_point_form = {
+    view:"form", 
+    id: "_new_point",
+    rules:{
+        "display_name": webix.rules.isNotEmpty,
+        "full_name": webix.rules.isNotEmpty,
+        "address": webix.rules.isNotEmpty,
+        "phone_num":  webix.rules.isNotEmpty
+        },
+    elements: [
+        {view:"text", label:"Клиент", name: "customer_id", id: '_c_id', width: 730, labelWidth: 220, disabled: true},
+        {view:"text", label:"Отображаемое имя", name: "display_name", id: '_pdname', invalidMessage: "Введите имя для отображения",
+            placeholder: "Аптека", width: 730, labelWidth: 220, required: true},
+        {view:"text", label:"Полное наименование организации", name: "full_name", id: '_pfname', invalidMessage: "Введите полное название точки",
+            placeholder: "ООО ХХХ", width: 730, labelWidth: 220, required: true},
+        {view:"text", label:"Фактический адрес", name: "address", id: '_paddr', invalidMessage: "Введите фактический адрес точки",
+            placeholder: "Россия, г. Тула, пр. Ленина, 77, оф. 111", width: 730, labelWidth: 220, required: true},
+        {view:"text", label:"ФИО контактного лица", name: "contact", id: '_pcont', placeholder: "Петров Петр Петрович", width: 730, labelWidth: 220},
+        {view:"text", label:"Контактный телефон", name: "phone_num", id: '_pphone', placeholder: "+7(XXX)XXX-XXXX", width: 730, labelWidth: 220,
+            required: true, ivalidMessage: "Укажите телефон"},
+        {view:"text", label:"Адрес электронной почты", name: "email", id: '_pemail', placeholder: "email@domain.ru", width: 730, labelWidth: 220},
+        {view:"textarea", label:"Комментарий", name: "comment", id: '_pcom', placeholder: "Введите комментарий здесь", width: 730, labelWidth: 220,
+            labelPosition:"top", height: 130},
+        {cols: [
+            {},
+            {view:"button", value:"test", click: function(){
+                let qq = $$("_new_point").validate({disabled:false});
+                console.log($$("_new_point").getValues());
+                }
+                },
+            {view:"button", value:"Отменить", click: function(){
+                $$("pop_new_point_form").hide();
+                $$("_new_point").reconstruct();
+                }
+                },
+            {view:"button", id: "_send_point", value:"Отправить", click: function(){
+                let qq = $$("_new_point").validate({disabled:false});
+                if (qq) {
+                    let item = $$("_new_point").getValues(); 
+                    submit_new_point(item);
+                    };
+                }
+                }
+            ]}
+        ]
+    };
+    
+    
 var send_form_body = {
     view:"form", 
     id:"send_form",
@@ -178,31 +290,29 @@ var send_form_body = {
     elements: input_form
     };
 
-var result_box = {
-    id: "res_box",
-    view:"form", 
-    label:"Результат",
-    elements:[
-        {view: "label", label:"Ваша заявка ", align:"center", id: "l1"},
-        {view: "label", label:"Номер заявки № ", align:"center", id: "l2"},
-        {cols: [
-            {},
-            {view: "button", label: "OK", width: 100, id: "ok_but",click: function(){
-                    $$("pop_result").hide();
-                    $$("res_box").reconstruct();
-                    }
-                },
-            {}
-            ]}
-        ]
-    }
-
-webix.ui({
+var req_res = webix.ui({
     view: "popup",
     position:"center",
     id: "pop_result",
     modal: true,
-    body: result_box,
+    body: {
+        id: "res_box",
+        view:"form", 
+        label:"Результат",
+        elements:[
+            {view: "label", label:"Ваша заявка ", align:"center", id: "l1"},
+            {view: "label", label:"Номер заявки № ", align:"center", id: "l2"},
+            {cols: [
+                {},
+                {view: "button", label: "OK", width: 100, id: "ok_but",click: function(){
+                        $$("pop_result").hide();
+                        $$("res_box").reconstruct();
+                        }
+                    },
+                {}
+                ]}
+            ]
+        },
     on: {
         onShow: function(id){
             $$("ok_but").focus();
@@ -210,8 +320,45 @@ webix.ui({
         }
     });
 
-webix.ui({
+var new_c = webix.ui({
+    view: "cWindow",
+    modal: false,
+    id: "pop_new_customer_form",
+    body: new_customer_form,
+    position: "center",
+    on: {
+        onBeforeShow: function() {
+            },
+        onShow: function() {
+            }
+        }
+    });
+
+var new_p = webix.ui({
+    view: "cWindow",
+    modal: false,
+    id: "pop_new_point_form",
+    body: new_point_form,
+    position: "center",
+    on: {
+        onBeforeShow: function() {
+            if ($$("pop_customers").isVisible()) {
+                let name = $$("customers_dt").getSelectedItem().display_name;
+                $$('_c_id').setValue(name);
+            } else if ($$("pop_send_form").isVisible()) {
+                let cc = $$("send_form").getValues().client;
+                let name = $$("clients_dc").getItem(cc).display_name;
+                $$('_c_id').setValue(name);
+                };
+            },
+        onShow: function() {
+            }
+        }
+    });
+
+var new_r = webix.ui({
     view: "popup",
+    modal: false,
     id: "pop_send_form",
     body: send_form_body,
     on: {
@@ -224,6 +371,31 @@ webix.ui({
             }
         }
     });
+
+var submit_new_point = function (item) {
+    $$("_new_point").hide();
+    item["create_user"] = user;
+    item["create_date"] = new Date();
+    item["change_date"] = new Date();
+    webix.message("добавление точки, доделать обновление списка точек");
+    $$("_new_point").reconstruct();
+    let params = {"put_point":item};
+    item = request(req_url, params, !0).response
+    //item = data.json()[0];
+    console.log(item);
+    };
+
+var submit_new_customer = function (item) {
+    $$("_new_customer").hide();
+    item["create_user"] = user;
+    item["create_date"] = new Date();
+    item["change_date"] = new Date();
+    webix.message("добавление клиента, доделать обновление списка клиентов");
+    $$("_new_customer").reconstruct();
+    let params = {"put_customer":item};
+    item = request(req_url, params, !0)
+    console.log(item);
+    };
 
 function submit(){
     $$("pop_send_form").hide();

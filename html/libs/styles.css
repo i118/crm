@@ -3,6 +3,10 @@
     src: url(../libs/fonts/Roboto-Regular-webfont.ttf);
 }
 
+.webix_icon_btn {
+    padding-right: 0px !important;
+    }
+
 .webix_message_area{width: 800px;}
 
 .myhover{
@@ -15,9 +19,9 @@
     }
 .webix_el_button button {
     /*background-color: #f0f7ff !important;
-    background-color: #f5faff;*/
-    text-align: center !important;
-    padding-left: 1px !important;
+    background-color: #f5faff;
+    text-align: center !important;*/
+    padding-left: 3px !important;
     padding-right: 1px !important;
     }
 

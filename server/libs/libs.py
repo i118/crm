@@ -183,7 +183,9 @@ where r.archived = false and r.deleted = false and num = {0};
     returning uid;
 """,
 'sql_points_c': """select * from points where uid > 0 and customer_id = {0};""",
-'sql_customer_c': """select * from customers where uid = {0};""",
+'sql_customer_c': """select uid, display_name, full_name, address, inn, kpp, phone_num, email, director, contact, create_date,
+create_user, change_date, active, deleted, id_old
+    from customers where uid = {0};""",
 'sql_point_c': """select * from points where uid = {0};"""
         }
 
@@ -482,6 +484,29 @@ where r.archived = false and r.deleted = false and num = {0};
         ret_value = json.dumps(ret, ensure_ascii=False)
         return ret_value
 
+    def put_customer(self, params=None, x_hash=None):
+        """
+        put new customer to bd
+        """
+
+        print(params)
+
+        ret = []
+        
+        ret_value = json.dumps(ret, ensure_ascii=False)
+        return ret_value
+        
+    def put_point(self, params=None, x_hash=None):
+        """
+        put new point to db
+        """
+
+        print(params)
+
+        ret = []
+        
+        ret_value = json.dumps(ret, ensure_ascii=False)
+        return ret_value
 
     def put_apply(self, params=None, x_hash=None):
         """
@@ -526,11 +551,6 @@ where r.archived = false and r.deleted = false and num = {0};
               "point": row[6]}
         ret.append(qw)
         ret_value = json.dumps(ret, ensure_ascii=False)
-        return ret_value
-
-        
-        num = ret[0] if ret else 0
-        ret_value = json.dumps(num, ensure_ascii=False)
         return ret_value
 
     def _make_sql(self, sql):

@@ -141,7 +141,7 @@ var view_cells_options = [
 var u_buttons = [
     {},
     {view:"button", id: "_opt_refresh", type:"imageButton", image: './libs/img/sync.svg',
-        label: "Обновить", width: 120, tooltip: "Синхронизация с сервером, <Ctrl>+Q", hotkey: "q+ctrl",
+        label: "Обновить", width: 120, tooltip: "Синхронизация с сервером",
         click: function() {
             opt_refresh();
             webix.message('refresh');
